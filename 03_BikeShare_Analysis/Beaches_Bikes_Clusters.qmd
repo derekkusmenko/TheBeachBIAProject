@@ -1,0 +1,428 @@
+---
+title: "Beaches_Bikes_Cluster"
+author: "Derek Kusmenko"
+format: pdf
+editor: visual
+---
+
+## Importing Data and Libraries
+
+```{r}
+library(opendatatoronto)
+library(tidyverse)
+library(sf)
+library(leaflet)
+library(skimr)
+library(janitor)
+library(lubridate)
+library(tidytext)
+library(readr)
+library(dplyr)
+library(ggplot2)
+library(purrr)
+library(leaflet)
+library(dbscan)
+library(igraph)
+library(tidygraph)
+library(ggraph)
+```
+
+```{r}
+trips_data <- read_csv("../01_Data/beaches_bikes.csv")
+```
+
+## K-means
+
+First want to plot a scree plot to use the "Elbow Method" to find the optimal number of clusters.
+
+```{r}
+set.seed(2453)
+kmeans_data <- trips_data |>
+  select(Trip..Duration, start_hour_of_day, User.Type) |>
+  filter(!is.na(Trip..Duration) & !is.na(start_hour_of_day) & !is.na(User.Type)) |>
+  filter(Trip..Duration < 7200) # Remove massive outliers so clusters aren't skewed
+
+# scale the data
+kmeans_scaled <- scale(kmeans_data |> select(Trip..Duration, start_hour_of_day))
+
+# calculate for k = 1 to 10
+k_values <- 1:10
+
+wss_values <- map_dbl(k_values, function(k) {
+  kmeans(kmeans_scaled, centers = k, nstart = 10)$tot.withinss
+})
+
+# create dataframe to store values for plotting
+scree_data <- data.frame(
+  k = k_values,
+  WSS = wss_values
+)
+
+# plot the Scree Plot
+ggplot(scree_data, aes(x = k, y = WSS)) +
+  geom_line(color = "steelblue", size = 1) +
+  geom_point(color = "darkred", size = 3) +
+  scale_x_continuous(breaks = 1:10) +
+  labs(
+    title = "Scree Plot (Elbow Method) for Trip Profiles",
+    subtitle = "Look for the 'bend' or 'elbow' to find the optimal k",
+    x = "Number of Clusters (k)",
+    y = "Total Within-Cluster Sum of Squares"
+  ) +
+  theme_minimal()
+```
+
+So 3 clusters appears to be the optimal number via the Elbow Method. Proceed with k=3 means clustering.
+
+```{r}
+set.seed(2453)
+# Run K-Means with 3 clusters
+trip_clusters <- kmeans(kmeans_scaled, centers = 3, nstart = 25)
+
+# Add the cluster assignments back to the data
+kmeans_data$Cluster <- as.factor(trip_clusters$cluster)
+
+# Visualize the Trip Profiles
+ggplot(kmeans_data, aes(x = start_hour_of_day, y = Trip..Duration, color = Cluster)) +
+  geom_point(alpha = 0.3) +
+  labs(title = "Trip Profiles (K-Means)",
+       x = "Hour of Day",
+       y = "Trip Duration (Seconds)") +
+  theme_minimal()
+```
+
+From this plot we see that are 3 clusters are broken down as early trips, late trips, and long trips. We can further analyze the data in each cluster.
+
+```{r}
+# Summarise the profiles including User Type Proportions
+cluster_profiles <- kmeans_data |>
+  group_by(Cluster) |>
+  summarise(
+    Total_Trips = n(),
+    Avg_Start_Hour = round(mean(start_hour_of_day), 1),
+    Avg_Duration_Mins = round(mean(Trip..Duration) / 60, 1),
+    
+    # Calculate the percentage of each member type
+    Pct_Annual = round(sum(User.Type == "Annual Member") / n() * 100, 1),
+    Pct_Casual = round(sum(User.Type == "Casual Member") / n() * 100, 1)
+  ) |>
+  arrange(Cluster)
+
+# Print the resulting table
+print(cluster_profiles)
+```
+
+From this output, it appears that cluster 1 mainly comprises of longer trips all throughout the day, with the average start time at about 3:30pm. We also have a very large concentration of casual to annual members, indicating that this cluster is likely a good representation of leisure trips. This is a strong assumption as we are likely missing other leisure trips that are being captured by the other clusters, however, it is a sizeable sample to proceed with.
+
+```{r}
+set.seed(2453)
+# list of id's for stations in Beaches BIA
+beaches_stations <- c(
+  "7692",
+  "7317",
+  "7318",
+  "7365",
+  "7427",
+  "7315",
+  "7695",
+  "7364",
+  "7314",
+  "7316",
+  "7428"
+)
+
+# Prepare and Filter the Data for INBOUND trips
+kmeans_data_inbound <- trips_data |>
+  # Filter for trips ENDING in Beaches
+  filter(End.Station.Id %in% beaches_stations) |>
+  filter(!(Start.Station.Id %in% beaches_stations)) |>
+  # Select Duration, END Hour, and User Type
+  select(Trip..Duration, end_hour_of_day, User.Type) |>
+  filter(!is.na(Trip..Duration) & !is.na(end_hour_of_day) & !is.na(User.Type)) |>
+  filter(Trip..Duration < 7200) # Remove massive outliers
+
+# Scale the numerical columns (Duration and End Hour)
+kmeans_scaled_inbound <- scale(kmeans_data_inbound |> select(Trip..Duration, end_hour_of_day))
+
+# Run K-Means with 3 clusters
+inbound_clusters <- kmeans(kmeans_scaled_inbound, centers = 3, nstart = 25)
+
+# Add the cluster assignments back to the original unscaled data
+kmeans_data_inbound$Cluster <- as.factor(inbound_clusters$cluster)
+
+# Summarise the Inbound Profiles
+inbound_profiles <- kmeans_data_inbound |>
+  group_by(Cluster) |>
+  summarise(
+    Total_Trips = n(),
+    Avg_Arrival_Hour = round(mean(end_hour_of_day), 1),
+    Avg_Duration_Mins = round(mean(Trip..Duration) / 60, 1),
+    
+    # Calculate member type proportions
+    Pct_Annual = round(sum(User.Type == "Annual Member") / n() * 100, 1),
+    Pct_Casual = round(sum(User.Type == "Casual Member") / n() * 100, 1)
+  ) |>
+  arrange(Cluster)
+
+# Print the resulting table
+print(inbound_profiles)
+```
+
+See similar results for inbound only trips as all trips (now cluster 2)
+
+### Create Cluster 1 Only Dataset
+
+```{r}
+set.seed(2453)
+# load data
+trips_data <- read_csv("../01_Data/beaches_bikes.csv")
+
+# remove any na and extreme outliers
+df_cleaned <- trips_data |>
+  filter(!is.na(Trip..Duration) & !is.na(start_hour_of_day)) |>
+  filter(Trip..Duration < 7200) # Keep trips under 2 hours to avoid skew
+
+# scale and Run K-Means (k = 3)
+kmeans_scaled <- scale(df_cleaned |> select(Trip..Duration, start_hour_of_day))
+trip_clusters <- kmeans(kmeans_scaled, centers = 3, nstart = 25)
+
+# add Cluster Assignments back to the cleaned dataset
+df_cleaned$Cluster <- trip_clusters$cluster
+
+
+# to keep track of which cluster is for leisure as sometimes label changes when re running
+leisure_cluster <- which(df_cleaned |> 
+                          group_by(Cluster) |>
+                          summarize(n = n()) == 27009) - 3
+
+# filter for leisure cluster
+leisure_dataset <- df_cleaned |>
+  filter(Cluster == leisure_cluster)
+
+# save to csv for future use
+write_csv(leisure_dataset, "../01_Data/leisure_dataset.csv")
+
+# summary
+cat("Export Complete!\n")
+cat("Total trips in Leisure Cluster:", nrow(leisure_dataset), "\n")
+cat("Average Duration (Mins):", round(mean(leisure_dataset$Trip..Duration)/60, 1), "\n")
+cat("Average Start Hour:", round(mean(leisure_dataset$start_hour_of_day), 1), "\n")
+```
+
+## DBScan
+
+```{r}
+set.seed(2453)
+# load in station data for lat and long
+stations_data <- read_csv("../01_Data/Bike_Station_Info.csv")
+stations_data <- stations_data |> mutate(station_id = as.character(station_id))
+
+# find top 50 most common trips
+top_50_trips <- trips_data |>
+  filter(!is.na(Start.Station.Id) & !is.na(End.Station.Id)) |>
+  group_by(Start.Station.Id, End.Station.Id) |>
+  summarise(weight = n(), .groups = "drop") |>
+  filter(Start.Station.Id != End.Station.Id) |>
+  arrange(desc(weight)) |>
+  slice_head(n = 50)
+
+#create list of top stations
+top_stations_list <- unique(c(top_50_trips$Start.Station.Id, top_50_trips$End.Station.Id))
+
+# filter to only include above stations
+spatial_data_top50 <- stations_data |>
+  filter(station_id %in% top_stations_list) |>
+  select(station_id, name, lat, lon) |>
+  filter(!is.na(lat) & !is.na(lon))
+
+# Extract just the coordinates for the DBSCAN algorithm
+coords_only <- spatial_data_top50 |> select(lon, lat)
+
+# Run DBSCAN 
+dbscan_res <- dbscan(coords_only, eps = 0.01, minPts = 2)
+
+# Add the cluster assignments back to the spatial data
+spatial_data_top50$Cluster <- as.factor(dbscan_res$cluster)
+
+# plot results on map of Toronto
+pal_clusters <- colorFactor(palette = "Set1", domain = spatial_data_top50$Cluster)
+
+# Generate the Map
+leaflet(spatial_data_top50) |>
+  addTiles() |>
+  setView(lng = -79.3832, lat = 43.6532, zoom = 12) |>
+  addCircleMarkers(
+    lng = ~lon,
+    lat = ~lat,
+    radius = 8, 
+    fillColor = ~pal_clusters(Cluster),
+    fillOpacity = 0.9,
+    stroke = TRUE,
+    weight = 1,
+    color = "black", 
+    popup = ~paste("<b>Station:</b>", name, "<br>",
+                   "<b>Top 50 Spatial Cluster:</b>", Cluster)
+  ) |>
+  addLegend("bottomright", pal = pal_clusters, values = ~Cluster,
+            title = "Top 50 Spatial Clusters<br>(0 = Outliers)",
+            opacity = 1)
+```
+
+## Network Graphs
+
+```{r}
+set.seed(2453)
+# Create edges for top 100 trips
+edges <- trips_data |>
+  filter(!is.na(Start.Station.Id) & !is.na(End.Station.Id)) |>
+  group_by(Start.Station.Id, End.Station.Id) |>
+  summarise(weight = n(), .groups = "drop") |>
+  # Filter out trips with same start and end station
+  filter(Start.Station.Id != End.Station.Id) |>
+  # Sort by highest trip volume to lowest
+  arrange(desc(weight)) |>
+  # Keep top 100 rows
+  slice_head(n = 100)
+
+# Convert edge list to an igraph Network Object
+bike_network <- graph_from_data_frame(edges, directed = TRUE)
+
+# Run Louvain clustering
+undirected_net <- as.undirected(bike_network, mode = "collapse", edge.attr.comb = "sum")
+communities <- cluster_louvain(undirected_net)
+
+# plot network
+plot(communities, undirected_net, 
+     vertex.size = 8,                
+     vertex.label.cex = 0.7,         
+     vertex.label.color = "black",
+     edge.arrow.size = 0.3,
+     # Scale the thickness of the connection lines based on the trip count
+     edge.width = E(undirected_net)$weight / max(E(undirected_net)$weight) * 5,
+     main = "Top 100 Routes: Bike Station Communities")
+
+
+```
+
+```{r}
+# Extract which community each station belongs to
+station_communities <- data.frame(
+  station_id = communities$names,
+  Community_ID = as.factor(communities$membership)
+)
+
+# Join the Community IDs with the spatial data (Lat/Long)
+mapped_communities <- station_communities |>
+  inner_join(stations_data, by = "station_id") |>
+  select(station_id, name, lat, lon, Community_ID) |>
+  filter(!is.na(lat) & !is.na(lon))
+
+# create colour palette for different communities
+pal_communities <- colorFactor(palette = "Set1", domain = mapped_communities$Community_ID)
+
+
+# Generate map with leaflet
+leaflet(mapped_communities) |>
+  addTiles() |>
+  setView(lng = -79.3832, lat = 43.6532, zoom = 12) |>
+  addCircleMarkers(
+    lng = ~lon,
+    lat = ~lat,
+    radius = 8, 
+    fillColor = ~pal_communities(Community_ID),
+    fillOpacity = 0.9,
+    stroke = TRUE, 
+    weight = 1,
+    color = "black", 
+    popup = ~paste("<b>Station:</b>", name, "<br>",
+                   "<b>Network Community ID:</b>", Community_ID)
+  ) |>
+  addLegend("bottomright", pal = pal_communities, values = ~Community_ID,
+            title = "Network Communities<br>(Based on Top 100 Routes)",
+            opacity = 1)
+
+
+```
+
+```{r}
+#  Prepare oubound Data
+outflow_graph <- df |>
+  filter((Start.Station.Id %in% beaches_stations) & !(End.Station.Id %in% beaches_stations)) |>
+  count(Start.Station.Name, End.Station.Name, sort = TRUE) |>
+  rename(from = Start.Station.Name, to = End.Station.Name, weight = n) |>
+  
+  # take only top 20 for visual simplicity
+  slice_head(n = 20) |> 
+  as_tbl_graph()
+
+# Prepare inbound data
+inflow_graph <- df |>
+  filter(!(Start.Station.Id %in% beaches_stations) & (End.Station.Id %in% beaches_stations)) |>
+  count(Start.Station.Name, End.Station.Name, sort = TRUE) |>
+  rename(from = Start.Station.Name, to = End.Station.Name, weight = n) |>
+  
+  # again keeping top 20
+  slice_head(n = 20) |> 
+  as_tbl_graph()
+
+# plotting function
+plot_flow <- function(graph_data, title, color_edge) {
+  ggraph(graph_data, layout = "fr") + 
+    geom_edge_fan(aes(alpha = weight), color = color_edge, 
+                  arrow = arrow(length = unit(3, 'mm')), 
+                  end_cap = circle(3, 'mm')) + 
+    
+    geom_node_point(size = 4, color = "black") +
+    geom_node_text(aes(label = name), repel = TRUE, size = 3) +
+    
+    theme_void() + 
+    labs(title = title, subtitle = "Top 20 Connections by Volume")
+}
+
+# Generate outflow and inflow plots
+p1 <- plot_flow(outflow_graph, "Outflow: Where do they go?", "firebrick")
+
+p2 <- plot_flow(inflow_graph, "Inflow: Where do they come from?", "steelblue")
+
+print(p1)
+print(p2)
+
+
+```
+
+## Misc: User Type Check
+
+Look at difference in distribution between annual vs casual members.
+
+```{r}
+# first remove outliers via 1.5*IQR method
+# Calculate the quartiles
+Q1 <- quantile(df$Trip..Duration, 0.25, na.rm = TRUE)
+Q3 <- quantile(df$Trip..Duration, 0.75, na.rm = TRUE)
+IQR_value <- Q3 - Q1
+
+# Define the bounds 
+lower_bound <- Q1 - 1.5 * IQR_value
+upper_bound <- Q3 + 1.5 * IQR_value
+
+# Create a new filtered dataset
+beaches_trips_no_outliers <- df |>
+  filter(Trip..Duration >= lower_bound & Trip..Duration <= upper_bound) 
+
+# Print how many rows were removed
+rows_removed <- nrow(df) - nrow(beaches_trips_no_outliers)
+print(paste("Removed", rows_removed, "outlier trips."))
+
+# visualize distributions
+ggplot(beaches_trips_no_outliers, aes(x = Trip..Duration, fill = User.Type)) +
+  geom_density(alpha = 0.5) +
+  scale_x_continuous(labels = scales::comma) + 
+  labs(
+    title = "Validation: Duration vs. User Type (Outliers Removed)",
+
+    x = "Trip Duration (Seconds)",
+    fill = "User Type",
+    y = "Density"
+  ) +
+  theme_minimal()
+```

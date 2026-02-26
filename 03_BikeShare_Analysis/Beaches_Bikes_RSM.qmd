@@ -1,0 +1,246 @@
+---
+title: "Beaches_Bikes_RSM"
+author: "Derek Kusmenko"
+format: pdf
+editor: visual
+---
+
+This notebook was produced to aid RSM students with some data analysis for their project. They mainly wanted data on Daily breakdown (weekday vs. weekend), Weekly averages, and Full-year data to assess seasonality trends.
+
+## Importing Data and Libraries
+
+```{r}
+library(opendatatoronto)
+library(tidyverse)
+library(sf)
+library(leaflet)
+library(skimr)
+library(janitor)
+library(lubridate)
+library(tidytext)
+set.seed(2453)
+```
+
+```{r}
+df <- read.csv("../01_Data/beaches_bikes.csv")
+```
+
+## Analysis for RSM Students
+
+```{r}
+df_clean <- df %>%
+  mutate(
+    started_at = ymd_hms(datetime_start), 
+    date = as.Date(started_at),
+    # We recreate the year and month safely from the date object for correct sorting 
+    year = year(date), 
+    month = month(date, label = TRUE, abbr = TRUE),
+    # Create Day of Week and Weekend/Weekday flag
+    day_of_week = wday(date, label = TRUE, abbr = FALSE),
+    day_type = ifelse(day_of_week %in% c("Saturday", "Sunday"), "Weekend", "Weekday"),
+    # Create a continuous weekly identifier for multi-year trending 
+    year_week = floor_date(date, "week") 
+  ) %>%
+  # Filter out any rows with missing dates that might break the plots
+  filter(!is.na(date))
+
+head(df_clean)
+```
+
+```{r}
+#  Define outlier function 
+is_outlier <- function(x) {
+  q1 <- quantile(x, 0.25, na.rm = TRUE)
+  q3 <- quantile(x, 0.75, na.rm = TRUE)
+  iqr <- q3 - q1
+  return(x < (q1 - 1.5 * iqr) | x > (q3 + 1.5 * iqr))
+}
+
+```
+
+```{r}
+# Daily Breakdown
+daily_counts_clean <- df_clean %>%
+  group_by(date, day_type, year) %>%
+  summarise(total_rides = n(), .groups = 'drop') %>%
+  group_by(day_type) %>% 
+  filter(!is_outlier(total_rides)) %>%
+  ungroup()
+
+# plot the boxplots faceted by year
+ggplot(daily_counts_clean, aes(x = day_type, y = total_rides, fill = day_type)) +
+  geom_boxplot() +
+  facet_wrap(~ year) + 
+  labs(title = "Daily Ride Distribution: Weekday vs. Weekend (Multi-Year)",
+       y = "Number of Rides",
+       x = "Day Type") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1),
+        legend.position = "none") 
+
+```
+
+```{r}
+# Weekly Averages
+weekly_data_clean <- df_clean %>%
+  group_by(year_week) %>%
+  summarise(total_weekly_rides = n(), .groups = 'drop') %>%
+  filter(!is_outlier(total_weekly_rides))
+
+overall_weekly_avg <- mean(weekly_data_clean$total_weekly_rides)
+
+# plot chart over all years
+ggplot(weekly_data_clean, aes(x = year_week, y = total_weekly_rides)) +
+  geom_col(fill = "steelblue") +
+  geom_hline(yintercept = overall_weekly_avg, linetype = "dashed", color = "red", linewidth = 1) +
+  labs(title = "Total Rides per Week (All Years)",
+       x = "Date (Weekly)",
+       y = "Total Rides") +
+  theme_minimal()
+```
+
+```{r}
+# seasonality trends
+monthly_trend_clean <- df_clean %>%
+  group_by(year, month) %>%
+  summarise(total_rides = n(), .groups = 'drop') %>%
+  filter(!is_outlier(total_rides))
+
+# plot
+ggplot(monthly_trend_clean, aes(x = month, y = total_rides, group = year, color = as.factor(year))) +
+  geom_line(linewidth = 1) +
+  geom_point(size = 3) +
+  labs(title = "Seasonality: Total Rides by Month (Year-over-Year)",
+       x = "Month",
+       y = "Total Rides",
+       color = "Year") +
+  theme_minimal()
+
+```
+
+```{r}
+# multi year daily trend with smoothing
+ggplot(daily_counts_clean, aes(x = date, y = total_rides)) +
+  geom_point(alpha = 0.3, color = "gray") +
+  geom_smooth(method = "loess", color = "blue", se = FALSE, span = 0.15) +
+  labs(title = "Multi-Year Daily Trend",
+       x = "Date",
+       y = "Total Rides") +
+  theme_minimal()
+
+```
+
+### Repeat Analysis for Inbound Trips Only
+
+```{r}
+# variable for beaches stations only
+beaches_stations <- c(
+  "7692",
+  "7317",
+  "7318",
+  "7365",
+  "7427",
+  "7315",
+  "7695",
+  "7364",
+  "7314",
+  "7316",
+  "7428"
+)
+
+# Create the inbound filtered dataset
+df_inbound <- df %>%
+  # trip ends in beaches
+  filter(End.Station.Id %in% beaches_stations) %>%
+  # trip starts outside of beaches
+  filter(!(Start.Station.Id %in% beaches_stations))
+
+```
+
+```{r}
+# preprocess data
+df_clean <- df_inbound %>%
+  mutate(
+
+    started_at = ymd_hms(datetime_start), 
+    date = as.Date(started_at),
+    
+    year = year(date), 
+    month = month(date, label = TRUE, abbr = TRUE),
+    
+    day_of_week = wday(date, label = TRUE, abbr = FALSE),
+    day_type = ifelse(day_of_week %in% c("Saturday", "Sunday"), "Weekend", "Weekday"),
+    
+    year_week = floor_date(date, "week") 
+  ) %>%
+  filter(!is.na(date))
+
+```
+
+```{r}
+# daily breakdown
+daily_counts_clean <- df_clean %>%
+  group_by(date, day_type, year) %>%
+  summarise(total_rides = n(), .groups = 'drop') %>%
+  group_by(day_type) %>% 
+  filter(!is_outlier(total_rides)) %>%
+  ungroup()
+
+ggplot(daily_counts_clean, aes(x = day_type, y = total_rides, fill = day_type)) +
+  geom_boxplot() +
+  facet_wrap(~ year) + 
+  labs(title = "Inbound Daily Ride Distribution: Weekday vs. Weekend",
+       y = "Number of Inbound Rides",
+       x = "Day Type") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1),
+        legend.position = "none")
+```
+
+```{r}
+# weekly averages
+weekly_data_clean <- df_clean %>%
+  group_by(year_week) %>%
+  summarise(total_weekly_rides = n(), .groups = 'drop') %>%
+  filter(!is_outlier(total_weekly_rides))
+
+overall_weekly_avg <- mean(weekly_data_clean$total_weekly_rides)
+
+ggplot(weekly_data_clean, aes(x = year_week, y = total_weekly_rides)) +
+  geom_col(fill = "mediumseagreen") + 
+  geom_hline(yintercept = overall_weekly_avg, linetype = "dashed", color = "red", linewidth = 1) +
+  labs(title = "Total Inbound Rides per Week (All Years)",
+       subtitle = "Dashed line is the multi-year weekly average (Outliers removed)",
+       x = "Date (Weekly)",
+       y = "Total Inbound Rides") +
+  theme_minimal()
+```
+
+```{r}
+# seasonality trends
+monthly_trend_clean <- df_clean %>%
+  group_by(year, month) %>%
+  summarise(total_rides = n(), .groups = 'drop') %>%
+  filter(!is_outlier(total_rides))
+
+ggplot(monthly_trend_clean, aes(x = month, y = total_rides, group = year, color = as.factor(year))) +
+  geom_line(linewidth = 1) +
+  geom_point(size = 3) +
+  labs(title = "Seasonality: Total Inbound Rides by Month (Year-over-Year)",
+       x = "Month",
+       y = "Total Inbound Rides",
+       color = "Year") +
+  theme_minimal()
+```
+
+```{r}
+# multi year daily trend with smoothing
+ggplot(daily_counts_clean, aes(x = date, y = total_rides)) +
+  geom_point(alpha = 0.3, color = "gray") +
+  geom_smooth(method = "loess", color = "mediumseagreen", se = FALSE, span = 0.15) +
+  labs(title = "Multi-Year Daily Inbound Trend",
+       subtitle = "Daily inbound ride counts with smoothing trend line (Outliers removed)",
+       x = "Date",
+       y = "Total Inbound Rides") +
+  theme_minimal()
+```

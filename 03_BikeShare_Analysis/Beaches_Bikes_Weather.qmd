@@ -1,0 +1,332 @@
+---
+title: "Beaches_Bikes_Weather"
+author: "Derek Kusmenko"
+format: pdf
+editor: visual
+---
+
+## Importing Data and Libraries
+
+```{r}
+library(opendatatoronto)
+library(tidyverse)
+library(sf)
+library(leaflet)
+library(skimr)
+library(janitor)
+library(lubridate)
+library(tidytext)
+library(dplyr)
+library(broom)
+library(readr)
+library(ggplot2)
+```
+
+```{r}
+df <- read.csv("../01_Data/beaches_bikes.csv")
+```
+
+## Bike/Weather Analysis
+
+```{r}
+
+Toronto_Daily_Temp <- read_csv("../01_Data/Toronto_Daily_Temp.csv")
+Toronto_Daily_Temp <- clean_names(Toronto_Daily_Temp)
+Toronto_Daily_Temp <- Toronto_Daily_Temp |> filter(local_year > 2020)
+
+# parse date so it is compatible with the bike share data
+temp_clean <- Toronto_Daily_Temp |> 
+  mutate(
+    
+    date = as_date(local_date),
+
+    month_name = month(date, label = TRUE)
+  ) |> 
+  # sort by the new datetime column
+  arrange(date) |> 
+
+  filter(!is.na(date))
+
+```
+
+```{r}
+# join temperature data to bike share
+combined_data <- df |>
+  mutate(join_date = as_date(end_date_actual)) |> 
+  inner_join(temp_clean, by = c("join_date" = "date")) |> 
+  mutate(year = year(join_date))
+
+```
+
+```{r}
+# Prepare the daily data
+daily_data_by_type <- combined_data %>%
+  group_by(start_date_actual, mean_temperature, User.Type) %>%
+  summarise(
+    total_trips = n(),
+    .groups = "drop"
+  )
+
+# plot with Facets
+ggplot(daily_data_by_type, aes(x = mean_temperature, y = total_trips)) +
+  geom_point(alpha = 0.5, color = "darkblue") + 
+  geom_smooth(method = "lm", color = "red") +   
+  
+  facet_wrap(~ User.Type, scales = "free_y") + 
+  
+  labs(
+    title = "Bike Trips vs. Temperature (Faceted)",
+    subtitle = "Comparing rider behavior side-by-side",
+    x = "Mean Temperature (°C)",
+    y = "Total Daily Trips"
+  ) +
+  theme_bw()
+```
+
+```{r}
+# Prepare the daily data
+filtered_daily_data <- combined_data %>%
+  # Aggregate to daily counts per user type
+  group_by(start_date_actual, mean_temperature, User.Type) %>%
+  summarise(total_trips = n(), .groups = "drop") %>%
+  
+  # filter for shoulder season
+  filter(month(start_date_actual) %in% c(1, 2, 3, 10, 11, 12))
+
+# plot
+ggplot(filtered_daily_data, aes(x = mean_temperature, y = total_trips)) +
+  geom_point(alpha = 0.5, color = "darkblue") +
+  geom_smooth(method = "lm", color = "red") +
+  facet_wrap(~ User.Type, scales = "free_y") +
+  labs(
+    title = "Bike Trips vs. Temperature (Cold Season Only)",
+    subtitle = "Months: Jan-Mar, Oct-Dec",
+    x = "Mean Temperature (°C)",
+    y = "Total Daily Trips"
+  ) +
+  theme_bw()
+```
+
+```{r}
+# run correlation test for each group
+correlation_results <- filtered_daily_data %>%
+  group_by(User.Type) %>%
+  summarise(
+
+    correlation = cor(mean_temperature, total_trips, use = "complete.obs"),
+    
+    p_value = cor.test(mean_temperature, total_trips)$p.value,
+
+    n_obs = n()
+  )
+
+# show results
+print(correlation_results)
+```
+
+### Using 3 Clusters
+
+Compare 3 clusters rather than user type
+
+```{r}
+set.seed(2453)
+# clean data
+clustering_temp <- combined_data %>%
+  filter(!is.na(Trip..Duration) & !is.na(start_hour_of_day)) %>%
+  filter(Trip..Duration < 7200)
+
+kmeans_scaled <- scale(clustering_temp %>% select(Trip..Duration, start_hour_of_day))
+trip_clusters <- kmeans(kmeans_scaled, centers = 3, nstart = 25)
+clustering_temp$Cluster <- as.factor(trip_clusters$cluster)
+
+# prepare dily data
+daily_data_cluster <- clustering_temp %>%
+  # Group by date, temperature, and Cluster
+  group_by(start_date_actual, mean_temperature, Cluster) %>%
+  summarise(total_trips = n(), .groups = "drop")
+
+
+# Summarise the profiles including User Type Proportions
+cluster_profiles <- clustering_temp |>
+  group_by(Cluster) |>
+  summarise(
+    Total_Trips = n(),
+    Avg_Start_Hour = round(mean(start_hour_of_day), 1),
+    Avg_Duration_Mins = round(mean(Trip..Duration) / 60, 1),
+    
+    # Calculate the percentage of each member type
+    Pct_Annual = round(sum(User.Type == "Annual Member") / n() * 100, 1),
+    Pct_Casual = round(sum(User.Type == "Casual Member") / n() * 100, 1)
+  ) |>
+  arrange(Cluster)
+
+# Print the resulting table
+print(cluster_profiles)
+
+# plot with facets by cluster
+ggplot(daily_data_cluster, aes(x = mean_temperature, y = total_trips)) +
+  geom_point(alpha = 0.5, color = "darkblue") + 
+  geom_smooth(method = "lm", color = "red") +  
+  
+  facet_wrap(~ Cluster, scales = "free_y", 
+             labeller = as_labeller(c("1" = "Cluster 1: Leisure", 
+                                      "2" = "Cluster 2: Morning Trips", 
+                                      "3" = "Cluster 3: Evening Trips"))) + 
+  
+  labs(
+    title = "Bike Trips vs. Temperature by Rider Persona",
+    subtitle = "Analyzing how different clusters respond to weather changes",
+    x = "Mean Temperature (°C)",
+    y = "Total Daily Trips"
+  ) +
+  theme_bw()
+```
+
+```{r}
+
+set.seed(2453)
+# clean data
+clustering_temp <- combined_data %>%
+  filter(!is.na(Trip..Duration) & !is.na(start_hour_of_day)) %>%
+  filter(Trip..Duration < 7200)
+
+kmeans_scaled <- scale(clustering_temp %>% select(Trip..Duration, start_hour_of_day))
+trip_clusters <- kmeans(kmeans_scaled, centers = 3, nstart = 25)
+clustering_temp$Cluster <- as.factor(trip_clusters$cluster)
+
+# prepare data for shoulder season
+filtered_daily_data_cluster <- clustering_temp %>%
+  # Filter for shoulder season
+  filter(month(start_date_actual) %in% c(1, 2, 3, 10, 11, 12)) %>%
+  # Group by date, temperature, and Cluster
+  group_by(start_date_actual, mean_temperature, Cluster) %>%
+  summarise(total_trips = n(), .groups = "drop")
+
+
+# Summarise the profiles including User Type Proportions
+cluster_profiles <- clustering_temp |>
+  filter(month(start_date_actual) %in% c(1, 2, 3, 10, 11, 12)) %>%
+  group_by(Cluster) |>
+  summarise(
+    Total_Trips = n(),
+    Avg_Start_Hour = round(mean(start_hour_of_day), 1),
+    Avg_Duration_Mins = round(mean(Trip..Duration) / 60, 1),
+    
+    # Calculate the percentage of each member type
+    Pct_Annual = round(sum(User.Type == "Annual Member") / n() * 100, 1),
+    Pct_Casual = round(sum(User.Type == "Casual Member") / n() * 100, 1)
+  ) |>
+  arrange(Cluster)
+
+# Print the resulting table
+print(cluster_profiles)
+
+# plot result
+ggplot(filtered_daily_data_cluster, aes(x = mean_temperature, y = total_trips)) +
+  geom_point(alpha = 0.5, color = "darkblue") +
+  geom_smooth(method = "lm", color = "red") +
+  facet_wrap(~ Cluster, scales = "free_y",
+             labeller = as_labeller(c("1" = "Cluster 1: Leisure", 
+                                      "2" = "Cluster 2: Morning Trips", 
+                                      "3" = "Cluster 3: Evening Trips"))) + 
+  labs(
+    title = "Bike Trips vs. Temperature (Cold Season Only)",
+    subtitle = "Faceted by Rider Persona (Cluster)",
+    x = "Mean Temperature (°C)",
+    y = "Total Daily Trips"
+  ) +
+  theme_bw()
+```
+
+```{r}
+# run the correlation test for each cluster group
+correlation_results_cluster <- filtered_daily_data_cluster %>%
+  group_by(Cluster) %>%
+  summarise(
+    correlation = cor(mean_temperature, total_trips, use = "complete.obs"),
+    
+    p_value = cor.test(mean_temperature, total_trips)$p.value,
+    
+    n_days = n()
+  )
+
+# show results
+print(correlation_results_cluster)
+```
+
+### Only using Leisure Cluster Data
+
+```{r}
+df2 <- read_csv("../01_Data/leisure_dataset.csv")
+# join temperature data to bike share leisure cluster
+combined_data <- df2 |>
+  mutate(join_date = as_date(end_date_actual)) |> 
+  inner_join(temp_clean, by = c("join_date" = "date")) |> 
+  mutate(year = year(join_date))
+
+```
+
+```{r}
+# Prepare the daily data 
+daily_data_by_type <- combined_data %>%
+  group_by(start_date_actual, mean_temperature, User.Type) %>%
+  summarise(
+    total_trips = n(),
+    .groups = "drop"
+  )
+
+# plot with facets
+ggplot(daily_data_by_type, aes(x = mean_temperature, y = total_trips)) +
+  geom_point(alpha = 0.5, color = "darkblue") + 
+  geom_smooth(method = "lm", color = "red") +  
+  
+  facet_wrap(~ User.Type, scales = "free_y") + 
+  
+  labs(
+    title = "Bike Trips vs. Temperature (Faceted)",
+    subtitle = "Comparing rider behavior side-by-side",
+    x = "Mean Temperature (°C)",
+    y = "Total Daily Trips"
+  ) +
+  theme_bw()
+```
+
+```{r}
+# Prepare the daily data
+filtered_daily_data <- combined_data %>%
+  # Aggregate to daily counts per user type
+  group_by(start_date_actual, mean_temperature, User.Type) %>%
+  summarise(total_trips = n(), .groups = "drop") %>%
+  
+  #filter for shoulder season
+  filter(month(start_date_actual) %in% c(1, 2, 3, 10, 11, 12))
+
+# plot results
+ggplot(filtered_daily_data, aes(x = mean_temperature, y = total_trips)) +
+  geom_point(alpha = 0.5, color = "darkblue") +
+  geom_smooth(method = "lm", color = "red") +
+  facet_wrap(~ User.Type, scales = "free_y") +
+  labs(
+    title = "Bike Trips vs. Temperature (Cold Season Only)",
+    subtitle = "Months: Jan-Mar, Oct-Dec",
+    x = "Mean Temperature (°C)",
+    y = "Total Daily Trips"
+  ) +
+  theme_bw()
+```
+
+```{r}
+# Run the correlation test for each group
+correlation_results <- filtered_daily_data %>%
+  group_by(User.Type) %>%
+  summarise(
+    correlation = cor(mean_temperature, total_trips, use = "complete.obs"),
+    
+    p_value = cor.test(mean_temperature, total_trips)$p.value,
+    
+    n_obs = n()
+  )
+
+# show results
+print(correlation_results)
+```

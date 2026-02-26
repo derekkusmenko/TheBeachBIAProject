@@ -1,0 +1,382 @@
+---
+title: "Beaches_Bikes_Heatmap"
+author: "Derek Kusmenko"
+format: pdf
+editor: visual
+---
+
+## Importing Data and Libraries
+
+```{r}
+library(opendatatoronto)
+library(tidyverse)
+library(sf)
+library(leaflet)
+library(skimr)
+library(janitor)
+library(lubridate)
+library(tidytext)
+library(readr)
+library(dplyr)
+library(leaflet)
+
+set.seed(2453)
+```
+
+## Heatmap
+
+```{r}
+# read csv files
+trips_data <- read_csv("../01_Data/beaches_bikes.csv")
+stations_data <- read_csv("../01_Data/Bike_Station_Info.csv")
+
+# Ensure IDs are characters so they merge properly
+stations_data <- stations_data %>% mutate(station_id = as.character(station_id))
+trips_data <- trips_data %>% mutate(End.Station.Id = as.character(End.Station.Id))
+
+# create weekend identifier
+trips_data <- trips_data %>%
+  mutate(
+    date_parsed = as.Date(end_date_actual),
+    day_type = ifelse(weekdays(date_parsed) %in% c("Saturday", "Sunday"), "Weekend", "Weekday")
+  )
+
+# create interactive heatmap by year
+
+# Aggregate by Year and Station
+yearly_activity <- trips_data %>%
+  group_by(End.Station.Id, year) %>%
+  summarise(trip_count = n(), .groups = 'drop') %>%
+  inner_join(stations_data, by = c("End.Station.Id" = "station_id")) %>%
+  filter(!is.na(lat) & !is.na(lon))
+
+# Create a fixed color palette scaled to the max trips
+pal_years <- colorNumeric("Reds", domain = yearly_activity$trip_count)
+
+# start map
+map_years <- leaflet() %>%
+  addTiles() %>%
+  setView(lng = -79.296, lat = 43.671, zoom = 14)
+
+# get list of unique years of data
+years_list <- sort(unique(yearly_activity$year))
+
+# Loop through each year and add it as a layer
+for (y in years_list) {
+  year_data <- yearly_activity %>% filter(year == y)
+  
+  map_years <- map_years %>%
+    addCircleMarkers(
+      data = year_data,
+      lng = ~lon, lat = ~lat,
+      radius = 6, # Fixed size for all bubbles
+      color = ~pal_years(trip_count), # Darker for more trips
+      fillOpacity = 0.9, stroke = FALSE,
+      group = as.character(y), # Name the layer by the year
+      popup = ~paste("<b>Station:</b>", name, "<br><b>Year:</b>", y, "<br><b>Trips:</b>", trip_count)
+    )
+}
+
+# Add the toggle menu and the legend
+map_years <- map_years %>%
+  addLayersControl(
+    baseGroups = as.character(years_list), 
+    options = layersControlOptions(collapsed = FALSE)
+  ) %>%
+  addLegend("bottomright", pal = pal_years, values = yearly_activity$trip_count,
+            title = "Trips per Year", opacity = 1)
+
+
+map_years
+```
+
+
+```{r}
+
+# create interactive heatmap for weekend/weekday
+
+# Aggregate by Day Type and Station
+day_type_activity <- trips_data %>%
+  group_by(End.Station.Id, day_type) %>%
+  summarise(trip_count = n(), .groups = 'drop') %>%
+  inner_join(stations_data, by = c("End.Station.Id" = "station_id")) %>%
+  filter(!is.na(lat) & !is.na(lon))
+
+# Create a palette for the weekday/weekend map
+pal_days <- colorNumeric("Reds", domain = day_type_activity$trip_count)
+
+# Start the map
+map_days <- leaflet() %>%
+  addTiles() %>%
+  setView(lng = -79.296, lat = 43.671, zoom = 14)
+
+# Loop through Weekday and Weekend to add the layers
+for (dtype in c("Weekday", "Weekend")) {
+  dt_data <- day_type_activity %>% filter(day_type == dtype)
+  
+  map_days <- map_days %>%
+    addCircleMarkers(
+      data = dt_data,
+      lng = ~lon, lat = ~lat,
+      radius = 6, # Fixed size
+      color = ~pal_days(trip_count), # Darker for more trips
+      fillOpacity = 0.9, stroke = FALSE,
+      group = dtype,
+      popup = ~paste("<b>Station:</b>", name, "<br><b>Type:</b>", dtype, "<br><b>Trips:</b>", trip_count)
+    )
+}
+
+# Add the toggle menu and legend
+map_days <- map_days %>%
+  addLayersControl(
+    baseGroups = c("Weekday", "Weekend"),
+    options = layersControlOptions(collapsed = FALSE)
+  ) %>%
+  addLegend("bottomright", pal = pal_days, values = day_type_activity$trip_count,
+            title = "Total Trips", opacity = 1)
+
+map_days
+```
+
+```{r}
+# ensure ID's are strings
+stations_data <- stations_data %>% mutate(station_id = as.character(station_id))
+trips_data <- trips_data %>% 
+  mutate(Start.Station.Id = as.character(Start.Station.Id),
+         End.Station.Id = as.character(End.Station.Id))
+
+# find top 20 trips ending in Beaches
+top_trips <- trips_data %>%
+  filter(End.Station.Id %in% beaches_stations) %>%
+  group_by(Start.Station.Id, End.Station.Id) %>%
+  summarise(trip_count = n(), .groups = 'drop') %>%
+  filter(Start.Station.Id != End.Station.Id) %>%
+  arrange(desc(trip_count)) %>%
+  slice_head(n = 20)
+
+# Join the coordinates for both the Start and End stations
+top_trips <- top_trips %>%
+  inner_join(stations_data %>% select(station_id, start_name = name, start_lat = lat, start_lon = lon), 
+             by = c("Start.Station.Id" = "station_id")) %>%
+  inner_join(stations_data %>% select(station_id, end_name = name, end_lat = lat, end_lon = lon), 
+             by = c("End.Station.Id" = "station_id")) %>%
+  filter(!is.na(start_lat) & !is.na(end_lat))
+
+# create colour palette
+pal_paths <- colorNumeric(palette = c("blue", "red"), domain = top_trips$trip_count)
+
+# start map
+path_map <- leaflet() %>%
+  addTiles() %>%
+  setView(lng = -79.296, lat = 43.671, zoom = 14)
+
+# loop through the trips and draw a line for each
+for (i in 1:nrow(top_trips)) {
+  
+  # Calculate line thickness for trip volume
+  line_thickness <- 3 + (top_trips$trip_count[i] / max(top_trips$trip_count)) * 5
+  
+  path_map <- path_map %>%
+    addPolylines(
+      lng = c(top_trips$start_lon[i], top_trips$end_lon[i]),
+      lat = c(top_trips$start_lat[i], top_trips$end_lat[i]),
+      color = pal_paths(top_trips$trip_count[i]),
+      weight = line_thickness,
+      opacity = 0.5,
+      popup = paste("<b>Start:</b>", top_trips$start_name[i], "<br>",
+                    "<b>End (Beaches):</b>", top_trips$end_name[i], "<br>",
+                    "<b>Total Trips:</b>", top_trips$trip_count[i])
+    )
+}
+
+# add markers for stations and legend
+path_map <- path_map %>%
+  addCircleMarkers(
+    lng = c(top_trips$start_lon, top_trips$end_lon),
+    lat = c(top_trips$start_lat, top_trips$end_lat),
+    radius = 3, color = "black", stroke = FALSE, fillOpacity = 0.5
+  ) %>%
+  addLegend("bottomright", pal = pal_paths, values = top_trips$trip_count,
+            title = "Inbound Trip Volume", opacity = 1)
+
+path_map
+```
+
+### Only Leisure Cluster Data
+
+```{r}
+# redo code but for leisure cluster data only
+trips_data <- read_csv("../01_Data/leisure_dataset.csv")
+stations_data <- read_csv("../01_Data/Bike_Station_Info.csv")
+
+# Ensure IDs are characters so they merge properly
+stations_data <- stations_data %>% mutate(station_id = as.character(station_id))
+trips_data <- trips_data %>% mutate(End.Station.Id = as.character(End.Station.Id))
+
+# create weekend identifier
+trips_data <- trips_data %>%
+  mutate(
+    date_parsed = as.Date(end_date_actual),
+    day_type = ifelse(weekdays(date_parsed) %in% c("Saturday", "Sunday"), "Weekend", "Weekday")
+  )
+
+# create interactive heatmap by year
+
+# Aggregate by Year and Station
+yearly_activity <- trips_data %>%
+  group_by(End.Station.Id, year) %>%
+  summarise(trip_count = n(), .groups = 'drop') %>%
+  inner_join(stations_data, by = c("End.Station.Id" = "station_id")) %>%
+  filter(!is.na(lat) & !is.na(lon))
+
+# Create a fixed color palette scaled to the max trips
+pal_years <- colorNumeric("Reds", domain = yearly_activity$trip_count)
+
+# start map
+map_years <- leaflet() %>%
+  addTiles() %>%
+  setView(lng = -79.296, lat = 43.671, zoom = 14)
+
+# get list of unique years of data
+years_list <- sort(unique(yearly_activity$year))
+
+# Loop through each year and add it as a layer
+for (y in years_list) {
+  year_data <- yearly_activity %>% filter(year == y)
+  
+  map_years <- map_years %>%
+    addCircleMarkers(
+      data = year_data,
+      lng = ~lon, lat = ~lat,
+      radius = 6, # Fixed size for all bubbles
+      color = ~pal_years(trip_count), # Darker for more trips
+      fillOpacity = 0.9, stroke = FALSE,
+      group = as.character(y), # Name the layer by the year
+      popup = ~paste("<b>Station:</b>", name, "<br><b>Year:</b>", y, "<br><b>Trips:</b>", trip_count)
+    )
+}
+
+# Add the toggle menu and the legend
+map_years <- map_years %>%
+  addLayersControl(
+    baseGroups = as.character(years_list), 
+    options = layersControlOptions(collapsed = FALSE)
+  ) %>%
+  addLegend("bottomright", pal = pal_years, values = yearly_activity$trip_count,
+            title = "Trips per Year", opacity = 1)
+
+
+map_years
+```
+
+
+```{r}
+
+# create interactive heatmap for weekend/weekday
+
+# Aggregate by Day Type and Station
+day_type_activity <- trips_data %>%
+  group_by(End.Station.Id, day_type) %>%
+  summarise(trip_count = n(), .groups = 'drop') %>%
+  inner_join(stations_data, by = c("End.Station.Id" = "station_id")) %>%
+  filter(!is.na(lat) & !is.na(lon))
+
+# Create a palette for the weekday/weekend map
+pal_days <- colorNumeric("Reds", domain = day_type_activity$trip_count)
+
+# Start the map
+map_days <- leaflet() %>%
+  addTiles() %>%
+  setView(lng = -79.296, lat = 43.671, zoom = 14)
+
+# Loop through Weekday and Weekend to add the layers
+for (dtype in c("Weekday", "Weekend")) {
+  dt_data <- day_type_activity %>% filter(day_type == dtype)
+  
+  map_days <- map_days %>%
+    addCircleMarkers(
+      data = dt_data,
+      lng = ~lon, lat = ~lat,
+      radius = 6, # Fixed size
+      color = ~pal_days(trip_count), # Darker for more trips
+      fillOpacity = 0.9, stroke = FALSE,
+      group = dtype,
+      popup = ~paste("<b>Station:</b>", name, "<br><b>Type:</b>", dtype, "<br><b>Trips:</b>", trip_count)
+    )
+}
+
+# Add the toggle menu and legend
+map_days <- map_days %>%
+  addLayersControl(
+    baseGroups = c("Weekday", "Weekend"),
+    options = layersControlOptions(collapsed = FALSE)
+  ) %>%
+  addLegend("bottomright", pal = pal_days, values = day_type_activity$trip_count,
+            title = "Total Trips", opacity = 1)
+
+map_days
+```
+
+```{r}
+# ensure ID's are strings
+stations_data <- stations_data %>% mutate(station_id = as.character(station_id))
+trips_data <- trips_data %>% 
+  mutate(Start.Station.Id = as.character(Start.Station.Id),
+         End.Station.Id = as.character(End.Station.Id))
+
+# find top 20 trips ending in Beaches
+top_trips <- trips_data %>%
+  filter(End.Station.Id %in% beaches_stations) %>%
+  group_by(Start.Station.Id, End.Station.Id) %>%
+  summarise(trip_count = n(), .groups = 'drop') %>%
+  filter(Start.Station.Id != End.Station.Id) %>%
+  arrange(desc(trip_count)) %>%
+  slice_head(n = 20)
+
+# Join the coordinates for both the Start and End stations
+top_trips <- top_trips %>%
+  inner_join(stations_data %>% select(station_id, start_name = name, start_lat = lat, start_lon = lon), 
+             by = c("Start.Station.Id" = "station_id")) %>%
+  inner_join(stations_data %>% select(station_id, end_name = name, end_lat = lat, end_lon = lon), 
+             by = c("End.Station.Id" = "station_id")) %>%
+  filter(!is.na(start_lat) & !is.na(end_lat))
+
+# create colour palette
+pal_paths <- colorNumeric(palette = c("blue", "red"), domain = top_trips$trip_count)
+
+# start map
+path_map <- leaflet() %>%
+  addTiles() %>%
+  setView(lng = -79.296, lat = 43.671, zoom = 14)
+
+# loop through the trips and draw a line for each
+for (i in 1:nrow(top_trips)) {
+  
+  # Calculate line thickness for trip volume
+  line_thickness <- 3 + (top_trips$trip_count[i] / max(top_trips$trip_count)) * 5
+  
+  path_map <- path_map %>%
+    addPolylines(
+      lng = c(top_trips$start_lon[i], top_trips$end_lon[i]),
+      lat = c(top_trips$start_lat[i], top_trips$end_lat[i]),
+      color = pal_paths(top_trips$trip_count[i]),
+      weight = line_thickness,
+      opacity = 0.5,
+      popup = paste("<b>Start:</b>", top_trips$start_name[i], "<br>",
+                    "<b>End (Beaches):</b>", top_trips$end_name[i], "<br>",
+                    "<b>Total Trips:</b>", top_trips$trip_count[i])
+    )
+}
+
+# add markers for stations and legend
+path_map <- path_map %>%
+  addCircleMarkers(
+    lng = c(top_trips$start_lon, top_trips$end_lon),
+    lat = c(top_trips$start_lat, top_trips$end_lat),
+    radius = 3, color = "black", stroke = FALSE, fillOpacity = 0.5
+  ) %>%
+  addLegend("bottomright", pal = pal_paths, values = top_trips$trip_count,
+            title = "Inbound Trip Volume", opacity = 1)
+
+path_map
+```

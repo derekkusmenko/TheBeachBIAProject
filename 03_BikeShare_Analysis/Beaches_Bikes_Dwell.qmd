@@ -1,0 +1,495 @@
+---
+title: "Beaches_Bikes_Dwell"
+author: "Derek Kusmenko"
+format: pdf
+editor: visual
+---
+
+## Importing Data and Libraries
+
+```{r}
+library(opendatatoronto)
+library(tidyverse)
+library(sf)
+library(leaflet)
+library(skimr)
+library(janitor)
+library(lubridate)
+library(tidytext)
+set.seed(2453)
+```
+
+```{r}
+df <- read.csv("../01_Data/beaches_bikes.csv")
+```
+
+## Dwell Time Analysis (Weekends)
+
+```{r}
+# prepare data
+flow_data <- df %>%
+  # filter for weekends only
+  filter(wday(start_date_actual, week_start = 1) %in% c(6, 7)) %>%
+  
+  # determine trip direction
+  mutate(
+    start_in_beaches = Start.Station.Id %in% beaches_stations,
+    end_in_beaches   = End.Station.Id %in% beaches_stations,
+    
+    direction = case_when(
+      !start_in_beaches & end_in_beaches  ~ "Inbound",  
+      start_in_beaches & !end_in_beaches  ~ "Outbound",  
+      TRUE ~ "Other"
+    )
+  ) %>%
+  
+  # filter out "Other" trips
+  filter(direction %in% c("Inbound", "Outbound")) %>%
+  
+  # extract hour and trip count
+  mutate(hour = hour(as.POSIXct(Start.Time, format = "%m/%d/%Y %H:%M"))) %>%
+  group_by(direction, hour) %>%
+  summarise(total_trips = n(), .groups = "drop")
+
+# plot flow
+ggplot(flow_data, aes(x = hour, y = total_trips, color = direction, group = direction)) +
+  geom_line(size = 1.5) +
+  geom_point(size = 3) +
+
+  geom_area(aes(fill = direction), alpha = 0.2, position = "identity") +
+  
+  scale_x_continuous(breaks = seq(0, 23, 2)) +
+  
+  labs(
+    title = "Weekend Flow: Inbound vs. Outbound",
+    subtitle = "Hourly Trip Volume (Saturdays & Sundays)",
+    x = "Hour of Day",
+    y = "Total Trips",
+    color = "Flow Direction",
+    fill = "Flow Direction"
+  ) +
+  theme_minimal()
+
+```
+
+```{r}
+# reuse the filtering logic from above
+dwell_analysis <- df %>%
+  filter(wday(start_date_actual, week_start = 1) %in% c(6, 7)) %>%
+
+  mutate(
+    start_in_beaches = Start.Station.Id %in% beaches_stations,
+    end_in_beaches   = End.Station.Id %in% beaches_stations,
+    
+    direction = case_when(
+      !start_in_beaches & end_in_beaches  ~ "Inbound",
+      start_in_beaches & !end_in_beaches  ~ "Outbound",
+      TRUE ~ "Other"
+    )
+  ) %>%
+  filter(direction %in% c("Inbound", "Outbound")) %>%
+  mutate(hour = hour(as.POSIXct(Start.Time, format = "%m/%d/%Y %H:%M")))
+
+# calculate weighted average starting hour 
+dwell_summary <- dwell_analysis %>%
+  group_by(direction) %>%
+  summarise(
+    # weighted avg: Sum(Hour * Count) / Total Count
+    avg_hour_of_day = mean(hour),
+    
+    median_hour_of_day = median(hour),
+    
+    total_trips = n()
+  )
+
+print(dwell_summary)
+
+# calculate difference in means
+inbound_avg <- dwell_summary$avg_hour_of_day[dwell_summary$direction == "Inbound"]
+outbound_avg <- dwell_summary$avg_hour_of_day[dwell_summary$direction == "Outbound"]
+
+estimated_dwell_time <- outbound_avg - inbound_avg
+
+print(paste("Estimated Average Dwell Time:", round(estimated_dwell_time, 2), "hours"))
+
+
+
+```
+
+```{r}
+dwell_stats <- dwell_analysis %>%
+  group_by(direction) %>%
+  summarise(
+    # use median instead of mean
+    median_hour = median(hour),
+    
+    # find peak hour
+    peak_hour = as.numeric(names(which.max(table(hour)))),
+    
+    # count total trip volume
+    total_volume = n()
+  )
+
+# extract values
+inbound_median <- dwell_stats$median_hour[dwell_stats$direction == "Inbound"]
+outbound_median <- dwell_stats$median_hour[dwell_stats$direction == "Outbound"]
+
+inbound_vol <- dwell_stats$total_volume[dwell_stats$direction == "Inbound"]
+outbound_vol <- dwell_stats$total_volume[dwell_stats$direction == "Outbound"]
+
+# calculate Metrics
+dwell_time_median <- outbound_median - inbound_median
+dropoff_rate <- (inbound_vol - outbound_vol) / inbound_vol
+
+# print other metrics
+print(paste("Typical Arrival Time (Median):", inbound_median, ":00"))
+print(paste("Typical Departure Time (Median):", outbound_median, ":00"))
+print(paste("Estimated Dwell Time:", dwell_time_median, "hours"))
+print(paste("One-Way Trip Percentage:", round(dropoff_rate * 100, 1), "% of riders do not bike back."))
+
+
+```
+
+### Only Using Leisure Cluster data
+
+Now repeating the analysis but using the data calculated from the leisure dataset generated in the _cluster file
+
+```{r}
+
+df2 <- read_csv("../01_Data/leisure_dataset.csv")
+
+# redo analysis from above
+flow_data2 <- df2 %>%
+  filter(wday(start_date_actual, week_start = 1) %in% c(6, 7)) %>%
+  mutate(
+    start_in_beaches = Start.Station.Id %in% beaches_stations,
+    end_in_beaches   = End.Station.Id %in% beaches_stations,
+    direction = case_when(
+      !start_in_beaches & end_in_beaches  ~ "Inbound",   
+      start_in_beaches & !end_in_beaches  ~ "Outbound",  
+      TRUE ~ "Other" 
+    )
+  ) %>%
+  filter(direction %in% c("Inbound", "Outbound")) %>%
+  mutate(hour = hour(as.POSIXct(Start.Time, format = "%m/%d/%Y %H:%M"))) %>%
+  group_by(direction, hour) %>%
+  summarise(total_trips = n(), .groups = "drop")
+
+# plot the flow
+ggplot(flow_data2, aes(x = hour, y = total_trips, color = direction, group = direction)) +
+  geom_line(size = 1.5) +
+  geom_point(size = 3) +
+  
+  geom_area(aes(fill = direction), alpha = 0.2, position = "identity") +
+  
+  scale_x_continuous(breaks = seq(0, 23, 2)) +
+  
+  labs(
+    title = "Weekend Flow: Inbound vs. Outbound",
+    subtitle = "Hourly Trip Volume (Saturdays & Sundays)",
+    x = "Hour of Day",
+    y = "Total Trips",
+    color = "Flow Direction",
+    fill = "Flow Direction"
+  ) +
+  theme_minimal()
+
+```
+
+```{r}
+# again reusing logic
+
+dwell_analysis2 <- df2 %>%
+  filter(wday(start_date_actual, week_start = 1) %in% c(6, 7)) %>%
+  mutate(
+    start_in_beaches = Start.Station.Id %in% beaches_stations,
+    end_in_beaches   = End.Station.Id %in% beaches_stations,
+    
+    direction = case_when(
+      !start_in_beaches & end_in_beaches  ~ "Inbound",
+      start_in_beaches & !end_in_beaches  ~ "Outbound",
+      TRUE ~ "Other"
+    )
+  ) %>%
+  filter(direction %in% c("Inbound", "Outbound")) %>%
+
+  mutate(hour = hour(as.POSIXct(Start.Time, format = "%m/%d/%Y %H:%M")))
+
+dwell_summary2 <- dwell_analysis2 %>%
+  group_by(direction) %>%
+  summarise(
+    avg_hour_of_day = mean(hour),
+    median_hour_of_day = median(hour),
+    total_trips = n()
+  )
+
+print(dwell_summary2)
+
+# calculate differences
+inbound_avg2 <- dwell_summary2$avg_hour_of_day[dwell_summary2$direction == "Inbound"]
+outbound_avg2 <- dwell_summary2$avg_hour_of_day[dwell_summary2$direction == "Outbound"]
+
+estimated_dwell_time2 <- outbound_avg2 - inbound_avg2
+
+print(paste("Estimated Average Dwell Time:", round(estimated_dwell_time2, 2), "hours"))
+
+
+
+```
+
+```{r}
+# again using same code
+dwell_stats2 <- dwell_analysis2 %>%
+  group_by(direction) %>%
+  summarise(
+    median_hour = median(hour),
+    peak_hour = as.numeric(names(which.max(table(hour)))),
+    total_volume = n()
+  )
+
+inbound_median2 <- dwell_stats2$median_hour[dwell_stats2$direction == "Inbound"]
+outbound_median2 <- dwell_stats2$median_hour[dwell_stats2$direction == "Outbound"]
+
+inbound_vol2 <- dwell_stats2$total_volume[dwell_stats2$direction == "Inbound"]
+outbound_vol2 <- dwell_stats2$total_volume[dwell_stats2$direction == "Outbound"]
+
+# calculate Metrics
+dwell_time_median2 <- outbound_median2 - inbound_median2
+dropoff_rate2 <- (inbound_vol2 - outbound_vol2) / inbound_vol2
+
+# print metrics
+print(paste("Typical Arrival Time (Median):", inbound_median2, ":00"))
+print(paste("Typical Departure Time (Median):", outbound_median2, ":00"))
+print(paste("Estimated Dwell Time:", dwell_time_median2, "hours"))
+print(paste("One-Way Trip Percentage:", round(dropoff_rate2 * 100, 1), "% of riders do not bike back."))
+
+
+```
+
+## Repeat for all days of the week (not just weekends)
+
+```{r}
+# use same code as above but removing weekend filter
+flow_data3 <- df %>%
+
+  mutate(
+    start_in_beaches = Start.Station.Id %in% beaches_stations,
+    end_in_beaches   = End.Station.Id %in% beaches_stations,
+    
+    direction = case_when(
+      !start_in_beaches & end_in_beaches  ~ "Inbound",   
+      start_in_beaches & !end_in_beaches  ~ "Outbound",  
+      TRUE ~ "Other" 
+    )
+  ) %>%
+
+  filter(direction %in% c("Inbound", "Outbound")) %>%
+  
+  mutate(hour = hour(as.POSIXct(Start.Time, format = "%m/%d/%Y %H:%M"))) %>%
+  group_by(direction, hour) %>%
+  summarise(total_trips = n(), .groups = "drop")
+
+# plot
+ggplot(flow_data3, aes(x = hour, y = total_trips, color = direction, group = direction)) +
+  geom_line(size = 1.5) +
+  geom_point(size = 3) +
+
+  geom_area(aes(fill = direction), alpha = 0.2, position = "identity") +
+  
+  scale_x_continuous(breaks = seq(0, 23, 2)) +
+  
+  labs(
+    title = "Bike Flow: Inbound vs. Outbound",
+    subtitle = "Hourly Trip Volume",
+    x = "Hour of Day",
+    y = "Total Trips",
+    color = "Flow Direction",
+    fill = "Flow Direction"
+  ) +
+  theme_minimal()
+
+```
+
+```{r}
+# reusing code
+dwell_analysis3 <- df %>%
+
+  mutate(
+    start_in_beaches = Start.Station.Id %in% beaches_stations,
+    end_in_beaches   = End.Station.Id %in% beaches_stations,
+    
+    direction = case_when(
+      !start_in_beaches & end_in_beaches  ~ "Inbound",
+      start_in_beaches & !end_in_beaches  ~ "Outbound",
+      TRUE ~ "Other"
+    )
+  ) %>%
+  filter(direction %in% c("Inbound", "Outbound")) %>%
+
+  mutate(hour = hour(as.POSIXct(Start.Time, format = "%m/%d/%Y %H:%M")))
+
+dwell_summary3 <- dwell_analysis3 %>%
+  group_by(direction) %>%
+  summarise(
+
+    avg_hour_of_day = mean(hour),
+
+    median_hour_of_day = median(hour),
+    
+    total_trips = n()
+  )
+
+print(dwell_summary3)
+
+inbound_avg3 <- dwell_summary3$avg_hour_of_day[dwell_summary3$direction == "Inbound"]
+outbound_avg3 <- dwell_summary3$avg_hour_of_day[dwell_summary3$direction == "Outbound"]
+
+estimated_dwell_time3 <- outbound_avg3 - inbound_avg3
+
+print(paste("Estimated Average Dwell Time:", round(estimated_dwell_time3, 2), "hours"))
+```
+
+```{r}
+# reusing code
+dwell_stats3 <- dwell_analysis3 %>%
+  group_by(direction) %>%
+  summarise(
+
+    median_hour = median(hour),
+
+    peak_hour = as.numeric(names(which.max(table(hour)))),
+
+    total_volume = n()
+  )
+
+inbound_median3 <- dwell_stats3$median_hour[dwell_stats3$direction == "Inbound"]
+outbound_median3 <- dwell_stats3$median_hour[dwell_stats3$direction == "Outbound"]
+
+inbound_vol3 <- dwell_stats3$total_volume[dwell_stats3$direction == "Inbound"]
+outbound_vol3<- dwell_stats3$total_volume[dwell_stats3$direction == "Outbound"]
+
+
+dwell_time_median3 <- outbound_median3 - inbound_median3
+dropoff_rate3 <- (inbound_vol3 - outbound_vol3) / inbound_vol3
+
+print(paste("Typical Arrival Time (Median):", inbound_median3, ":00"))
+print(paste("Typical Departure Time (Median):", outbound_median3, ":00"))
+print(paste("Estimated Dwell Time:", dwell_time_median3, "hours"))
+print(paste("One-Way Trip Percentage:", round(dropoff_rate3 * 100, 1), "% of riders do not bike back."))
+
+
+```
+
+### Only Using Leisure Cluster Data
+
+```{r}
+# reusing code
+flow_data4 <- df2 %>%
+
+  mutate(
+    start_in_beaches = Start.Station.Id %in% beaches_stations,
+    end_in_beaches   = End.Station.Id %in% beaches_stations,
+    
+    direction = case_when(
+      !start_in_beaches & end_in_beaches  ~ "Inbound",   
+      start_in_beaches & !end_in_beaches  ~ "Outbound",  
+      TRUE ~ "Other" 
+    )
+  ) %>%
+
+  filter(direction %in% c("Inbound", "Outbound")) %>%
+
+  mutate(hour = hour(as.POSIXct(Start.Time, format = "%m/%d/%Y %H:%M"))) %>%
+  group_by(direction, hour) %>%
+  summarise(total_trips = n(), .groups = "drop")
+
+ggplot(flow_data4, aes(x = hour, y = total_trips, color = direction, group = direction)) +
+  geom_line(size = 1.5) +
+  geom_point(size = 3) +
+  geom_area(aes(fill = direction), alpha = 0.2, position = "identity") +
+  
+  scale_x_continuous(breaks = seq(0, 23, 2)) +
+  
+  labs(
+    title = "Bike Flow: Inbound vs. Outbound",
+    subtitle = "Hourly Trip Volume ",
+    x = "Hour of Day",
+    y = "Total Trips",
+    color = "Flow Direction",
+    fill = "Flow Direction"
+  ) +
+  theme_minimal()
+
+```
+
+```{r}
+# reuse code
+dwell_analysis4 <- df2 %>%
+  
+  mutate(
+    start_in_beaches = Start.Station.Id %in% beaches_stations,
+    end_in_beaches   = End.Station.Id %in% beaches_stations,
+    
+    direction = case_when(
+      !start_in_beaches & end_in_beaches  ~ "Inbound",
+      start_in_beaches & !end_in_beaches  ~ "Outbound",
+      TRUE ~ "Other"
+    )
+  ) %>%
+  filter(direction %in% c("Inbound", "Outbound")) %>%
+  
+  mutate(hour = hour(as.POSIXct(Start.Time, format = "%m/%d/%Y %H:%M")))
+
+
+dwell_summary4 <- dwell_analysis4 %>%
+  group_by(direction) %>%
+  summarise(
+
+    avg_hour_of_day = mean(hour),
+
+    median_hour_of_day = median(hour),
+    
+    total_trips = n()
+  )
+
+print(dwell_summary4)
+
+
+inbound_avg4 <- dwell_summary4$avg_hour_of_day[dwell_summary4$direction == "Inbound"]
+outbound_avg4<- dwell_summary4$avg_hour_of_day[dwell_summary4$direction == "Outbound"]
+
+estimated_dwell_time4 <- outbound_avg4 - inbound_avg4
+
+print(paste("Estimated Average Dwell Time:", round(estimated_dwell_time4, 2), "hours"))
+```
+
+```{r}
+dwell_stats4 <- dwell_analysis4 %>%
+  group_by(direction) %>%
+  summarise(
+
+    median_hour = median(hour),
+
+    peak_hour = as.numeric(names(which.max(table(hour)))),
+
+    total_volume = n()
+  )
+
+inbound_median4 <- dwell_stats4$median_hour[dwell_stats4$direction == "Inbound"]
+outbound_median4 <- dwell_stats4$median_hour[dwell_stats4$direction == "Outbound"]
+
+inbound_vol4 <- dwell_stats4$total_volume[dwell_stats4$direction == "Inbound"]
+outbound_vol4 <- dwell_stats4$total_volume[dwell_stats4$direction == "Outbound"]
+
+dwell_time_median4 <- outbound_median4 - inbound_median4
+dropoff_rate4 <- (inbound_vol4 - outbound_vol4) / inbound_vol4
+
+print(paste("Typical Arrival Time (Median):", inbound_median4, ":00"))
+print(paste("Typical Departure Time (Median):", outbound_median4, ":00"))
+print(paste("Estimated Dwell Time:", dwell_time_median4, "hours"))
+print(paste("One-Way Trip Percentage:", round(dropoff_rate4 * 100, 1), "% of riders do not bike back."))
+
+
+```
+
+See after including all days, filtering for leisure cluster only makes data look more like weekend only, again indicating leisure cluster truly includes mainly leisure trips
