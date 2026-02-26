@@ -1,0 +1,205 @@
+---
+title: "Beaches_Bikes_Data"
+author: "Derek Kusmenko"
+format: pdf
+editor: visual
+---
+
+```{r}
+library(opendatatoronto)
+library(tidyverse)
+library(sf)
+library(leaflet)
+library(skimr)
+library(janitor)
+library(lubridate)
+library(tidytext)
+set.seed(2453)
+```
+
+First look at the open data Toronto datasets available.
+
+```{r}
+all_data <- list_packages(limit = 500)
+head(all_data)
+```
+
+Look at bike share data. Select past few years worth of data
+
+```{r}
+res <- list_package_resources("7e876c24-177c-4605-9cef-e50dd74c617f")
+res <- res |> mutate(year = str_extract(name, "202.?"))
+bike_2024_ids <- res |> filter(year==2024) |> select(id) |> pull()
+
+bike_2024 <- get_resource(bike_2024_ids)
+
+# make the column names nicer to work with
+bike_2024 <- clean_names(bike_2024)
+```
+
+```{r}
+# combine the list of dataframes into one
+
+bike_2024$bike_share_ridership_2024_01_csv <- bike_2024$bike_share_ridership_2024_01_csv |> 
+  mutate(End.Station.Id = as.numeric(End.Station.Id))
+
+
+all_bike_2024 <- bind_rows(bike_2024)
+
+all_bike_2024 <- all_bike_2024 |>
+  mutate(End.Station.Id = as.character(End.Station.Id))
+```
+
+```{r}
+
+res <- list_package_resources("7e876c24-177c-4605-9cef-e50dd74c617f")
+res <- res |> mutate(year = str_extract(name, "202.?"))
+bike_2021_ids <- res |> filter(year==2021) |> select(id) |> pull()
+
+bike_2021 <- get_resource(bike_2021_ids)
+
+# make the column names nicer to work with
+bike_2021 <- clean_names(bike_2021)
+
+# combine the list of dataframes into one
+
+bike_2021$bike_share_ridership_2021_01_csv <- bike_2021$bike_share_ridership_2021_01_csv |>
+  mutate(Bike.Id = as.numeric(Bike.Id))
+
+all_bike_2021 <- bind_rows(bike_2021)
+```
+
+```{r}
+res <- list_package_resources("7e876c24-177c-4605-9cef-e50dd74c617f")
+res <- res |> mutate(year = str_extract(name, "202.?"))
+bike_2022_ids <- res |> filter(year==2022) |> select(id) |> pull()
+
+bike_2022 <- get_resource(bike_2022_ids)
+
+# make the column names nicer to work with
+bike_2022 <- clean_names(bike_2022)
+
+# combine the list of dataframes into one
+all_bike_2022 <- bind_rows(bike_2022)
+```
+
+```{r}
+res <- list_package_resources("7e876c24-177c-4605-9cef-e50dd74c617f")
+res <- res |> mutate(year = str_extract(name, "202.?"))
+bike_2023_ids <- res |> filter(year==2023) |> select(id) |> pull()
+
+bike_2023 <- get_resource(bike_2023_ids)
+
+# make the column names nicer to work with
+bike_2023 <- clean_names(bike_2023)
+
+# combine the list of dataframes into one
+all_bike_2023 <- bind_rows(bike_2023)
+```
+
+```{r}
+all_bike <- bind_rows(all_bike_2021, all_bike_2022, all_bike_2023, all_bike_2024)
+```
+
+```{r}
+
+
+# parse trip start datetime into date, month, and specific hour
+bike_clean <- all_bike |> 
+  mutate(
+    datetime_start = mdy_hm(Start.Time),
+    
+    start_date_actual = as_date(datetime_start),
+    
+    start_hour_of_day = hour(datetime_start),
+    
+    start_month_name = month(datetime_start, label = TRUE),
+    
+    year = year(datetime_start)
+  ) |> 
+  # sort by the new datetime column
+  arrange(datetime_start) |> 
+  filter(!is.na(datetime_start)) |>
+  # repeat with trip end datetime 
+  mutate(
+    datetime_end = mdy_hm(End.Time),
+    
+    end_date_actual = as_date(datetime_end),
+    
+    end_hour_of_day = hour(datetime_end),
+    
+    end_month_name = month(datetime_end, label = TRUE)
+  ) |> 
+  filter(!is.na(datetime_end))
+```
+
+Removed null from start and end as not really useful
+
+```{r}
+beaches_stations <- c(
+  "Hubbard Blvd / Balsam Av",
+  "Hubbard Blvd. / Glen Manor Dr.",
+  "Kew Beach Ave / Kenilworth Ave",
+  "Queen St E / Hammersmith Ave",
+  "85 Lee Ave",
+  "Queen St. E / Spruce Hill Rd.",
+  "Woodbine Ave / Lake Shore Blvd E",
+  "Queen St E / Joseph Duggan Rd",
+  "Northern Dancer Blvd / Lake Shore Blvd E",
+  "Queen St E / Nursewood Rd (Neville Park Loop)",
+  "Queen St. E / Eastern Ave"
+)
+
+# Extract the corresponding IDs from the main data
+station_id_lookup <- bike_clean %>%
+  # Filter for rows where the End Station Name matches list
+  filter(End.Station.Name %in% beaches_stations) %>%
+  
+  # Select only the Name and ID columns
+  select(End.Station.Name, End.Station.Id) %>%
+  
+  # Keep only unique rows
+  distinct() %>%
+
+  arrange(End.Station.Name)
+
+# View the result
+print(station_id_lookup)
+
+```
+
+```{r}
+# define keywords for Beaches bike share locations
+beaches_stations <- c(
+  "7692",
+  "7317",
+  "7318",
+  "7365",
+  "7427",
+  "7315",
+  "7695",
+  "7364",
+  "7314",
+  "7316",
+  "7428"
+)
+
+# filter for trips either starting or ending in the Beaches
+beaches_trips_clean <- bike_clean |> 
+  # first remove NULL as not useful
+  filter(Start.Station.Name != "NULL", End.Station.Name != "NULL") |> 
+  
+  filter(
+    # filter for starting station
+    Start.Station.Id %in% beaches_stations | 
+    # filter for end station
+    End.Station.Id %in% beaches_stations
+  )
+
+print(any(beaches_trips_clean$End.Station.Name == "NULL"))
+
+print(paste("Total Beaches-related trips found:", nrow(beaches_trips_clean)))
+
+write_csv(beaches_trips_clean, "beaches_bikes.csv")
+
+```
