@@ -1,0 +1,1405 @@
+---
+title: "The Beach BIA - Exploratory Data Analysis"
+author: "Arusan Surendiran"
+date: today
+date-format: long
+execute: 
+  warning: false
+  echo: false
+format: 
+  pdf:
+    fig-pos: "H"
+abstract: "The Beaches BIA Project, for Dr. Johanna Carlo. Using open-source data available online, I analysed several different datasets and created visualizations of interest for our project."
+toc: true
+header-includes:
+  - \usepackage{float}
+  - \floatplacement{table}{H}
+  - \floatplacement{figure}{H}
+---
+
+```{r setup}
+#| warning: false
+#| message: false
+#| include: false
+library(ggplot2)
+library(tidyverse)
+library(lubridate)
+library(sf)
+library(janitor)
+library(skimr)
+library(visdat)
+library(patchwork)
+library(kableExtra)
+```
+
+# TTC Streetcar Data
+
+Using TTC Streetcar Delay data from the City of Toronto Open Data Portal, we examine streetcar ridership and delay patterns along the 501 Queen route.
+
+We only analysed the stops on the Streetcar 501 QUEEN that are within the BIA, From Coxwell Ave to Neville Park Loop.
+
+|                                    |                               |
+|------------------------------------|-------------------------------|
+| Queen St East at Neville Park Blvd |                               |
+| Queen St East at Silver Birch Ave  | Queen St East at Elmer Ave    |
+| Queen St East at Beech Ave         | Queen St East at Woodbine Ave |
+| Queen St East at Glen Manor Dr     | Queen St East at Lockwood Rd  |
+| Queen St East at Wineva Ave        | Queen St East at Kingston Rd  |
+| Queen St East at Bellefair Ave     | Queen St East at Coxwell Ave  |
+
+```{r streetcar}
+#| message: false
+#| warning: false
+#| echo: false
+
+# LOAD TTC STREETCAR DELAY DATA
+library(opendatatoronto)
+
+package <- show_package("b68cb71b-44a7-4394-97e2-5d2f41462a5d")
+ttc_resources <- list_package_resources("b68cb71b-44a7-4394-97e2-5d2f41462a5d")
+
+ttc_resources20s <- ttc_resources |> mutate(year = str_extract(name, "202.?"))
+delay_ids <- ttc_resources20s |> filter(year %in% c(2022, 2023, 2024)) |> select(id) |> pull()
+
+ttc_2025 <- get_resource("cf2fdd12-6f0e-4644-aae7-0bbfc31df031")
+ttc_2024 <- get_resource("5f527714-2284-437b-958b-c02b6f21eb9d")
+ttc_2023 <- get_resource("472d838d-e41a-4616-a11b-585d26d59777")
+ttc_2022 <- get_resource("28547222-35fe-48b6-ac4b-ccc67d286393")
+```
+
+```{r streetcar-clean}
+#| echo: false
+standardize_ttc_data <- function(df) {
+  df |>
+    clean_names() %>%
+    rename(
+      # Unify 'station' and 'location' into 'station'
+      station = any_of(c("location", "station")),
+      # Unify 'code' and 'incident' into 'incident'
+      incident = any_of(c("code", "incident")),
+      delay = min_delay,
+      gap = min_gap
+    ) %>%
+    mutate(
+      date = as_date(date),
+      line = as.character(line),
+      month = floor_date(date, "month")
+    ) %>%
+    filter(str_detect(as.character(line), "501")) # Focus strictly on the Queen Streetcar
+}
+
+ttc501_22 <- standardize_ttc_data(ttc_2022)
+ttc501_23 <- standardize_ttc_data(ttc_2023)
+ttc501_24 <- standardize_ttc_data(ttc_2024)
+ttc501_25 <- standardize_ttc_data(ttc_2025)
+
+# Stations of interest: ("NEVILLE", "SILVER BIRCH", "BEECH", "GLEN MANOR", 
+# "WINEVA", "BELLEFAIR", "ELMER", "WOODBINE", "LOCKWOOD", "KINGSTON", "COXWELL")
+
+filter_beaches_stops <- function(df) {
+  df_cleaned <- df %>%
+    mutate(station_clean = case_when(
+      str_detect(station, "NEVILLE")           ~ "Neville Park Blvd",
+      str_detect(station, "SILVER BIRCH")      ~ "Silver Birch Ave",
+      str_detect(station, "BEECH")             ~ "Beech Ave",
+      str_detect(station, "GLEN MANOR")        ~ "Glen Manor Dr",
+      str_detect(station, "WINEVA")            ~ "Wineva Ave",
+      str_detect(station, "BELLEFAIR")         ~ "Bellefair Ave",
+      str_detect(station, "ELMER")             ~ "Elmer Ave",
+      str_detect(station, "WOODBINE")          ~ "Woodbine Ave",
+      str_detect(station, "LOCKWOOD")          ~ "Lockwood Rd",
+      str_detect(station, "KINGSTON")          ~ "Kingston Rd",
+      str_detect(station, "COXWELL")           ~ "Coxwell Ave",
+      TRUE ~ "Other/Outside BIA"
+    )) %>%
+    # Filter strictly for the neighborhood of interest
+    filter(station_clean != "Other/Outside BIA") |>
+    mutate(delay_final = ifelse(delay > 90, 90, delay))
+  
+  return(df_cleaned)
+}
+
+beaches_ttc_25 <- filter_beaches_stops(ttc501_25)
+beaches_ttc_24 <- filter_beaches_stops(ttc501_24)
+beaches_ttc_23 <- filter_beaches_stops(ttc501_23)
+beaches_ttc_22 <- filter_beaches_stops(ttc501_22)
+```
+
+```{r streetcar-plots-1}
+#| echo: false
+#| fig-height: 10
+#| fig-width: 8
+#| fig-cap: These four horizontal bar charts compare the annual frequency of TTC delays across specific Beaches BIA stops on the streetcar Route 501. It highlights Kingston Rd, and Neville Park Blvd (end of route), as consistent primary hotspots for transit delays.
+
+plot_beaches_friction <- function(df, year_label) {
+  df %>%
+    count(station_clean, sort = TRUE) %>%
+    ggplot(aes(x = reorder(station_clean, n), y = n)) +
+    geom_col(fill = "darkred") +
+    geom_text(aes(label = n), hjust = -0.2, size = 3) + 
+    coord_flip() +
+    labs(
+      title = paste("Transit Delays by Stop:", year_label),
+      x = "Cleaned Station Name",
+      y = "Frequency of Delays"
+    ) +
+    theme_minimal()
+    
+}
+
+# Store the plots
+p1 <- plot_beaches_friction(beaches_ttc_25, "2025")
+p2 <- plot_beaches_friction(beaches_ttc_24, "2024")
+p3 <- plot_beaches_friction(beaches_ttc_23, "2023")
+p4 <- plot_beaches_friction(beaches_ttc_22, "2022")
+
+# Arrange them in a 2x2 grid
+(p1 + p2 + p3 + p4) + 
+  plot_annotation(title = "Comparing Transit Delays: 2022-2025",
+                  subtitle = "Annual TTC delay frequency across Beaches BIA stations",
+                  theme = theme(
+      plot.title = element_text(size = 20, face = "bold"),
+      plot.subtitle = element_text(size = 14)
+    ))
+```
+
+```{r streetcar-plots-2}
+#| echo: false
+#| fig-width: 8
+#| fig-height: 8
+#| fig-cap: This series of bar charts tracks the total number of TTC delays by month each year to identify seasonal congestion spikes. It shows high variability such as a significant peaks of delays in the colder months of the year (November-March), while dipping in the warmer season.
+
+# Monthly Summary Statistics
+summarize_monthly_ttc <- function(df) {
+  df %>%
+    group_by(month) %>%
+    summarise(
+      Total_Delays = n(),
+      Avg_Min_Delay = mean(delay, na.rm = TRUE),
+      .groups = "drop"
+    )
+}
+
+beaches_ttc_metrics25 <- summarize_monthly_ttc(beaches_ttc_25)
+beaches_ttc_metrics24 <- summarize_monthly_ttc(beaches_ttc_24)
+beaches_ttc_metrics23 <- summarize_monthly_ttc(beaches_ttc_23)
+beaches_ttc_metrics22 <- summarize_monthly_ttc(beaches_ttc_22)
+
+# Frequency Plots (Total Delays)
+plot_monthly_frequency <- function(monthly_df, year_label) {
+  ggplot(monthly_df, aes(x = month, y = Total_Delays)) +
+    geom_col(fill = "steelblue") +
+    geom_text(aes(label = Total_Delays), vjust = -0.5, size = 3) +
+    scale_x_date(date_labels = "%b", date_breaks = "1 month") +
+    labs(
+      title = paste("Frequency: TTC Delays per Month -", year_label),
+      x = "Month",
+      y = "Total Number of Delays"
+    ) +
+    theme_minimal() +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+}
+
+f25 <- plot_monthly_frequency(beaches_ttc_metrics25, "2025")
+f24 <- plot_monthly_frequency(beaches_ttc_metrics24, "2024")
+f23 <- plot_monthly_frequency(beaches_ttc_metrics23, "2023")
+f22 <- plot_monthly_frequency(beaches_ttc_metrics22, "2022")
+
+frequency_2x2 <- (f25 + f24) / (f23 + f22) + 
+  plot_annotation(
+    title = "Monthly Delay Frequency: 2022-2025",
+    subtitle = "Tracking visitor volume & congestion spikes across seasons",
+    theme = theme(
+      plot.title = element_text(size = 20, face = "bold"),
+      plot.subtitle = element_text(size = 14)
+    )
+  )
+
+max_freq <- max(c(beaches_ttc_metrics25$Total_Delays, beaches_ttc_metrics24$Total_Delays, 
+                  beaches_ttc_metrics23$Total_Delays, beaches_ttc_metrics22$Total_Delays))
+
+frequency_2x2 & ylim(0, max_freq)
+```
+
+```{r streetcar-plots-3}
+#| echo: false
+#| fig-width: 8
+#| fig-height: 10
+#| fig-cap: These line graphs measure the "friction" visitors face by plotting the average duration of delays in minutes, revealing high peaks that sometimes exceed 30 minutes. No discernible patterns are seen across all years, but we do notice a peak in delays in May/Jun in the last two years.
+
+# Severity Plots (Average Duration)
+plot_monthly_severity <- function(monthly_df, year_label) {
+  ggplot(monthly_df, aes(x = month, y = Avg_Min_Delay)) +
+    geom_line(color = "darkred", linewidth = 1) +
+    geom_point(color = "darkred") +
+    scale_x_date(date_labels = "%b", date_breaks = "1 month") +
+    labs(
+      title = paste("Severity: Average Duration of Delays -", year_label),
+      x = "Month",
+      y = "Average Delay (Minutes)"
+    ) +
+    theme_minimal() +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+}
+
+s25 <- plot_monthly_severity(beaches_ttc_metrics25, "2025")
+s24 <- plot_monthly_severity(beaches_ttc_metrics24, "2024")
+s23 <- plot_monthly_severity(beaches_ttc_metrics23, "2023")
+s22 <- plot_monthly_severity(beaches_ttc_metrics22, "2022")
+
+severity_2x2 <- (s25 + s24) / (s23 + s22) + 
+  plot_annotation(
+    title = "Monthly Delay Severity: 2022-2025",
+    subtitle = "Average duration of delays (minutes) impacting BIA access \n
+    Measures the 'friction' visitors face when entering the BIA",
+    theme = theme(
+      plot.title = element_text(size = 20, face = "bold"),
+      plot.subtitle = element_text(size = 14)
+    )
+  )
+
+max_sev <- max(c(beaches_ttc_metrics25$Avg_Min_Delay, beaches_ttc_metrics24$Avg_Min_Delay, 
+                 beaches_ttc_metrics23$Avg_Min_Delay, beaches_ttc_metrics22$Avg_Min_Delay))
+
+severity_2x2 & ylim(0, max_sev)
+```
+
+```{r streetcar-misc}
+#| include: false
+delay_codes <- get_resource("06d13be4-a8b7-4365-ac68-2169de8e0630")
+```
+
+# Toronto Climate Data
+
+Pulling daily weather data from the Government of Canada, we analyze the trends in weather, and are curious to understand how it may impact business activity in the BIA.
+
+```{r climate-data}
+#| warning: false
+#| message: false
+#| echo: false
+#| include: false
+
+# LOAD CLIMATE DATA
+climate_daily <- read_csv("climate-daily.csv")
+```
+
+```{r climate-plots-1}
+#| warning: false
+#| message: false
+#| echo: false
+#| fig-cap: This plot displays daily temperature values (blue) alongside a smoothed red trend line, capturing the seasonal cycling of Toronto’s climate from 2022 through early 2026.
+
+# 1. Cleaning and Preparation
+climate_cleaned <- climate_daily %>%
+  mutate(
+    Date = as.Date(LOCAL_DATE),
+    Year = as.factor(LOCAL_YEAR),
+    # Create an ordered month factor for better plotting
+    Month_Label = factor(month.abb[LOCAL_MONTH], levels = month.abb)
+  ) %>%
+  # Filter for years we want to focus on (2022 to current)
+  filter(LOCAL_YEAR >= 2022)
+
+# 2. Plot: Combined Time Series (The "Together" Plot)
+# Visualizes the continuous trend of temperature over the years
+ggplot(climate_cleaned, aes(x = Date, y = MEAN_TEMPERATURE)) +
+  geom_line(color = "steelblue", alpha = 0.5) +
+  geom_smooth(color = "darkred", method = "gam", span = 0.1) +
+  labs(
+    title = "Mean Daily Temperature Trend (2022 - Present)",
+    subtitle = "Blue line represents daily values; Red line represents the smoothed trend",
+    x = "Date",
+    y = "Mean Temperature (°C)"
+  ) +
+  theme_minimal() +
+  theme(plot.title = element_text(size = 18, face = "bold"),
+      plot.subtitle = element_text(size = 14))
+```
+
+```{r climate-plots-2}
+#| warning: false
+#| message: false
+#| echo: false
+#| fig-height: 5
+#| fig-width: 10
+#| fig-cap: The plot overlaps the lines average monthly mean temperatures to show highly consistent year-over-year seasonal changes in weather.
+
+# 4. Plot: Average Monthly Temperatures (Seasonality)
+# Aggregates daily data to show the 'typical' temperature for each month per year
+monthly_avg_temp <- climate_cleaned %>%
+  group_by(Year, Month_Label) %>%
+  summarise(Avg_Monthly_Temp = mean(MEAN_TEMPERATURE, na.rm = TRUE), .groups = "drop")
+
+ggplot(monthly_avg_temp, aes(x = Month_Label, y = Avg_Monthly_Temp, group = Year, color = Year)) +
+  geom_line(size = 1.2) +
+  geom_point(size = 3) +
+  scale_color_viridis_d() +
+  labs(
+    title = "Average Monthly Mean Temperature by Year",
+    x = "Month",
+    y = "Average Mean Temperature (°C)",
+    color = "Year"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "none",
+        plot.title = element_text(size = 20, face = "bold"))
+```
+
+```{r climate-plots-3}
+#| warning: false
+#| message: false
+#| echo: false
+#| fig-height: 10
+#| fig-width: 8
+#| fig-cap: This panel of line plots compares the progression of the weather across individual years, presented widely and stacked on one another to compare trends more easily.
+
+# 3. Plot: Individual Yearly Comparison (Faceted)
+# Allows you to see year-over-year variability in a single view
+ggplot(climate_cleaned, aes(x = yday(Date), y = MEAN_TEMPERATURE, color = Year)) +
+  geom_line() +
+  facet_wrap(~Year, ncol = 1) +
+  labs(
+    title = "Yearly Temperature Profiles",
+    subtitle = "Comparing the progression of the year across 2022-2025",
+    x = "Day of Year",
+    y = "Mean Temperature (°C)"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "none",
+        plot.title = element_text(size = 20, face = "bold"),
+        plot.subtitle = element_text(size = 14))
+```
+
+# Toronto Parking Tickets Data
+
+Using Toronto Parking Tickets data from the City of Toronto Open Data Portal, we examine the distribution of parking tickets on one of the busiest streets within the BIA, Queen Street East.
+
+```{r parking-data-1}
+#| warning: false
+#| message: false
+#| echo: false
+#| include: false
+
+
+# LOAD TORONTO PARKING TICKETS DATA
+
+package <- show_package("8c233bc2-1879-44ff-a0e4-9b69a9032c54")
+tickets_res <- list_package_resources("8c233bc2-1879-44ff-a0e4-9b69a9032c54")
+tickets_data <- get_resource("3263cbd6-39f8-46c9-8ca6-bd8ffc730157")
+```
+
+```{r parking-data-24}
+#| echo: false
+#| message: false
+#| warning: false
+#| include: false
+
+# Parking Tickets Data for Year 2024
+
+tickets_data24 <- get_resource("3263cbd6-39f8-46c9-8ca6-bd8ffc730157")
+tickets24_data1 <- tickets_data24[[1]]
+tickets24_data10 <- tickets_data24[[2]]
+tickets24_data11 <- tickets_data24[[3]]
+tickets24_data12 <- tickets_data24[[4]]
+tickets24_data2 <- tickets_data24[[5]]
+tickets24_data3 <- tickets_data24[[6]]
+tickets24_data4 <- tickets_data24[[7]]
+tickets24_data5 <- tickets_data24[[8]]
+tickets24_data6 <- tickets_data24[[9]]
+tickets24_data7 <- tickets_data24[[10]]
+tickets24_data8 <- tickets_data24[[11]]
+tickets24_data9 <- tickets_data24[[12]]
+
+# Beaches Parking Location
+filter_beaches_parking_addresses <- function(df) {
+  df %>%
+    mutate(
+      # 1. Clean the string to uppercase
+      location_clean = toupper(location2),
+      
+      # 2. Extract the first set of numbers found in the address
+      address_num = as.numeric(str_extract(location_clean, "\\d+")),
+      
+    ) %>%
+  filter(
+      # Logic: (Street Name matches) AND (Number is within BIA bounds)
+      (str_detect(location_clean, "QUEEN ST E| QUEEN STREET EAST") & address_num >= 1590 & address_num <= 2500) #|
+      
+      #(str_detect(location_clean, "WOODBINE")   & address_num <= 150) |
+      #(str_detect(location_clean, "COXWELL")    & address_num <= 100) |
+      #(str_detect(location_clean, "LEE AVE")    & address_num <= 80) |
+      #(str_detect(location_clean, "WINEVA")     & address_num <= 80) |
+      #(str_detect(location_clean, "NEVILLE")    & address_num <= 50)
+    )
+}
+
+beaches24_parking_1 <- filter_beaches_parking_addresses(tickets24_data1)
+beaches24_parking_2 <- filter_beaches_parking_addresses(tickets24_data2)
+beaches24_parking_3 <- filter_beaches_parking_addresses(tickets24_data3)
+beaches24_parking_4 <- filter_beaches_parking_addresses(tickets24_data4)
+beaches24_parking_5 <- filter_beaches_parking_addresses(tickets24_data5)
+beaches24_parking_6 <- filter_beaches_parking_addresses(tickets24_data6)
+beaches24_parking_7 <- filter_beaches_parking_addresses(tickets24_data7)
+beaches24_parking_8 <- filter_beaches_parking_addresses(tickets24_data8)
+beaches24_parking_9 <- filter_beaches_parking_addresses(tickets24_data9)
+beaches24_parking_10 <- filter_beaches_parking_addresses(tickets24_data10)
+beaches24_parking_11 <- filter_beaches_parking_addresses(tickets24_data11)
+beaches24_parking_12 <- filter_beaches_parking_addresses(tickets24_data12)
+
+# Combine all 12 months into one dataframe
+beaches24_all_parking <- bind_rows(
+  beaches24_parking_1, beaches24_parking_2, beaches24_parking_3, beaches24_parking_4,
+  beaches24_parking_5, beaches24_parking_6, beaches24_parking_7, beaches24_parking_8,
+  beaches24_parking_9, beaches24_parking_10, beaches24_parking_11, beaches24_parking_12
+) %>%
+  mutate(
+    # Convert integer date (20240118) to real Date object
+    date_clean = ymd(as.character(date_of_infraction)),
+    month = floor_date(date_clean, "month"),
+    day_of_week = wday(date_clean, label = TRUE, abbr = TRUE),
+    # Convert time (e.g., 1437) to hour (14)
+    hour = floor(time_of_infraction / 100)
+  )
+```
+
+```{r parking-data-23}
+#| warning: false
+#| message: false
+#| echo: false
+#| include: false
+
+# Parking Tickets Data for Year 2023
+tickets_data23 <- get_resource("95b34a0c-3403-4075-aa37-e9a91c4d4f29")
+tickets23_data1 <- tickets_data23[[1]]
+tickets23_data10 <- tickets_data23[[2]]
+tickets23_data11 <- tickets_data23[[3]]
+tickets23_data12 <- tickets_data23[[4]]
+tickets23_data2 <- tickets_data23[[5]]
+tickets23_data3 <- tickets_data23[[6]]
+tickets23_data4 <- tickets_data23[[7]]
+tickets23_data5 <- tickets_data23[[8]]
+tickets23_data6 <- tickets_data23[[9]]
+tickets23_data7 <- tickets_data23[[10]]
+tickets23_data8 <- tickets_data23[[11]]
+tickets23_data9 <- tickets_data23[[12]]
+
+# Beaches Parking Location
+filter_beaches_parking_addresses <- function(df) {
+  df %>%
+    mutate(
+      # 1. Clean the string to uppercase
+      location_clean = toupper(location2),
+      
+      # 2. Extract the first set of numbers found in the address
+      address_num = as.numeric(str_extract(location_clean, "\\d+")),
+      
+    ) %>%
+  filter(
+      # Logic: (Street Name matches) AND (Number is within BIA bounds)
+      (str_detect(location_clean, "QUEEN ST E| QUEEN STREET EAST") & address_num >= 1590 & address_num <= 2500) #|
+      
+      #(str_detect(location_clean, "WOODBINE")   & address_num <= 150) |
+      #(str_detect(location_clean, "COXWELL")    & address_num <= 100) |
+      #(str_detect(location_clean, "LEE AVE")    & address_num <= 80) |
+      #(str_detect(location_clean, "WINEVA")     & address_num <= 80) |
+      #(str_detect(location_clean, "NEVILLE")    & address_num <= 50)
+    )
+}
+
+beaches23_parking_1 <- filter_beaches_parking_addresses(tickets23_data1)
+beaches23_parking_2 <- filter_beaches_parking_addresses(tickets23_data2)
+beaches23_parking_3 <- filter_beaches_parking_addresses(tickets23_data3)
+beaches23_parking_4 <- filter_beaches_parking_addresses(tickets23_data4)
+beaches23_parking_5 <- filter_beaches_parking_addresses(tickets23_data5)
+beaches23_parking_6 <- filter_beaches_parking_addresses(tickets23_data6)
+beaches23_parking_7 <- filter_beaches_parking_addresses(tickets23_data7)
+beaches23_parking_8 <- filter_beaches_parking_addresses(tickets23_data8)
+beaches23_parking_9 <- filter_beaches_parking_addresses(tickets23_data9)
+beaches23_parking_10 <- filter_beaches_parking_addresses(tickets23_data10)
+beaches23_parking_11 <- filter_beaches_parking_addresses(tickets23_data11)
+beaches23_parking_12 <- filter_beaches_parking_addresses(tickets23_data12)
+
+# Combine all 12 months into one dataframe
+beaches23_all_parking <- bind_rows(
+  beaches23_parking_1, beaches23_parking_2, beaches23_parking_3, beaches23_parking_4,
+  beaches23_parking_5, beaches23_parking_6, beaches23_parking_7, beaches23_parking_8,
+  beaches23_parking_9, beaches23_parking_10, beaches23_parking_11, beaches23_parking_12
+) %>%
+  mutate(
+    # Convert integer date (20240118) to real Date object
+    date_clean = ymd(as.character(date_of_infraction)),
+    month = floor_date(date_clean, "month"),
+    day_of_week = wday(date_clean, label = TRUE, abbr = TRUE),
+    # Convert time (e.g., 1437) to hour (14)
+    hour = floor(time_of_infraction / 100)
+  )
+```
+
+```{r parking-plots-1}
+#| warning: false
+#| message: false
+#| echo: false
+#| fig-width: 8
+#| fig-height: 10
+#| fig-cap: This chart analyzes seasonality in parking enforcement, showing a peak in total tickets during May (1,168).
+
+# Monthly Ticket Volume
+
+b24 <- beaches24_all_parking %>%
+  count(month) %>%
+  ggplot(aes(x = month, y = n)) +
+  geom_col(fill = "steelblue") +
+  geom_text(aes(label = n), vjust = -0.5, size = 3) +
+  scale_x_date(date_labels = "%b", date_breaks = "1 month") +
+  labs(
+    title = "Monthly Ticket Volume, in Year 2024",
+    x = "Month",
+    y = "Total Tickets"
+  ) +
+  theme_minimal() +
+  theme(plot.title = element_text(size = 20, face = "bold"))
+
+b23 <- beaches23_all_parking %>%
+  count(month) %>%
+  ggplot(aes(x = month, y = n)) +
+  geom_col(fill = "steelblue") +
+  geom_text(aes(label = n), vjust = -0.5, size = 3) +
+  scale_x_date(date_labels = "%b", date_breaks = "1 month") +
+  labs(
+    title = "Monthly Ticket Volume, in Year 2023",
+    x = "Month",
+    y = "Total Tickets"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "none",
+        plot.title = element_text(size = 20, face = "bold"))
+
+b24 / b23
+
+```
+
+```{r parking-plots-2}
+#| warning: false
+#| message: false
+#| echo: false
+#| fig-width: 8
+#| fig-height: 9
+#| fig-cap: This chart presents a smoothed daily trend that fluctuates with the changing seasons of 2023 and 2024.
+
+
+# Daily Parking Counts: 2024
+daily_parking_counts <- beaches24_all_parking %>%
+  group_by(date_clean) %>%
+  summarise(ticket_count = n())
+
+dp24 <- ggplot(daily_parking_counts, aes(x = date_clean, y = ticket_count)) +
+  geom_col(fill = "darkorange") + # Using geom_col instead of geom_bar for pre-summed data
+  geom_smooth(method = "loess", span = 0.2, color = "black", se = FALSE) +
+  labs(
+    title = "Daily Parking Tickets: The Beaches BIA (2024)",
+    subtitle = "Black line shows the smoothed trend across seasons",
+    x = "Date",
+    y = "Number of Tickets Issued"
+  ) +
+  theme_minimal() +
+  theme(plot.title = element_text(size = 20, face = "bold"),
+        plot.subtitle = element_text(size = 12))
+
+# Daily Parking Counts: 2023
+daily_parking_counts <- beaches23_all_parking %>%
+  group_by(date_clean) %>%
+  summarise(ticket_count = n())
+
+dp23 <- ggplot(daily_parking_counts, aes(x = date_clean, y = ticket_count)) +
+  geom_col(fill = "darkorange") + # Using geom_col instead of geom_bar for pre-summed data
+  geom_smooth(method = "loess", span = 0.2, color = "black", se = FALSE) +
+  labs(
+    title = "Daily Parking Tickets: The Beaches BIA (2023)",
+    subtitle = "Black line shows the smoothed trend across seasons",
+    x = "Date",
+    y = "Number of Tickets Issued"
+  ) +
+  theme_minimal() +
+  theme(plot.title = element_text(size = 20, face = "bold"),
+        plot.subtitle = element_text(size = 12))
+
+dp24 / dp23
+```
+
+```{r parking-plots-24-4}
+#| warning: false
+#| message: false
+#| echo: false
+#| fig-width: 8
+#| fig-height: 3
+#| fig-pos: "H"
+#| fig-cap: This horizontal bar chart ranks the most frequent types of parking violations in The Beaches, with "Park Machine-Reqd Fee Not Paid" identified as the most common infraction by a wide margin
+
+# Top 10 Parking Infractions in The Beaches
+pi24 <- beaches24_all_parking %>%
+  count(infraction_description, sort = TRUE) %>%
+  head(10) %>%
+  ggplot(aes(x = reorder(infraction_description, n), y = n)) +
+  geom_col(fill = "darkred") +
+  coord_flip() +
+  labs(
+    title = "Top 10 Parking Infractions \n in The Beaches (2024)",
+    x = "Infraction Type",
+    y = "Frequency"
+  ) +
+  theme_minimal() +
+  theme(plot.title = element_text(size = 18, face = "bold"))
+
+pi23 <- beaches23_all_parking %>%
+  count(infraction_description, sort = TRUE) %>%
+  head(10) %>%
+  ggplot(aes(x = reorder(infraction_description, n), y = n)) +
+  geom_col(fill = "darkred") +
+  coord_flip() +
+  labs(
+    title = "Top 10 Parking Infractions \n in The Beaches (2023)",
+    x = "Infraction Type",
+    y = "Frequency"
+  ) +
+  theme_minimal() +
+  theme(plot.title = element_text(size = 18, face = "bold"))
+
+pi24
+pi23
+```
+
+```{r parking-plots-24-3}
+#| warning: false
+#| message: false
+#| echo: false
+#| fig-width: 8
+#| fig-height: 3
+#| fig-pos: "H"
+#| fig-cap: This heatmap identifies peak parking ticket times for visitors by hour and day of the week, with the brightest cells indicating the highest volume of tickets issued, often around midday.
+
+# Parking Enforcement Heatmap: Day vs. Hour
+pe24 <- beaches24_all_parking %>%
+  group_by(day_of_week, hour) %>%
+  summarise(ticket_count = n(), .groups = "drop") %>%
+  ggplot(aes(x = hour, y = day_of_week, fill = ticket_count)) +
+  geom_tile(color = "white") +
+  scale_fill_viridis_c(option = "magma") +
+  labs(
+    title = "Parking Enforcement Heatmap: Day vs. Hour (2024)",
+    subtitle = "Highlights when visitors face the most 'friction'",
+    x = "Hour of Day (24h)",
+    y = "Day of Week",
+    fill = "Tickets"
+  ) +
+  theme_minimal() +
+  theme(plot.title = element_text(size = 20, face = "bold"),
+        plot.subtitle = element_text(size = 12))
+
+
+# Parking Enforcement Heatmap: Day vs. Hour
+pe23 <- beaches23_all_parking %>%
+  group_by(day_of_week, hour) %>%
+  summarise(ticket_count = n(), .groups = "drop") %>%
+  ggplot(aes(x = hour, y = day_of_week, fill = ticket_count)) +
+  geom_tile(color = "white") +
+  scale_fill_viridis_c(option = "magma") +
+  labs(
+    title = "Parking Enforcement Heatmap: Day vs. Hour (2023)",
+    subtitle = "Highlights when visitors face the most 'friction'",
+    x = "Hour of Day (24h)",
+    y = "Day of Week",
+    fill = "Tickets"
+  ) +
+  theme_minimal() +
+  theme(plot.title = element_text(size = 20, face = "bold"),
+        plot.subtitle = element_text(size = 12))
+
+pe24 
+pe23
+```
+
+```{r parking-plots-24-5}
+#| warning: false
+#| message: false
+#| echo: false
+#| fig-width: 8
+#| fig-height: 5
+#| fig-cap: The bar plot represents the average amount of parking tickets by day of the week in 2024, showing that when entering the weekend the tickets seem to be the highest.
+
+# Average Tickets per specific day of the week
+dow_summary <- beaches24_all_parking %>%
+  count(date_clean, day_of_week) %>%
+  group_by(day_of_week) %>%
+  summarise(avg_tickets = mean(n), .groups = "drop")
+
+ggplot(dow_summary, aes(x = day_of_week, y = avg_tickets, fill = day_of_week)) +
+  geom_col() +
+  scale_fill_brewer(palette = "Set3") +
+  labs(
+    title = "Average Parking Tickets by Day of the Week",
+    subtitle = "Higher weekend averages suggest leisure-driven visitor inflow",
+    x = "Day",
+    y = "Average Tickets per Day"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "none",
+        plot.title = element_text(size = 20, face = "bold"),
+        plot.subtitle = element_text(size = 13))
+```
+
+```{r parking-plots-24-6}
+#| warning: false
+#| message: false
+#| echo: false
+#| fig-width: 8
+#| fig-height: 8
+#| fig-cap: This line graph tracks the total monthly fine revenue in 2024 as a proxy for the "cost" of visiting the BIA, showing a peak of approximately $80,000 in late summer.
+
+# Monthly Fine Revenue
+pr24 <- beaches24_all_parking %>%
+  group_by(month) %>%
+  summarise(total_revenue = sum(set_fine_amount)) %>%
+  ggplot(aes(x = month, y = total_revenue)) +
+  geom_line(size = 1, color = "darkgreen") +
+  geom_point() +
+  scale_y_continuous(labels = scales::dollar,
+                     limits = c(0, NA), expand = expansion(mult = c(0, 0.1))) +
+  labs(
+    title = "Total Fine Revenue in Year 2024",
+    subtitle = "A measure of the 'cost' of visiting the BIA",
+    x = "Month",
+    y = "Total Set Fine Amount"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "none",
+        plot.title = element_text(size = 20, face = "bold"),
+        plot.subtitle = element_text(size = 13))
+
+# Monthly Fine Revenue
+pr23 <- beaches23_all_parking %>%
+  group_by(month) %>%
+  summarise(total_revenue = sum(set_fine_amount)) %>%
+  ggplot(aes(x = month, y = total_revenue)) +
+  geom_line(size = 1, color = "darkgreen") +
+  geom_point() +
+  scale_y_continuous(labels = scales::dollar,
+                     limits = c(0, NA), expand = expansion(mult = c(0, 0.1))) +
+  labs(
+    title = "Total Fine Revenue in Year 2023",
+    subtitle = "A measure of the 'cost' of visiting the BIA",
+    x = "Month",
+    y = "Total Set Fine Amount"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "none",
+        plot.title = element_text(size = 20, face = "bold"),
+        plot.subtitle = element_text(size = 13))
+
+pr24 / pr23
+```
+
+**We combine the 2023-2024 data to present the graphs together easily.**
+
+```{r parking-data-23-24}
+#| warning: false
+#| message: false
+#| echo: false
+
+# Combine both years into one master dataset
+beaches_23_24_combined <- bind_rows(beaches23_all_parking, beaches24_all_parking)
+```
+
+```{r parking-plots-23-24-1}
+#| warning: false
+#| message: false
+#| echo: false
+#| fig-width: 12
+#| fig-height: 5
+#| fig-cap: This chart presents the daily trends that fluctuates with the changing seasons of both years, 2023 and 2024.
+
+
+daily_tickets <- beaches_23_24_combined %>%
+  group_by(date_clean) %>%
+  summarise(ticket_count = n(), .groups = "drop")
+
+ggplot(daily_tickets, aes(x = date_clean, y = ticket_count)) +
+  geom_line(color = "darkorange", linewidth = 0.5, alpha = 0.7) +
+  # Smoothed trend to show seasonality across years
+  geom_smooth(method = "loess", span = 0.1, color = "black", se = FALSE) +
+  labs(
+    title = "Daily Parking Ticket Volume: 2023-2024",
+    subtitle = "The orange line shows daily variability; the black line highlights the seasonal trend",
+    x = "Timeline",
+    y = "Number of Tickets Issued"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "none",
+        plot.title = element_text(size = 20, face = "bold"),
+        plot.subtitle = element_text(size = 13))
+```
+
+```{r parking-plots-23-24-2}
+#| warning: false
+#| message: false
+#| echo: false
+#| fig-width: 12
+#| fig-height: 5
+#| fig-cap: This line graph tracks the total monthly fine revenue in both years, 2023 and 2024, showing peaks and dips throughout the year.
+
+daily_revenue <- beaches_23_24_combined %>%
+  group_by(date_clean) %>%
+  summarise(total_revenue = sum(set_fine_amount), .groups = "drop")
+
+ggplot(daily_revenue, aes(x = date_clean, y = total_revenue)) +
+  geom_line(color = "darkgreen", linewidth = 0.5) +
+  geom_smooth(method = "loess", span = 0.1, color = "black", se = FALSE) +
+  scale_y_continuous(labels = scales::dollar) + # Formats axis as money
+  labs(
+    title = "Total Fine Revenue: 2023-2024",
+    subtitle = "Tracking the total financial cost to visitors entering the BIA",
+    x = "Timeline",
+    y = "Total Daily Revenue ($)"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "none",
+        plot.title = element_text(size = 20, face = "bold"),
+        plot.subtitle = element_text(size = 13))
+```
+
+# The Beach BIA's Beaches Water Quality
+
+Using Toronto Beaches data, we examine one of the most popular beaches near the BIA, Kew Beach, and its water quality trends over the year.
+
+```{r beach-data}
+#| echo: false
+
+# LOAD TORONTO BEACHES QUALITY DATA
+resources <- list_package_resources("c8ce3e2f-935d-4ef6-ade2-27e08df239f2")
+beach_quality_data <- get_resource("42551dd8-a3c1-45fa-9e8b-674c43b4d3b7")
+kewbeach_quality_data <- beach_quality_data |> filter(beachName == "Kew Balmy Beach")
+
+kew_cleaned <- kewbeach_quality_data %>%
+  mutate(
+    Date = as.Date(dataCollectionDate),
+    Year = year(Date),
+    Month = month(Date, label = TRUE),
+    waterTemp = ifelse(waterTemp > 35, NA, waterTemp) 
+  )
+```
+
+```{r beach-plots-1}
+#| warning: false
+#| message: false
+#| echo: false
+#| fig-cap: This boxplot summarizes water temperature consistency and extremes from 2008 to 2025, providing a long-term view of the thermal characteristics of the swimming season.
+
+ggplot(kew_cleaned, aes(x = factor(Year), y = waterTemp, fill = factor(Year))) +
+  geom_boxplot(outlier.color = "red", alpha = 0.7) +
+  labs(
+    title = "Annual Water Temperature Distribution: Kew Beach",
+    subtitle = "Visualizing consistency and extremes across years",
+    x = "Year",
+    y = "Water Temperature (°C)"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "none",
+        plot.title = element_text(size = 15, face = "bold"),
+        plot.subtitle = element_text(size = 13))
+
+```
+
+```{r beach-plots-2}
+#| warning: false
+#| message: false
+#| echo: false
+#| fig-width: 8
+#| fig-height: 3
+#| fig-cap: These plots compare monthly averages of air and water temperatures, illustrating how water temperature typically lags behind air temperature.
+
+kew_recent <- kew_cleaned %>%
+  filter(Year >= 2022)
+
+# Monthly Average Statistics for Water Temp
+kew_recent_summary <- kew_recent %>%
+  mutate(Month = fct_drop(Month)) %>%
+  group_by(Year, Month) %>%
+  summarise(
+    Avg_Water_Temp = mean(waterTemp, na.rm = TRUE),
+    Avg_Air_Temp = mean(airTemp, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+# Plot: Water vs Air Seasonality
+kew_recent_summary %>%
+  filter(!is.na(Avg_Water_Temp)) %>%
+  mutate(Month = fct_drop(Month)) %>% # This removes months with zero data
+  ggplot(aes(x = Month, group = Year, color = factor(Year))) +
+  geom_line(aes(y = Avg_Water_Temp), size = 1) +
+  geom_line(aes(y = Avg_Air_Temp), linetype = "dashed", alpha = 0.6) +
+  labs(
+    title = "Water (Solid) vs. Air (Dashed) Temp: 2022-2024",
+    subtitle = "Solid line: Water Temp | Dashed line: Air Temp",
+    x = "Month",
+    y = "Temperature (°C)",
+    color = "Year"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "none",
+        plot.title = element_text(size = 20, face = "bold"),
+        plot.subtitle = element_text(size = 13))
+
+```
+
+```{r beach-plots-3}
+#| warning: false
+#| message: false
+#| echo: false
+#| fig-height: 5
+#| fig-cap: These plots compare daily water temperatures, illustrating the peaks and lows within the summer season. It is of interest to see how people activity rises/drops on these specific days.
+
+# 1. Clean and Prepare the Daily Data
+kew_daily_recent <- kewbeach_quality_data %>%
+  mutate(
+    Date = as.Date(dataCollectionDate),
+    Year = year(Date),
+    # Handle the 201°C outlier in water temp
+    waterTemp = ifelse(waterTemp > 50, NA, waterTemp),
+    # Create a 'Day of Season' to overlap lines if needed later
+    Day_of_Year = yday(Date)
+  ) %>%
+  filter(Year >= 2022)
+
+# 2. Daily Water Temperature Trends (Faceted by Year)
+ggplot(kew_daily_recent, aes(x = Date, y = waterTemp)) +
+  geom_line(color = "steelblue", size = 0.8) +
+  geom_point(color = "steelblue", size = 1, alpha = 0.5) +
+  # Scales = "free_x" ensures each year's panel only shows its specific season
+  facet_wrap(~Year, scales = "free_x", ncol = 1) +
+  labs(
+    title = "Daily Water Temperature Trends: Kew Beach",
+    subtitle = "Tracking the onset and duration of the swimmable season",
+    x = "Date",
+    y = "Water Temperature (°C)"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "none",
+        plot.title = element_text(size = 16, face = "bold"),
+        plot.subtitle = element_text(size = 13))
+
+```
+
+## Toronto Beaches E-Coli Data
+
+```{r ecoli-data}
+#| echo: false
+#| message: false
+#| warning: false
+
+# LOAD TORONTO BEACHES E-COLI DATA
+
+package <- show_package("92b0de8f-1ada-44a7-84cf-adc04868e990")
+resources <- list_package_resources("92b0de8f-1ada-44a7-84cf-adc04868e990")
+beach_ecoli_data <- get_resource("fa96223e-ccf8-4c0a-817b-6f5039311287")
+kewbeach_ecoli_data <- beach_ecoli_data |> filter(beachName == "Kew Balmy Beach")
+
+ecoli_cleaned <- kewbeach_ecoli_data %>%
+  mutate(
+    Date = as.Date(collectionDate),
+    Year = year(Date),
+    Month = month(Date, label = TRUE)
+  ) %>%
+  filter(Year >= 2022) %>%
+  # Handle missing values and group by day to average the different test sites
+  group_by(Date, Year, Month) %>%
+  summarise(Daily_Avg_Ecoli = mean(eColi, na.rm = TRUE), .groups = "drop")
+```
+
+Toronto follows Ontario's criteria and will close a beach when E.coli levels exceed 100 E.coli per 100 millilitres of water.
+
+```{r ecoli-plots-1}
+#| warning: false
+#| message: false
+#| echo: false
+#| fig-height: 8
+#| fig-width: 8
+#| fig-cap: These log-scale charts track E. coli counts against the 100 CFU/100mL safety limit. Points in red indicate unsafe days that resulted in the closures of the water.
+
+ggplot(ecoli_cleaned, aes(x = Date, y = Daily_Avg_Ecoli)) +
+  geom_line(color = "darkgreen", alpha = 0.6) +
+  geom_point(aes(color = Daily_Avg_Ecoli > 100), size = 1.5) +
+  # The "Safe" threshold line
+  geom_hline(yintercept = 100, linetype = "dashed", color = "red") +
+  annotate("text", x = Inf, y = 110, label = "Safety Limit (100)", 
+           hjust = 1.1, color = "red", fontface = "bold") +
+  scale_color_manual(values = c("FALSE" = "darkgreen", "TRUE" = "red")) +
+  facet_wrap(~Year, scales = "free_x", ncol = 1) +
+  scale_y_log10() + # Log scale helps see variations when there are massive spikes
+  labs(
+    title = "Daily E. coli Levels: Kew Beach",
+    subtitle = "Spikes above 100 CFU indicate beach closures and reduced 'Third Space' utility",
+    x = "Date",
+    y = "E. coli Count (CFU/100mL) - Log Scale",
+    color = "Unsafe for Swimming"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "bottom",
+        plot.title = element_text(size = 20, face = "bold"),
+        plot.subtitle = element_text(size = 13))
+```
+
+```{r ecoli-stats}
+#| warning: false
+#| message: false
+#| echo: false
+#| tbl-cap: This table represents the proportion of days that were unsafe and ended up closing the beach due to the e-coli levels.
+
+ecoli_impact_stats <- ecoli_cleaned %>%
+  group_by(Year) %>%
+  summarise(
+    Total_Testing_Days = n(),
+    Unsafe_Days = sum(Daily_Avg_Ecoli > 100, na.rm = TRUE),
+    Pct_Days_Closed = (Unsafe_Days / Total_Testing_Days) * 100,
+    Max_Contamination = max(Daily_Avg_Ecoli, na.rm = TRUE)
+  )
+
+kable(ecoli_impact_stats)
+```
+
+```{r ecoli-plots-2}
+#| warning: false
+#| message: false
+#| echo: false
+#| out-width: "100%"
+#| fig-cap: This bar chart shows the percentage of testing days that were unsafe each year, highlighting that 2025 had the highest closure rate at 29.2%, a significant jump from the previous years.
+
+# Plot: Percentage of Days the Beach was 'Closed' (Unsafe)
+ggplot(ecoli_impact_stats, aes(x = factor(Year), y = Pct_Days_Closed, fill = factor(Year))) +
+  geom_col(color = "black", width = 0.7) +
+  geom_text(aes(label = paste0(round(Pct_Days_Closed, 1), "%")), 
+            vjust = -0.5, fontface = "bold") +
+  scale_fill_brewer(palette = "YlOrRd") +
+  labs(
+    title = "Percentage of Swimming Season Closed",
+    subtitle = "Percentage of testing days where E. coli exceeded 100 CFU/100mL",
+    x = "Year",
+    y = "% of Testing Days Unsafe",
+    fill = "Year"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "none",
+        plot.title = element_text(size = 16, face = "bold"),
+        plot.subtitle = element_text(size = 12))
+```
+
+# iNaturalist Data
+
+Pulling from the openly available data on iNaturalist, we visualize insights on observations found particulary in the Beach BIA region, analyzing the quantities and timings of these records.
+
+```{r nature-data}
+#| warning: false
+#| message: false
+#| echo: false
+
+inaturalist <- read.csv("inaturalist.csv")
+```
+
+```{r boundaries-data}
+#| warning: false
+#| message: false
+#| echo: false
+#| include: false
+
+# 1. Search for BIA boundaries on Toronto Open Data
+bia_packages <- search_packages("Business Improvement Areas")
+bia_resources <- list_package_resources("business-improvement-areas")
+
+# 2. Download the GeoJSON version
+bia_data <- get_resource("4d9216bd-71e7-4416-8d17-c2699c6354f0")
+
+the_beach_bia <- bia_data %>% 
+  filter(AREA_NAME == "The Beach") # Note: Toronto Open Data uses "The Beach" not "The Beaches"
+```
+
+```{r nature-plots-1}
+#| warning: false
+#| message: false
+#| echo: false
+#| fig-height: 6
+#| fig-width: 7
+#| fig-cap: These bar charts use iNaturalist observations as a proxy for engagement with nature, showing that human activity in these spaces peaks significantly during the summer months, over the years from 2022-2025.
+
+# 1. Clean and Filter
+inaturalist_clean <- inaturalist %>%
+  mutate(
+    Date = as.Date(observed_on),
+    Month = month(Date, label = TRUE),
+    Year = year(Date)
+  ) %>%
+  # Filter for recent years but exclude the current incomplete year
+  filter(Year >= 2022 & Year < 2026)
+
+# 2. Plot with Aesthetic Improvements
+ggplot(inaturalist_clean, aes(x = Month, fill = ..count..)) +
+  geom_bar(show.legend = FALSE) +
+  facet_wrap(~Year, ncol = 1) + # Stacked vertically for easier year-over-year comparison
+  scale_fill_gradient(low = "#d1e5f0", high = "#2166ac") + # Subtle blue gradient
+  labs(
+    title = "Seasonal Pulse of Nature Observations: The Beaches",
+    subtitle = "Observations serve as a proxy for 'Third Space' engagement (2022-2025)",
+    x = "Month",
+    y = "Number of Observations"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1),
+    strip.text = element_text(face = "bold", size = 11),
+    panel.grid.minor = element_blank(),
+    plot.title = element_text(size = 18, face = "bold"),
+    plot.subtitle = element_text(size = 13)
+  )
+```
+
+```{r nature-plots-2}
+#| warning: false
+#| message: false
+#| echo: false
+#| fig-height: 6
+#| fig-width: 8
+#| fig-cap: This spatial visualization track how nature engagement shifts relative to the BIA boundary between the "Off Season" and "Summer," with the density of activity expanding significantly during the warmer months.
+
+# 1. Focus only on the two primary seasons for comparison
+inat_comparison <- inaturalist_clean %>%
+  mutate(
+    Season = case_when(
+      Month %in% c("Oct", "Nov", "Dec", "Jan", "Feb", "Mar", "Apr", "May") ~ "Off Season",
+      Month %in% c("Jun", "Jul", "Aug", "Sep")       ~ "Summer",
+      TRUE                                           ~ NA_character_
+    )
+  ) %>%
+  drop_na(Season, latitude, longitude)
+
+# 2. Plotting the Comparison
+ggplot() +
+  # Layer 1: The Heatmap (using 'stat_density_2d' with filled polygons)
+  # This creates the actual 'heat' look instead of just lines
+  stat_density_2d(data = inat_comparison, 
+                  aes(x = longitude, y = latitude, fill = after_stat(level)), 
+                  geom = "polygon", alpha = 0.5) +
+  
+  # Layer 2: The BIA Boundary (Clean and bold)
+  geom_sf(data = the_beach_bia, color = "white", size = 1.1) +
+  geom_sf(data = the_beach_bia, color = "black", size = 0.5) +
+  
+  # Layer 3: Faceting by Season
+  # This is the most important change for meaningfulness
+  facet_wrap(~Season) +
+  
+  # Styling
+  scale_fill_viridis_c(option = "magma", name = "Activity Level") +
+  coord_sf(xlim = c(-79.31, -79.28), ylim = c(43.66, 43.68)) + 
+  theme_minimal() +
+  theme(
+    axis.text = element_blank(),
+    panel.grid = element_blank(), # Removing the grid to focus on the heat
+    strip.text = element_text(face = "bold", size = 12),
+    legend.position = "bottom",
+    plot.title = element_text(size = 18, face = "bold"),
+    plot.subtitle = element_text(size = 13)
+  ) +
+  labs(
+    title = "Nature Engagement: Struggle vs. Peak Seasons",
+    subtitle = "Tracking how human presence shifts relative to the BIA boundary",
+  )
+```
+
+```{r nature-plots-3}
+#| message: false
+#| warning: false
+#| echo: false
+#| out-width: "100%"
+#| fig-cap: This spatial visualization tracks the concentrations of nature observations withing the BIA boundary between, colouring based on the season. We see a high concentration of winter and spring observations alongside the Beaches boardwalk, which may be of note if the BIA aims to mobilize this population.
+
+library(ggspatial) 
+library(prettymapr)
+
+# 1. Define the four standard seasons
+inat_sf_map <- inaturalist_clean %>%
+  mutate(
+    Season = case_when(
+      Month %in% c("Dec", "Jan", "Feb") ~ "Winter",
+      Month %in% c("Mar", "Apr", "May") ~ "Spring",
+      Month %in% c("Jun", "Jul", "Aug") ~ "Summer",
+      Month %in% c("Sep", "Oct", "Nov") ~ "Fall"
+    ),
+    Season = factor(Season, levels = c("Winter", "Spring", "Summer", "Fall"))
+  ) %>%
+  drop_na(latitude, longitude) %>%
+  st_as_sf(coords = c("longitude", "latitude"), crs = 4326)
+
+ggplot() +
+  # Layer 1: The Actual Map Background (Basemap)
+  annotation_map_tile(type = "cartolight", zoom = 15) + 
+  
+  # Layer 2: The BIA Boundary (Red lines)
+  geom_sf(data = the_beach_bia, color = "red", linewidth = 1, alpha = 0.8) +
+  
+  # Layer 3: Seasonal Points
+  geom_sf(data = inat_sf_map, aes(color = Season), alpha = 0.6, size = 1.2) +
+  
+  # Layer 4: Map elements (Scale bar and North arrow)
+  annotation_scale(location = "bl", width_hint = 0.4) +
+  annotation_north_arrow(location = "tr", which_north = "true") +
+  
+  # Styling and Zoom
+  coord_sf(xlim = c(-79.31, -79.28), ylim = c(43.66, 43.68), crs = 4326) +
+  scale_color_manual(values = c(
+    "Winter" = "#2c7bb6", # Blue
+    "Spring" = "#abd9e9", # Light Blue
+    "Summer" = "#d7191c", # Red/Orange
+    "Fall"   = "#fdae61"  # Yellow/Orange
+  )) +
+  theme_minimal() +
+  theme(
+    axis.text = element_blank(), # Removes latitude/longitude numbers
+    axis.title = element_blank(),
+    panel.grid.major = element_line(color = "grey80", linetype = "dashed"),
+    legend.position = "right",
+    plot.title = element_text(face = "bold", size = 14)
+  ) +
+  labs(
+    title = "Nature Engagement by Season: The Beaches",
+    subtitle = "Observations on OpenStreetMap relative to the Beach BIA boundary",
+    color = "Season"
+  )
+```
+
+# Relationships between Two Variables
+
+From the analyszed datasets, we plot some variables together on the same plot to analyze the relationship between factors that we might assume can impact movement patterns within the BIA.
+
+```{r relationship-plots-1}
+#| warning: false
+#| message: false
+#| echo: false
+#| fig-width: 8
+#| fig-height: 5
+#| fig-cap: This dual-axis timeline overlays daily parking ticket volume with mean water temperature for the summer season, illustrating the correlation between warmer weather for swimming and increased visitor enforcement activity.
+
+# 1. Combine and Aggregate Parking Tickets for 2023 and 2024
+daily_parking_combined <- bind_rows(
+  beaches23_all_parking %>% mutate(Year = 2023),
+  beaches24_all_parking %>% mutate(Year = 2024)
+) %>%
+  group_by(date_clean, Year) %>%
+  summarise(ticket_count = n(), .groups = "drop")
+
+# 2. Join with Water Temp (Filters parking to the monitoring season only)
+seasonal_friction <- kew_daily_recent %>%
+  filter(Year %in% c(2023, 2024)) %>%
+  # inner_join ensures we only keep dates where BOTH water temp and tickets exist
+  inner_join(daily_parking_combined, by = c("Date" = "date_clean", "Year" = "Year"))
+
+# 3. Scaling Coefficient
+# Water temp peaks ~25°C, Tickets peak ~90. 
+# A coeff of 4 aligns 25°C with 100 on the ticket axis.
+coeff_wt <- 4
+
+# 4. Create the Faceted Dual-Axis Plot
+ggplot(seasonal_friction, aes(x = Date)) +
+  # Primary Axis: Daily Parking Tickets (Orange)
+  geom_line(aes(y = ticket_count, color = "Daily Parking Tickets"), linewidth = 0.8) +
+  
+  # Secondary Axis: Water Temp (Steelblue)
+  # Multiplied by coeff to map onto the primary axis space
+  geom_line(aes(y = waterTemp * coeff_wt, color = "Water Temp (°C)"), linewidth = 1) +
+  
+  # Configuration of Dual Y-Axes
+  scale_y_continuous(
+    name = "Daily Parking Tickets",
+    sec.axis = sec_axis(~./coeff_wt, name = "Water Temperature (°C)")
+  ) +
+  
+  # Facet by Year with free_x so the seasons are scaled appropriately
+  facet_wrap(~Year, scales = "free_x", ncol = 1) +
+  
+  # Styling and Legends
+  scale_color_manual(values = c(
+    "Daily Parking Tickets" = "darkorange", 
+    "Water Temp (°C)" = "steelblue"
+  )) +
+  scale_x_date(date_labels = "%b %d", date_breaks = "2 weeks") +
+  labs(
+    title = "Peak Season Dynamics: Water Temperature vs. Parking Tickets",
+    subtitle = "Daily tickets overlaid on water temperature trends for the 2023-2024 seasons",
+    x = "Timeline",
+    color = "Metric"
+  ) +
+  theme_minimal() +
+  theme(
+    legend.position = "bottom",
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    panel.grid.minor = element_blank(),
+    plot.title = element_text(size = 16, face = "bold"),
+    plot.subtitle = element_text(size = 13)
+  )
+```
+
+```{r relationship-plots-2}
+#| warning: false
+#| message: false
+#| echo: false
+#| fig-width: 8
+#| fig-height: 5
+#| fig-cap: This dual-axis timeline overlays daily parking ticket volume with mean temperature, illustrating the correlation between warmer weather and increased visitor enforcement activity.
+
+# 1. Prepare the daily comparison data for 2024
+daily_comp <- climate_cleaned %>%
+  filter(Year == "2024") %>%
+  select(Date, MEAN_TEMPERATURE) %>%
+  left_join(
+    beaches24_all_parking %>% 
+      group_by(date_clean) %>% 
+      summarise(tickets = n(), .groups = "drop"), 
+    by = c("Date" = "date_clean")
+  ) %>%
+  mutate(tickets = replace_na(tickets, 0))
+
+# 2. Define the scaling coefficient
+# This aligns the ticket volume (max ~90) with temperature (max ~30)
+coeff <- 3 
+
+# 3. Plotting with both as lines
+ggplot(daily_comp, aes(x = Date)) +
+  # Primary Axis: Parking Tickets (Orange Line)
+  geom_line(aes(y = tickets, color = "Daily Parking Tickets"), linewidth = 0.8) +
+  
+  # Secondary Axis: Mean Temperature (Dark Red Line)
+  # We multiply by the coefficient to map it to the primary axis scale
+  geom_line(aes(y = MEAN_TEMPERATURE * coeff, color = "Mean Daily Temp"), linewidth = 1) +
+  
+  # Configure the Dual Y-Axes
+  scale_y_continuous(
+    name = "Daily Parking Tickets",
+    sec.axis = sec_axis(~./coeff, name = "Mean Temperature (°C)")
+  ) +
+  
+  # Styling and Legends
+  scale_color_manual(values = c(
+    "Daily Parking Tickets" = "darkorange", 
+    "Mean Daily Temp" = "darkred"
+  )) +
+  scale_x_date(date_labels = "%b", date_breaks = "1 month") +
+  labs(
+    title = "Daily Weather & Parking Trends: The Beaches (2024)",
+    subtitle = "Comparing seasonal temperature trends against daily visitor enforcement volume",
+    x = "2024 Timeline",
+    color = "Metric"
+  ) +
+  theme_minimal() +
+  theme(
+    legend.position = "bottom",
+    panel.grid.minor = element_blank(),
+    plot.title = element_text(size = 16, face = "bold"),
+    plot.subtitle = element_text(size = 13)
+  )
+```
