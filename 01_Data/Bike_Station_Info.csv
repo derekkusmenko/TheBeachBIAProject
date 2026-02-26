@@ -1,0 +1,1014 @@
+﻿station_id,name,physical_configuration,lat,lon,altitude,address,capacity,is_charging_station,rental_methods,groups,obcn,short_name,nearby_distance,_ride_code_support,rental_uris,post_code
+7000,Fort York  Blvd / Capreol Ct,REGULAR,43.639832,-79.395954,,Fort York  Blvd / Capreol Ct,47,FALSE,[List],[List],647-643-9607,647-643-9607,500,TRUE,[Record],
+7001,Wellesley Station Green P,ELECTRICBIKESTATION,43.66496416,-79.38355032,,Yonge / Wellesley,23,TRUE,[List],[List],416-617-9576,416-617-9576,500,TRUE,[Record],M4Y 1G7
+7002,St. George St / Bloor St W,REGULAR,43.66713122,-79.39955506,,St. George St / Bloor St W,19,FALSE,[List],[List],647-643-9615,647-643-9615,500,TRUE,[Record],
+7003,Madison Ave / Bloor St W,REGULAR,43.6670183,-79.40279587,,Madison Ave / Bloor St W,15,FALSE,[List],[List],647-631-4587,647-631-4587,500,TRUE,[Record],
+7005,King St W / York St,VAULT,43.6480008,-79.383177,0,King St W / York St,26,FALSE,[List],[List],647-643-9693,647-643-9693,500,TRUE,[Record],
+7006,Bay St / College St (East Side),REGULAR,43.660439,-79.385525,,Bay St / College St (East Side),31,FALSE,[List],[List],416-569-2349,416-569-2349,500,TRUE,[Record],
+7007,College St / Huron St,REGULAR,43.658148,-79.398167,,College St / Huron St,19,FALSE,[List],[List],647-625-3582,647-625-3582,500,TRUE,[Record],
+7008,Wellesley St W / Queen's Park Cres,REGULAR,43.663376,-79.392125,,Wellesley St W / Queen's Park Cres,19,FALSE,[List],[List],647-643-9648,647-643-9648,500,TRUE,[Record],
+7009,King St E / Jarvis St,REGULAR,43.65018138,-79.37252303,,King St E / Jarvis St,25,FALSE,[List],[List],647-620-8649,647-620-8649,500,TRUE,[Record],
+7010,King St W / Spadina Ave,REGULAR,43.64514249,-79.39510358,,King St W / Spadina Ave,19,FALSE,[List],[List],647-202-6537,647-202-6537,500,TRUE,[Record],
+7013,Scott St / The Esplanade,REGULAR,43.64659663,-79.37530914,0,Scott St / The Esplanade,19,FALSE,[List],[List],416-666-6440,416-666-6440,500,TRUE,[Record],M5E 1Z4
+7014,Sherbourne St / Carlton St (Allan Gardens),REGULAR,43.663102,-79.373181,,Sherbourne St / Carlton St (Allan Gardens),17,FALSE,[List],[List],416-710-6764,416-710-6764,500,TRUE,[Record],
+7015,King St W / Bay St (West Side),REGULAR,43.64852,-79.380576,,King St W / Bay St (West Side),39,FALSE,[List],[List],416-671-7595,416-671-7595,500,TRUE,[Record],
+7016,Bay St / Queens Quay W (Ferry Terminal),REGULAR,43.640978,-79.376785,,Bay St / Queens Quay W (Ferry Terminal),35,FALSE,[List],[List],647-271-1378,647-271-1378,500,TRUE,[Record],M5J
+7017,Widmer St / Adelaide St W - SMART,SMARTMAPFRAME,43.64754763,-79.391552,0,Widmer St / Adelaide St W,12,FALSE,[List],[List],647-631-9958,647-631-9958,500,TRUE,[Record],M5V 1J9
+7018,Bremner Blvd / Rees St,REGULAR,43.641529,-79.386741,,Bremner Blvd / Rees St,49,FALSE,[List],[List],647-669-0947,647-669-0947,500,TRUE,[Record],
+7019,Temperance St Station,VAULT,43.650945,-79.379498,,Temperance St. Station,55,FALSE,[List],[List],9 Temperance St .,9 Temperance St .,500,TRUE,[Record],M5H 1Y6
+7020,Phoebe St / Spadina Ave,REGULAR,43.650033,-79.396555,,Phoebe St / Spadina Ave,32,FALSE,[List],[List],647-621-5766,647-621-5766,500,TRUE,[Record],
+7021,Bay St / Albert St,REGULAR,43.653264,-79.382458,,Bay St / Albert St,62,FALSE,[List],[List],647-643-9652,647-643-9652,500,TRUE,[Record],
+7023,College St / Borden St,REGULAR,43.6571,-79.4056,,College St / Borden St,11,FALSE,[List],[List],647-643-9629,647-643-9629,500,TRUE,[Record],
+7024,Dundonald St / Church St,REGULAR,43.66663,-79.38148,0,Dundonald St / Church St,39,FALSE,[List],[List],647-631-9859,647-631-9859,500,TRUE,[Record],
+7025,Ted Rogers Way / Bloor St E,REGULAR,43.671293,-79.380471,,Ted Rogers Way / Bloor St E,26,FALSE,[List],[List],647-631-9970,647-631-9970,500,TRUE,[Record],
+7026,Bay St / St. Joseph St,REGULAR,43.665527,-79.387499,,Bay St / St. Joseph St,15,FALSE,[List],[List],416-666-0783,416-666-0783,500,TRUE,[Record],
+7027,Beverley St / Dundas St W,REGULAR,43.652823,-79.393388,,Beverley  St / Dundas St W,31,FALSE,[List],[List],647-621-6739,647-621-6739,500,TRUE,[Record],
+7028,Gould St / Mutual St,REGULAR,43.6582,-79.3768,,Gould St / Mutual St,30,FALSE,[List],[List],416-560-7261,416-560-7261,500,TRUE,[Record],
+7029,Bay St / Bloor St W (East Side),REGULAR,43.66943,-79.38915,,1199 Bay St,15,FALSE,[List],[List],647-669-3457,647-669-3457,500,TRUE,[Record],M6G1X2
+7030,Bay St / Wellesley St W,REGULAR,43.664088,-79.387095,,Bay St / Wellesley St W,35,FALSE,[List],[List],647-643-9612,647-643-9612,1609.34,TRUE,[Record],
+7031,Jarvis St / Isabella St,REGULAR,43.668991,-79.379385,,Jarvis St / Isabella St,39,FALSE,[List],[List],416-569-7503,416-569-7503,500,TRUE,[Record],
+7032,Augusta Ave / Dundas St W,REGULAR,43.652473,-79.401456,,Augusta Ave / Dundas St W,15,FALSE,[List],[List],647-622-8139,647-622-8139,500,TRUE,[Record],
+7033,Union Station,REGULAR,43.645609,-79.380386,,Union Station,27,FALSE,[List],[List],647-620-1494,647-620-1494,500,TRUE,[Record],M5J1E3
+7034,Church St / Bloor St E,REGULAR,43.671389,-79.382919,,Church St / Bloor St E,15,FALSE,[List],[List],437-992-7029,437-992-7029,500,TRUE,[Record],
+7035,Queen St W / Ossington Ave,REGULAR,43.643975,-79.419576,,Queen St W / Ossington Ave,43,FALSE,[List],[List],416-371-6632,416-371-6632,500,TRUE,[Record],
+7036,Trinity St /Front St E,REGULAR,43.651318,-79.36023,,Trinity St / Front St E,19,FALSE,[List],[List],416-816-5603,416-816-5603,500,TRUE,[Record],
+7037,Bathurst St / Dundas St W,REGULAR,43.65189188,-79.40577862,,Bathurst St / Dundas St W,27,FALSE,[List],[List],647-621-8042,647-621-8042,500,TRUE,[Record],M5T 2S3
+7038,Dundas St W / Yonge St,REGULAR,43.656094,-79.381484,,Dundas St W / Yonge St,31,FALSE,[List],[List],647-643-9714,647-643-9714,500,TRUE,[Record],
+7039,Simcoe St / Michael Sweet Ave,REGULAR,43.65232722,-79.38825382,0,Simcoe St / Michael Sweet Ave,19,FALSE,[List],[List],647-202-6089,647-202-6089,500,TRUE,[Record],M5T3M3
+7040,Euclid Ave / Bloor St W,REGULAR,43.664467,-79.414783,,Euclid Ave / Bloor St W,19,FALSE,[List],[List],416-565-9380,416-565-9380,500,TRUE,[Record],
+7041,Edward St / Yonge St,REGULAR,43.656729,-79.382736,,Edward St / Yonge St,23,FALSE,[List],[List],647-643-9697,647-643-9697,500,TRUE,[Record],
+7042,Sherbourne St / Wellesley St E,REGULAR,43.6673,-79.374,,Sherbourne St / Wellesley St E,31,FALSE,[List],[List],416-804-0543,416-804-0543,500,TRUE,[Record],
+7043,Queens Quay W / Lower Simcoe St,REGULAR,43.63951,-79.383717,,Queens Quay W / Lower Simcoe St,19,FALSE,[List],[List],647-204-1380,647-204-1380,500,TRUE,[Record],
+7044,Church St / Alexander St,REGULAR,43.663722,-79.380288,,Church St / Alexander St,35,FALSE,[List],[List],647-618-1341,647-618-1341,500,TRUE,[Record],
+7045,Bond St / Queen St E,REGULAR,43.653236,-79.376716,,Bond St / Queen St E,37,FALSE,[List],[List],647-629-0639,647-629-0639,500,TRUE,[Record],
+7046,Niagara St / Richmond St W,REGULAR,43.64534,-79.409597,,Niagara St / Richmond St W,42,FALSE,[List],[List],647-643-9655,647-643-9655,500,TRUE,[Record],
+7047,University Ave / Gerrard St W (East Side),REGULAR,43.657763,-79.389165,,University Ave / Gerrard St W,25,FALSE,[List],[List],647-643-9690,647-643-9690,500,TRUE,[Record],
+7048,Front St W / Yonge St (Hockey Hall of Fame),REGULAR,43.64632291,-79.37746467,,Front St W / Yonge St (Hockey Hall of Fame),47,FALSE,[List],[List],647-204-0984,647-204-0984,500,TRUE,[Record],
+7049,Portland St / Queen St W,REGULAR,43.6476,-79.4015,,Queen St W / Portland St,7,FALSE,[List],[List],647-624-3144,647-624-3144,500,TRUE,[Record],
+7050,Richmond St E / Jarvis St Green P,ELECTRICBIKESTATION,43.652634,-79.374222,,Richmond St E / Jarvis St Green P,16,TRUE,[List],[List],416-602-5376,416-602-5376,500,TRUE,[Record],
+7052,Wellington St W / Bay St,VAULT,43.647259,-79.379878,,Wellington St W / Bay St,55,FALSE,[List],[List],416-723-3438,416-723-3438,500,TRUE,[Record],
+7053,Metro Hall Plaza,REGULAR,43.645859,-79.38783,,Metro Hall Plaza,27,FALSE,[List],[List],647-201-7794,647-201-7794,500,TRUE,[Record],
+7054,Navy Wharf Crt / Bremner Blvd,REGULAR,43.640722,-79.391051,,Navy Wharf Ct. / Bremner Blvd.,11,FALSE,[List],[List],416-662-2516,416-662-2516,500,TRUE,[Record],
+7055,Jarvis St / Carlton St,REGULAR,43.66207,-79.37617,,Jarvis St / Carlton St,12,FALSE,[List],[List],416-722-3901,416-722-3901,500,TRUE,[Record],
+7057,Simcoe St / Wellington St W South,VAULT,43.6458569,-79.3853654,,Simcoe St / Wellington St 1,27,FALSE,[List],[List],647-641-2103,647-641-2103,500,TRUE,[Record],M6a1a1
+7058,Huron St / Harbord St,VAULT,43.6637,-79.400053,,Huron/ Harbord St,38,FALSE,[List],[List],647-643-9725,647-643-9725,500,TRUE,[Record],
+7059,Front St W / Blue Jays Way,REGULAR,43.643473,-79.390477,,Front St W / Blue Jays Way,15,FALSE,[List],[List],647-241-7299,647-241-7299,500,TRUE,[Record],
+7061,Dalton Rd / Bloor St W,REGULAR,43.6662942,-79.4066433,,Dalton Rd / Bloor St W,15,FALSE,[List],[List],647-643-9676,647-643-9676,500,TRUE,[Record],M6G1A1
+7063,Queen's Park / Bloor St W,REGULAR,43.668456,-79.393899,,Queen's Park / Bloor St W,23,FALSE,[List],[List],647-632-5491,647-632-5491,500,TRUE,[Record],
+7064,51 Parliament St,REGULAR,43.652169,-79.362841,,51 Parliament St,19,FALSE,[List],[List],647-241-9519,647-241-9519,500,TRUE,[Record],
+7065,Dundas St E / Parliament St,REGULAR,43.659575,-79.365769,,Dundas St E / Parliament St,15,FALSE,[List],[List],416-568-2679,416-568-2679,500,TRUE,[Record],
+7066,Willcocks St / St. George St,REGULAR,43.662085,-79.397735,,Willcocks St / St. George St,15,FALSE,[List],[List],647-643-9624,647-643-9624,500,TRUE,[Record],
+7069,Queen St W / Spadina Ave,REGULAR,43.649147,-79.395504,,Queen St W / Spadina Ave,11,FALSE,[List],[List],647-622-8344,647-622-8344,500,TRUE,[Record],
+7070,25 York St – Union Station South,REGULAR,43.643667,-79.380414,,25 York St – Union Station South,11,FALSE,[List],[List],416-624-8596,416-624-8596,500,TRUE,[Record],
+7071,161 Bleecker St (South of Wellesley),REGULAR,43.666233,-79.373327,0,161 Bleecker St (South of Wellesley),23,FALSE,[List],[List],647-643-9846,647-643-9846,500,TRUE,[Record],
+7073,Spadina Ave / Fort York Blvd,REGULAR,43.640114,-79.393249,,Spadina Ave / Fort York Blvd,23,FALSE,[List],[List],416-627-9646,416-627-9646,500,TRUE,[Record],
+7074,King St E / Church St,REGULAR,43.65020416,-79.37335142,,St James Park,35,FALSE,[List],[List],647-643-9718,647-643-9718,500,TRUE,[Record],M5C 1G6
+7075,Queens Quay W / Dan Leckie Way,ELECTRICBIKESTATION,43.636533,-79.395854,,Queens Quay W / Dan Leckie Way,27,TRUE,[List],[List],416-669-9604,416-669-9604,500,TRUE,[Record],
+7076,York St / Queens Quay W,REGULAR,43.640132,-79.380464,,York St / Queens Quay W,57,FALSE,[List],[List],416-618-7456,416-618-7456,500,TRUE,[Record],
+7077,College Park South,REGULAR,43.65945682,-79.38236467,,College Park South,19,FALSE,[List],[List],647-643-9694,647-643-9694,500,TRUE,[Record],
+7078,College St / Major St,REGULAR,43.6576,-79.4032,,College St / Major St,15,FALSE,[List],[List],647-643-9638,647-643-9638,500,TRUE,[Record],
+7079,McGill St / Church St,REGULAR,43.660694,-79.379052,,McGill St / Church St,19,FALSE,[List],[List],437-999-8524,437-999-8524,500,TRUE,[Record],
+7084,High Park - Grenadier Cafe,REGULAR,43.645599,-79.4657123,,High Park - Grenadier Cafe,11,FALSE,[List],[List],647-643-9563,647-643-9563,1609.34,TRUE,[Record],
+7085,Danforth Ave / Westlake Ave,REGULAR,43.687323,-79.304848,,Danforth Ave / Westlake Ave,15,FALSE,[List],[List],647-201-8853,647-201-8853,500,TRUE,[Record],
+7086,High Park - West Rd,REGULAR,43.651922,-79.465693,,High Park - West Rd,23,FALSE,[List],[List],647-641-7093,647-641-7093,1609.34,TRUE,[Record],1324
+7087,Danforth Ave / Aldridge Ave,REGULAR,43.684758,-79.316767,,Danforth Ave / Aldridge Ave,11,FALSE,[List],[List],647-641-9873,647-641-9873,1000,TRUE,[Record],
+7088,Danforth Ave / Coxwell Ave,REGULAR,43.683378,-79.322961,0,Danforth Ave / Coxwell Ave,15,FALSE,[List],[List],647-248-5891,647-248-5891,500,TRUE,[Record],
+7089,Church St  / Wood St,REGULAR,43.662712,-79.379903,102.08,Church St / Wood St,27,FALSE,[List],[List],647-262-1148,647-262-1148,500,TRUE,[Record],
+7090,Danforth Ave / Lamb Ave,REGULAR,43.681991,-79.329455,,Danforth Ave / Lamb Ave,19,FALSE,[List],[List],647-641-6203,647-641-6203,500,TRUE,[Record],
+7091,Donlands Subway Station,REGULAR,43.681114,-79.3373885,,Donlands Station,15,FALSE,[List],[List],647-669-1705,647-669-1705,1000,TRUE,[Record],M4J 1P3
+7093,Danforth Ave / Gough Ave,REGULAR,43.678401,-79.346289,,Danforth Ave / Gough Ave,24,FALSE,[List],[List],647-669-1671,647-669-1671,500,TRUE,[Record],
+7094,14 Arundel Ave,ELECTRICBIKESTATION,43.6784834,-79.3513564,,14 Arundel Ave,25,TRUE,[List],[List],14 Arundel Ave - EBS - @CP 87,14 Arundel Ave - EBS - @CP 87,500,TRUE,[Record],M4K 3A2
+7095,Danforth Ave / Ellerbeck St,REGULAR,43.677076,-79.35667,,Danforth Ave / Ellerbeck St,15,FALSE,[List],[List],647-669-1678,647-669-1678,500,TRUE,[Record],
+7096,Lower Don River Trail and Taylor Creek Trail,REGULAR,43.7027268,-79.3336809,,425 Don Mills Rd,19,FALSE,[List],[List],647-669-3908,647-669-3908,500,TRUE,[Record],M4J
+7097,Riverdale Park North (Broadview Ave),REGULAR,43.671172,-79.354704,,Riverdale Park North (Broadview Ave),15,FALSE,[List],[List],647-643-9838,647-643-9838,500,TRUE,[Record],
+7098,Riverdale Park South (Broadview Ave),VAULT,43.667819,-79.35347,,Riverdale Park South (Broadview Ave),15,FALSE,[List],[List],450 Broadview Ave ,450 Broadview Ave ,500,TRUE,[Record],
+7099,Mill St / Cherry St,REGULAR,43.65141433,-79.35680472,,Cherry St / Mill St,39,FALSE,[List],[List],647-640-7714,647-640-7714,500,TRUE,[Record],M5A 4T3
+7100,Dundas St E / Regent Park Blvd,REGULAR,43.660207,-79.361275,,Dundas St E / Regent Park Blvd,27,FALSE,[List],[List],647-669-3847,647-669-3847,500,TRUE,[Record],
+7101,Lower Sherbourne St / The Esplanade,REGULAR,43.648655,-79.367061,,Lower Sherbourne St / The Esplanade,27,FALSE,[List],[List],647-641-5818,647-641-5818,500,TRUE,[Record],
+7102,Nelson St / Duncan St,REGULAR,43.648711,-79.389728,,Nelson St / Duncan St,31,FALSE,[List],[List],647-641-5951,647-641-5951,500,TRUE,[Record],
+7103,Jimmie Simpson Park (Queen St E),REGULAR,43.6605603,-79.3437663,,Jimmie Simpson Park (Queen St E),33,FALSE,[List],[List],647-669-2521,647-669-2521,500,TRUE,[Record],
+7104,King St E / River St,REGULAR,43.65678478,-79.35627385,,King St E / River St,15,FALSE,[List],[List],647-641-5813,647-641-5813,500,TRUE,[Record],M5A 1M6
+7105,Queen St E / Sackville St,REGULAR,43.6561111,-79.36138889,,Queen St E / Sackville St,15,FALSE,[List],[List],647-290-7069,647-290-7069,500,TRUE,[Record],
+7106,Mill St / Tannery Rd,REGULAR,43.65215182,-79.35458218,,Mill St / Tannery Rd,23,FALSE,[List],[List],647-641-5839,647-641-5839,500,TRUE,[Record],
+7107,Cherry St / Distillery Ln,REGULAR,43.650279,-79.356832,,Cherry St / Distillery Ln,15,FALSE,[List],[List],647-669-2608,647-669-2608,500,TRUE,[Record],
+7109,Seaton St / Dundas St E - SMART,SMARTMAPFRAME,43.658777,-79.369596,,Seaton St / Dundas St E,32,FALSE,[List],[List],647-669-3971,647-669-3971,500,TRUE,[Record],
+7110,Queen St E / Berkeley St,REGULAR,43.6552778,-79.36583333,,Queen St E / Berkeley St,15,FALSE,[List],[List],647-290-4392,647-290-4392,500,TRUE,[Record],
+7111,King St W / Douro St,REGULAR,43.640885,-79.416379,,King St W / Douro St,11,FALSE,[List],[List],647-641-5214,647-641-5214,500,TRUE,[Record],
+7112,Liberty St / Fraser Ave Green P,REGULAR,43.637981,-79.424146,,Liberty St / Fraser Ave Green P,19,FALSE,[List],[List],647-669-3920,647-669-3920,500,TRUE,[Record],
+7113,Parliament St / Aberdeen Ave,VAULT,43.665278,-79.368333,,Parliament St / Aberdeen Ave,15,FALSE,[List],[List],647-640-5613,647-640-5613,500,TRUE,[Record],
+7114,Carlton St / Parliament St,REGULAR,43.664524,-79.36793,,Carlton St / Parliament St,26,FALSE,[List],[List],647-262-2870,647-262-2870,500,TRUE,[Record],
+7115,Howard St / Sherbourne St,REGULAR,43.6712581,-79.376367,,Howard St / Sherbourne St,11,FALSE,[List],[List],647-641-1259,647-641-1259,500,TRUE,[Record],
+7116,Bloor St E / Parliament St,VAULT,43.6719461,-79.37245115,,575 Bloor St East,19,FALSE,[List],[List],Ward 13 - (575 Bloor St E),Ward 13 - (575 Bloor St E),500,TRUE,[Record],M4W 0B2
+7117,Castle Frank Subway Station,REGULAR,43.6741803,-79.3679584,,640 Bloor Street East,19,FALSE,[List],[List],647-267-2042,647-267-2042,500,TRUE,[Record],M4W 1J3
+7118,King St W / Bay St (East Side),REGULAR,43.648575,-79.380042,,King St W / Bay St (East Side),19,FALSE,[List],[List],647-271-6326,647-271-6326,500,TRUE,[Record],
+7119,Sumach St / Carlton St (Riverdale Farm),REGULAR,43.665867,-79.362506,,Sumach St / Carlton St (Riverdale Farm),15,FALSE,[List],[List],647-282-9705,647-282-9705,500,TRUE,[Record],
+7120,Gerrard St E / River St,REGULAR,43.663993,-79.358534,,Gerrard St E / River St,11,FALSE,[List],[List],647-643-9843,647-643-9843,500,TRUE,[Record],
+7121,Jarvis St / Dundas St E,REGULAR,43.657266,-79.374756,,Jarvis St / Dundas St E,27,FALSE,[List],[List],647-641-5582,647-641-5582,500,TRUE,[Record],
+7122,Niagara St / Tecumseth St,REGULAR,43.641389,-79.404444,,Niagara St / Tecumseth St,15,FALSE,[List],[List],647-272-3286,647-272-3286,500,TRUE,[Record],
+7123,420 Wellington St W,REGULAR,43.643834,-79.396649,,420 Wellington St W,15,FALSE,[List],[List],647-272-4047,647-272-4047,500,TRUE,[Record],
+7124,Dundas St E / Broadview Ave,REGULAR,43.662365,-79.351104,,Dundas St E / Broadview Ave,19,FALSE,[List],[List],647-669-4283,647-669-4283,500,TRUE,[Record],
+7126,Yonge St / Yorkville Ave,REGULAR,43.671944,-79.387778,,Yonge St / Yorkville Ave,17,FALSE,[List],[List],647-719-3941,647-719-3941,500,TRUE,[Record],
+7127,Bay St / Scollard St,REGULAR,43.672152,-79.39018,,Bay St / Scollard St,15,FALSE,[List],[List],647-201-6479,647-201-6479,500,TRUE,[Record],M5R 0A1
+7128,Yonge St / Aylmer Ave,REGULAR,43.675492,-79.388858,,Yonge St / Aylmer Ave,23,FALSE,[List],[List],647-641-6641,647-641-6641,500,TRUE,[Record],
+7129,Davenport Rd / Avenue Rd,REGULAR,43.674991,-79.396273,,Davenport Rd / Avenue Rd,11,FALSE,[List],[List],437-992-7074,437-992-7074,500,TRUE,[Record],
+7130,Davenport Rd / Bedford Rd,REGULAR,43.674446,-79.398331,,Davenport Rd / Bedford Rd,15,FALSE,[List],[List],647-641-6906,647-641-6906,500,TRUE,[Record],M5R 1J8
+7131,Taddle Creek Park,REGULAR,43.66986,-79.398443,,Taddle Creek Park,14,FALSE,[List],[List],647-309-1691,647-309-1691,500,TRUE,[Record],
+7132,Kendal Ave / Spadina Rd,REGULAR,43.670318,-79.405181,,Kendal Ave / Spadina Rd,9,FALSE,[List],[List],647-641-7095,647-641-7095,500,TRUE,[Record],
+7133,Summerhill Subway Station,REGULAR,43.68201189,-79.39130702,,Summerhill Station,11,FALSE,[List],[List],647-328-4512,647-328-4512,500,TRUE,[Record],
+7135,Hanna Ave / Liberty St,REGULAR,43.6386086,-79.41965437,,Hanna Ave / Liberty St,35,FALSE,[List],[List],647-280-9962,647-280-9962,500,TRUE,[Record],M6K 1W8
+7137,Davenport Rd / Bathurst St,REGULAR,43.676667,-79.416111,,Davenport Rd / Bathurst St,15,FALSE,[List],[List],647-641-6859,647-641-6859,500,TRUE,[Record],
+7138,Davenport Rd / Christie St,REGULAR,43.675278,-79.423889,,Davenport Rd / Christie St,27,FALSE,[List],[List],647-669-2814,647-669-2814,500,TRUE,[Record],
+7139,Glen Edyth Dr / Davenport Rd,REGULAR,43.677778,-79.405556,,Glen Edyth Dr / Davenport Rd,15,FALSE,[List],[List],647-643-9830,647-643-9830,500,TRUE,[Record],
+7140,Macpherson Ave / Spadina Rd,REGULAR,43.675791,-79.40698,,Macpherson Ave / Spadina Rd,15,FALSE,[List],[List],647-669-2824,647-669-2824,500,TRUE,[Record],
+7141,Bridgman Ave / Kendal Ave,REGULAR,43.675556,-79.410278,,Bridgeman Ave / Kendal Ave,15,FALSE,[List],[List],647-640-7641,647-640-7641,500,TRUE,[Record],
+7142,Bridgman Ave / Bathurst St,REGULAR,43.674444,-79.414722,,Bridgeman Ave / Bathurst St,15,FALSE,[List],[List],647-669-4408,647-669-4408,500,TRUE,[Record],
+7143,Kendal Ave / Bernard Ave,REGULAR,43.671513,-79.408317,,Kendal Ave / Bernard Ave,15,FALSE,[List],[List],647-643-9741,647-643-9741,500,TRUE,[Record],
+7144,Palmerston Ave / Vermont Ave,REGULAR,43.671389,-79.416389,,Palmerston Ave / Vermont Ave,15,FALSE,[List],[List],647-284-2560,647-284-2560,500,TRUE,[Record],
+7146,Christie St / Benson Ave (Wychwood Barns),REGULAR,43.68,-79.425,,Christie St / Benson Ave (Wychwood Barns),19,FALSE,[List],[List],647-643-9742,647-643-9742,500,TRUE,[Record],
+7147,King St W / Fraser Ave,REGULAR,43.6394444,-79.42527778,,King St W / Fraser Ave,15,FALSE,[List],[List],647-669-3846,647-669-3846,500,TRUE,[Record],
+7148,King St W / Joe Shuster Way,REGULAR,43.639444,-79.423611,,King St W / Joe Shuster Way,23,FALSE,[List],[List],647-285-4281,647-285-4281,500,TRUE,[Record],
+7149,Yarmouth Rd / Christie St,REGULAR,43.67,-79.42083333,,Yarmouth Rd / Christie St,11,FALSE,[List],[List],647-287-2061,647-287-2061,500,TRUE,[Record],
+7150,Dufferin St / Sylvan Av (Dufferin Grove Park),REGULAR,43.6555556,-79.43361111,,Dufferin St / Sylvan Av (Dufferin Grove Park),19,FALSE,[List],[List],647-643-9812,647-643-9812,500,TRUE,[Record],
+7151,Essex St / Christie St,REGULAR,43.6686111,-79.42027778,,Essex St / Christie St,19,FALSE,[List],[List],647-643-9745,647-643-9745,500,TRUE,[Record],
+7152,Ossington Ave / Bloor St W,REGULAR,43.66171041,-79.42559161,,Ossington Ave / Bloor St W,11,FALSE,[List],[List],647-286-9204,647-286-9204,500,TRUE,[Record],
+7153,Bloor St W / Christie St,REGULAR,43.6638889,-79.41888889,,Bloor St W / Christie St,19,FALSE,[List],[List],647-643-9744,647-643-9744,500,TRUE,[Record],
+7154,Bathurst Subway Station,REGULAR,43.6666667,-79.41166667,,Bathurst Subway Station,23,FALSE,[List],[List],647-289-4712,647-289-4712,500,TRUE,[Record],
+7155,Bathurst St / Lennox St,REGULAR,43.663808,-79.410491,,Bathurst St / Lennox St,19,FALSE,[List],[List],647-643-9750,647-643-9750,500,TRUE,[Record],
+7156,Salem Ave / Bloor St W,REGULAR,43.6608333,-79.43166667,,Salem Ave / Bloor St W,15,FALSE,[List],[List],647-289-9256,647-289-9256,500,TRUE,[Record],
+7157,Dufferin St / Bloor St W,REGULAR,43.66083333,-79.43583333,,Dufferin St / Bloor St,23,FALSE,[List],[List],647-309-0950,647-309-0950,500,TRUE,[Record],
+7158,King St W / Stafford St,REGULAR,43.6422222,-79.41111111,,King St W / Stafford St,15,FALSE,[List],[List],647-300-9735,647-300-9735,500,TRUE,[Record],
+7160,King St W / Tecumseth St,REGULAR,43.64333333,-79.40555556,,King St W / Tecumseth St,19,FALSE,[List],[List],647-302-3804,647-302-3804,500,TRUE,[Record],
+7161,Beverley St / College St,REGULAR,43.6575,-79.39527778,,Beverley St / College St,23,FALSE,[List],[List],647-643-9768,647-643-9768,500,TRUE,[Record],
+7162,Hayter St / La Plante Ave,REGULAR,43.65916667,-79.38555556,,Hayter St / Laplante Ave,21,FALSE,[List],[List],647-669-1302,647-669-1302,500,TRUE,[Record],
+7164,Gould St / Yonge St (TMU),REGULAR,43.657424,-79.381019,,Gould St / Yonge St (Ryerson University),23,FALSE,[List],[List],647-292-0183,647-292-0183,500,TRUE,[Record],
+7168,Queens Quay / Yonge St,REGULAR,43.641646,-79.375308,,Queens Quay / Yonge St,47,FALSE,[List],[List],647-643-9780,647-643-9780,500,TRUE,[Record],
+7169,Front St W / Bay St (North Side),REGULAR,43.646162,-79.378912,,Front St W / Bay St (North Side),11,FALSE,[List],[List],437-992-6547,437-992-6547,500,TRUE,[Record],
+7170,Spadina Ave / Willcocks St,REGULAR,43.6616667,-79.40138889,,Spadina Ave / Willcocks St,15,FALSE,[List],[List],647-293-0441,647-293-0441,500,TRUE,[Record],
+7171,Ontario Place Blvd / Lake Shore Blvd W,REGULAR,43.6322445,-79.4108105,0,Ontario Place Blvd / Lake Shore Blvd W,27,FALSE,[List],[List],647-294-0390,647-294-0390,500,TRUE,[Record],
+7172,Strachan Ave / Princes' Blvd,REGULAR,43.635,-79.40888889,,Strachan Ave / Princes' Blvd,19,FALSE,[List],[List],647-294-5248,647-294-5248,500,TRUE,[Record],
+7173,Cariboo Ave / Railpath Trail,REGULAR,43.66666667,-79.45833333,,Cariboo St / Rail Path,19,FALSE,[List],[List],647-643-9769,647-643-9769,500,TRUE,[Record],
+7174,Bloor St W / Dundas St W,REGULAR,43.6563889,-79.45166667,,Bloor St W / Dundas St W,15,FALSE,[List],[List],647-296-3378,647-296-3378,500,TRUE,[Record],
+7175,HTO Park (Queens Quay W),REGULAR,43.63796,-79.387502,,HTO Park (Queens Quay W),27,FALSE,[List],[List],647-643-9853,647-643-9853,500,TRUE,[Record],
+7176,Bathurst St / Fort York Blvd,REGULAR,43.639179,-79.399595,,Bathurst St / Fort York Blvd,19,FALSE,[List],[List],647-643-9795,647-643-9795,500,TRUE,[Record],
+7178,Dundas St W / Edna Ave,REGULAR,43.657192,-79.452559,,Dundas St W / Edna Ave,15,FALSE,[List],[List],647-643-9783,647-643-9783,500,TRUE,[Record],
+7180,Lansdowne Subway Station,REGULAR,43.65922918,-79.44320901,0,Lansdowne Ave / Wade Ave,23,FALSE,[List],[List],647-643-9759,647-643-9759,500,TRUE,[Record],
+7181,Lansdowne Ave / Whytock Ave,REGULAR,43.65388889,-79.44138889,,Lansdowne Ave / Whytock Ave,15,FALSE,[List],[List],647-295-6052,647-295-6052,500,TRUE,[Record],
+7182,Sterling Rd / Dundas St W,REGULAR,43.65083333,-79.44305556,,Sterling Rd / Dundas St W,19,FALSE,[List],[List],647-643-9791,647-643-9791,500,TRUE,[Record],
+7183,St Clarens Ave / College St,REGULAR,43.651238,-79.43868,0,St Clarens Ave / College St,15,FALSE,[List],[List],647-300-6130,647-300-6130,500,TRUE,[Record],
+7184,Ossington Ave / College St,VAULT,43.6544915,-79.422634,,Ossington Ave / College St,11,FALSE,[List],[List],647-643-9789,647-643-9789,500,TRUE,[Record],
+7188,Exhibition GO (Atlantic Ave),REGULAR,43.63769549,-79.42023184,,Exhibition GO (Atlantic Ave),35,FALSE,[List],[List],647-643-9764,647-643-9764,500,TRUE,[Record],
+7189,Augusta Ave / Denison Sq,REGULAR,43.653766,-79.4016759,0,Augusta Ave / Denison Sq,15,FALSE,[List],[List],647-285-0348,647-285-0348,500,TRUE,[Record],
+7190,St. George St / Hoskin Ave,REGULAR,43.6637403,-79.3980645,,St. George St / Hoskin Ave,15,FALSE,[List],[List],647-669-1645,647-669-1645,500,TRUE,[Record],M5S 2E5
+7191,Central Tech  (Harbord St),REGULAR,43.661975,-79.407896,,Central Tech (Harbord St),11,FALSE,[List],[List],647-643-9801,647-643-9801,500,TRUE,[Record],
+7192,Harbord St / Clinton St,REGULAR,43.660414,-79.415646,,Harbord St / Clinton St,15,FALSE,[List],[List],647-669-1501,647-669-1501,500,TRUE,[Record],
+7193,Dufferin St / Queen St W,REGULAR,43.64309688,-79.42875614,,Dufferin St /Queen St W ,15,FALSE,[List],[List],647-405-2875,647-405-2875,500,TRUE,[Record],
+7194,Mortimer Ave / Coxwell Ave,REGULAR,43.690564,-79.326319,,Mortimer Ave / Coxwell Ave,23,FALSE,[List],[List],647-669-1379,647-669-1379,500,TRUE,[Record],
+7195,Ulster St / Bathurst St,REGULAR,43.66,-79.40888889,,Ulster St / Bathurst St,11,FALSE,[List],[List],647-643-9821,647-643-9821,500,TRUE,[Record],
+7196,Roxton Rd / Harbord St,REGULAR,43.65905,-79.422988,,Roxton Rd / Harbord St,10,FALSE,[List],[List],647-643-9811,647-643-9811,500,TRUE,[Record],
+7197,Queen St W / Dovercourt Rd,REGULAR,43.6438602,-79.4227573,,Queen St W / Dovercourt Rd,11,FALSE,[List],[List],647-643-9863,647-643-9863,500,TRUE,[Record],M6J 3C4
+7198,Queen St W / Cowan Ave,REGULAR,43.64089724,-79.43283583,,1303 Queen St W,19,FALSE,[List],[List],647-244-9310,647-244-9310,500,TRUE,[Record],M6K 1L6
+7199,College St / Markham St,REGULAR,43.65638889,-79.40916667,,College St / Markham St,19,FALSE,[List],[List],647-643-9817,647-643-9817,500,TRUE,[Record],
+7202,York St / Queen St W (City Hall),VAULT,43.65160619,-79.38404693,,York St / Queen St W (City Hall),27,FALSE,[List],[List],647-629-5943,647-629-5943,500,TRUE,[Record],M5H 2N3
+7203,Bathurst St/Queens Quay(Billy Bishop Airport),REGULAR,43.635492,-79.398253,,Bathurst St/Queens Quay(Billy Bishop Airport),35,FALSE,[List],[List],647-669-4303,647-669-4303,500,TRUE,[Record],
+7204,College St / Crawford St,REGULAR,43.655,-79.418889,,College St / Crawford St,19,FALSE,[List],[List],647-530-9928,647-530-9928,500,TRUE,[Record],
+7205,Rusholme Park Cres / College St,REGULAR,43.65277778,-79.42972222,,Rusholme Park Cres / College St,15,FALSE,[List],[List],647-633-4094,647-633-4094,500,TRUE,[Record],
+7206,Claremont St / Dundas St W,REGULAR,43.651281,-79.411717,,Claremont St / Dundas St W,13,FALSE,[List],[List],647-530-5659,647-530-5659,500,TRUE,[Record],
+7207,Dundas St W / Crawford St,REGULAR,43.649722,-79.416944,,Dundas St W / Crawford St,47,FALSE,[List],[List],647-669-3017,647-669-3017,500,TRUE,[Record],
+7208,80 Clinton St,REGULAR,43.656296,-79.414663,,80 Clinton St (North of College),15,FALSE,[List],[List],647-530-1442,647-530-1442,500,TRUE,[Record],
+7209,Ossington Ave / Harrison St,REGULAR,43.65111111,-79.42138889,,Ossington Ave / Harrison St,19,FALSE,[List],[List],647-669-4279,647-669-4279,500,TRUE,[Record],
+7210,Mary McCormick Rec Centre (Sheridan Ave),REGULAR,43.6475,-79.43305556,,Mary McCormick Rec Centre (Sheridan Ave),15,FALSE,[List],[List],647-504-1948,647-504-1948,500,TRUE,[Record],
+7211,Fort York Blvd / Garrison Rd,REGULAR,43.637381,-79.406112,,Fort York Blvd / Garrison Rd,15,FALSE,[List],[List],647-669-3872,647-669-3872,500,TRUE,[Record],M5V 1B2
+7216,Wellington St W / Stafford St,REGULAR,43.6409957,-79.4096663,,Wellington St W / Stafford St,22,FALSE,[List],[List],647-643-9874,647-643-9874,500,TRUE,[Record],M5V 1G8
+7217,Soho St / Queen St W,REGULAR,43.64964971,-79.39372141,,Soho St. / Queen St W,15,FALSE,[List],[List],647-669-1785,647-669-1785,500,TRUE,[Record],
+7220,Lake Shore Blvd W / Ellis Ave,REGULAR,43.635932,-79.465083,,Lake Shore Blvd W / Ellis Ave,19,FALSE,[List],[List],647-502-8498,647-502-8498,1000,TRUE,[Record],
+7221,High Park Subway Station,REGULAR,43.6543604,-79.4655296,,High Park Subway Station,11,FALSE,[List],[List],647-669-0254,647-669-0254,1000,TRUE,[Record],
+7222,Sunnyside - Gus Ryder Pool,REGULAR,43.637894,-79.454823,,Sunnyside - Gus Ryder Pool,27,FALSE,[List],[List],647-339-2011,647-339-2011,1000,TRUE,[Record],
+7223,Parkside Dr / Bloor St W - SMART,SMARTMAPFRAME,43.654501,-79.460053,,Parkside Dr / Bloor St W,12,FALSE,[List],[List],647-669-0176,647-669-0176,1000,TRUE,[Record],
+7224,Bloor St W / High Park Ave (High Park),REGULAR,43.6535269,-79.4650569,,Bloor St W / High Park Ave (High Park),23,FALSE,[List],[List],647-405-1809,647-405-1809,1000,TRUE,[Record],
+7225,Lake Shore Blvd W / Windermere Ave,REGULAR,43.634896,-79.467763,,Lake Shore Blvd W / Windermere Ave,19,FALSE,[List],[List],647-330-4430,647-330-4430,1000,TRUE,[Record],
+7226,Lake Shore Blvd W / The Boulevard Club,REGULAR,43.636731,-79.444966,,Lake Shore Blvd W / The Boulevard Club,19,FALSE,[List],[List],647-643-9869,647-643-9869,1000,TRUE,[Record],
+7227,Martin Goodman Trail (Marilyn Bell Park),REGULAR,43.6314,-79.4304,,Martin Goodman Trail (Marilyn Bell Park),31,FALSE,[List],[List],647-338-5620,647-338-5620,1000,TRUE,[Record],
+7228,King St W / Wilson Park Blvd,REGULAR,43.6372958,-79.4423237,,King St W / Wilson Park Rd,19,FALSE,[List],[List],647-669-0897,647-669-0897,1000,TRUE,[Record],M6K 1J6
+7230,Garden Ave / Roncesvalles Ave,REGULAR,43.643769,-79.447915,,Garden Ave / Roncesvalles Ave,19,FALSE,[List],[List],647-669-0128,647-669-0128,1000,TRUE,[Record],
+7231,Wright Ave / Sorauren Ave - SMART,SMARTMAPFRAME,43.646677,-79.442741,,Wright Ave / Sorauren St (Sorauren Park),18,FALSE,[List],[List],437-992-0663,437-992-0663,1000,TRUE,[Record],
+7232,Queen St W  /  Fuller Ave - SMART,SMARTMAPFRAME,43.640255,-79.439223,,Queen St W / Fuller Ave,16,FALSE,[List],[List],647-669-0539,647-669-0539,1000,TRUE,[Record],
+7233,King St W / Cowan Ave - SMART,SMARTMAPFRAME,43.637922,-79.431734,,King St W / Cowan Ave,16,FALSE,[List],[List],647-669-3856,647-669-3856,1000,TRUE,[Record],
+7234,Roncesvalles Ave / Marmaduke St,REGULAR,43.650492,-79.450842,,Roncesvalles Ave / Marmaduke St,19,FALSE,[List],[List],647-400-6814,647-400-6814,1000,TRUE,[Record],
+7235,Bay St / College St (West Side) - SMART,SMARTMAPFRAME,43.660087,-79.385655,,Bay St / College St (West Side),16,FALSE,[List],[List],437-992-0779,437-992-0779,1000,TRUE,[Record],
+7236,Thompson St / Broadview Ave - SMART,SMARTMAPFRAME,43.659471,-79.350325,,Thompson St / Broadview Ave,24,FALSE,[List],[List],437-992-2970,437-992-2970,1000,TRUE,[Record],
+7237,Ward St / Wallace Ave,REGULAR,43.662857,-79.44618,,Ward Ave / Wallace Ave,15,FALSE,[List],[List],647-643-9824,647-643-9824,1000,TRUE,[Record],m6h1v5
+7238,Sorauren Ave / Geoffrey St - SMART,SMARTMAPFRAME,43.649172,-79.4445087,,Sorauren St / Geoffrey St (Sorauren Park),16,FALSE,[List],[List],437-992-0948,437-992-0948,1000,TRUE,[Record],
+7239,Bloor St W / Manning Ave - SMART,SMARTMAPFRAME,43.663912,-79.416124,,Bloor St W / Manning Ave,42,FALSE,[List],[List],437-992-4514,437-992-4514,1000,TRUE,[Record],
+7240,Bloor St W / Shaw St - SMART,SMARTMAPFRAME,43.662403,-79.423098,,Bloor St W / Shaw Ave,34,FALSE,[List],[List],437-992-3508,437-992-3508,1000,TRUE,[Record],
+7241,519 Church St ,VAULT,43.66683342,-79.38120391,,620 Church St,11,FALSE,[List],[List],437-992-6115,437-992-6115,1000,TRUE,[Record],M4Y 2G2
+7242,Lake Shore Blvd W / Ontario Dr,REGULAR,43.630254,-79.420317,,Lake Shore Blvd W / Ontario Dr (Ontario Place),34,FALSE,[List],[List],647-669-1038,647-669-1038,560,TRUE,[Record],
+7243,Exhibition GO Station,REGULAR,43.6352007,-79.4187711,,Exhibition GO Station,14,FALSE,[List],[List],647-404-4533,647-404-4533,1000,TRUE,[Record],M6K 3C3
+7244,Dufferin Gate - SMART,SMARTMAPFRAME,43.633473,-79.425679,,Dufferin Gate,16,FALSE,[List],[List],647-669-0734,647-669-0734,1000,TRUE,[Record],
+7246,Yonge St / Bloor St,REGULAR,43.669969,-79.386532,,Yonge St / Bloor St,19,FALSE,[List],[List],647-669-3238,647-669-3238,1000,TRUE,[Record],
+7247,Howard Park Ave / Dundas St W - SMART,SMARTMAPFRAME,43.6521,-79.4486,,Howard Park Ave / Dundas St W,12,FALSE,[List],[List],437-992-0352,437-992-0352,1000,TRUE,[Record],
+7248,Baldwin St / Spadina Ave - SMART,SMARTMAPFRAME,43.654905,-79.398448,,Baldwin Ave / Spadina Ave,20,FALSE,[List],[List],437-992-0713,437-992-0713,1000,TRUE,[Record],
+7249,144 Harrison St,ELECTRICBIKESTATION,43.651145,-79.423742,,144 Harrison St ,51,TRUE,[List],[List],CP168- 144 Harrison St,CP168- 144 Harrison St,100,TRUE,[Record],
+7250,Ursula Franklin St / St. George St - SMART,SMARTMAPFRAME,43.660296,-79.397107,,Ursula Franklin St / St. George St,16,FALSE,[List],[List],647-338-0572,647-338-0572,1000,TRUE,[Record],
+7252,Robert St / Bloor St W - SMART,SMARTMAPFRAME,43.665846,-79.404998,,Robert St / Bloor St W,18,FALSE,[List],[List],437-9924908,437-9924908,1000,TRUE,[Record],
+7253,John St  / Mercer St - SMART,SMARTMAPFRAME,43.6461,-79.3895,,John St / Mercer St - SMART,12,FALSE,[List],[List],647-649-4986,647-649-4986,1000,TRUE,[Record],
+7256,Vanauley St / Queen St W - SMART,SMARTMAPFRAME,43.648437,-79.39838,,Vanauley St / Queen St W,12,FALSE,[List],[List],437-992-6550,437-992-6550,1000,TRUE,[Record],
+7257,Dundas St W / St. Patrick St,REGULAR,43.6545174,-79.3895315,,Dundas St W / St. Patrick St,19,FALSE,[List],[List],647-400-9727,647-400-9727,1000,TRUE,[Record],
+7258,Queen St E / Rushbrooke Ave,REGULAR,43.6626628,-79.3323698,,Queen St E / Rushbrooke Ave,15,FALSE,[List],[List],647-504-9410,647-504-9410,1000,TRUE,[Record],M4M 1L5
+7259,Lower Spadina Ave / Lake Shore Blvd W,REGULAR,43.638497,-79.39192,,Lower Spadina Ave / Lake Shore Blvd W,19,FALSE,[List],[List],647-402-7126,647-402-7126,1000,TRUE,[Record],
+7260,Spadina Ave / Adelaide St W,REGULAR,43.6472019,-79.3953394,,Spadina Ave / Adelaide St W,15,FALSE,[List],[List],647-712-8927,647-712-8927,1000,TRUE,[Record],M5V 2K8
+7261,Queens Quay E / Lower Sherbourne St,REGULAR,43.645215,-79.364898,0,Queens Quay E / Lower Sherbourne,26,FALSE,[List],[List],437-688-8691,437-688-8691,1000,TRUE,[Record],M5A 3Y4
+7262,Wychwood Ave / Benson Ave - SMART,SMARTMAPFRAME,43.6809164,-79.4229684,,Wychwood Ave / Benson Ave,16,FALSE,[List],[List],437-992-6472,437-992-6472,1000,TRUE,[Record],
+7264,Bloor St E / Huntley St - SMART,SMARTMAPFRAME,43.671535,-79.379173,,Bloor St E / Huntley St,19,FALSE,[List],[List],437-992-3239,437-992-3239,1000,TRUE,[Record],
+7265,Wallace Ave / Symington Ave - SMART,SMARTMAPFRAME,43.661324,-79.449534,,Wallace Ave / Symington Ave,12,FALSE,[List],[List],437-992-0966,437-992-0966,1000,TRUE,[Record],
+7266,Victoria Park Subway Station - SMART,SMARTMAPFRAME,43.69510152,-79.28970303,,Victoria Park Subway Station,12,FALSE,[List],[List],437-992-7115,437-992-7115,1000,TRUE,[Record],
+7267,Dundas St E / Pembroke St ,VAULT,43.658295,-79.372346,,Dundas St E / Pembroke St,15,FALSE,[List],[List],437-992-1458,437-992-1458,1000,TRUE,[Record],
+7268,111 Bond St (North of Dundas St E)  - SMART,SMARTMAPFRAME,43.656927,-79.378497,,111 Bond St (North of Dundas St E),16,FALSE,[List],[List],437-992-1826,437-992-1826,1000,TRUE,[Record],
+7269,Toronto Eaton Centre (Yonge St) - SMART,SMARTMAPFRAME,43.655431,-79.380653,,Toronto Eaton Centre (Yonge St),20,FALSE,[List],[List],647-669-0729,647-669-0729,1000,TRUE,[Record],
+7270,Church St / Dundas St E - SMART,SMARTMAPFRAME,43.657024,-79.377257,,Church St / Dundas St E,20,FALSE,[List],[List],437-992-0805,437-992-0805,1000,TRUE,[Record],
+7271,Yonge St / Alexander St - SMART,SMARTMAPFRAME,43.662862,-79.383572,,Yonge St / Alexander St,18,FALSE,[List],[List],437-992-3627,437-992-3627,1000,TRUE,[Record],
+7272,Yonge St / Dundonald St ,VAULT,43.6659601,-79.38461361,,Yonge St / Dundonald St,26,FALSE,[List],[List],437-992-6086,437-992-6086,1000,TRUE,[Record],
+7273,Bay St / Charles St W - SMART,SMARTMAPFRAME,43.668153,-79.38891,,Bay St / Charles St W,20,FALSE,[List],[List],437-992-7265,437-992-7265,1000,TRUE,[Record],
+7276,Bloor St W / Balmuto St,REGULAR,43.66981064,-79.38801107,,Bloor St W / Balmuto St,11,FALSE,[List],[List],647-669-4314,647-669-4314,1000,TRUE,[Record],
+7277,Chorley Park - SMART,SMARTMAPFRAME,43.6856,-79.3718,,Chorley Park,20,FALSE,[List],[List],437-992-0849,437-992-0849,1000,TRUE,[Record],
+7278,Mallon Ave / Jones Ave -SMART,SMARTMAPFRAME,43.66587,-79.33443,,Mallon Ave / Jones Ave,16,FALSE,[List],[List],437-992-0901,437-992-0901,1000,TRUE,[Record],M4M2Z1
+7279,Rosehill Ave / Avoca Ave - SMART,SMARTMAPFRAME,43.687999,-79.38906,,Rosehill Ave / Avoca Ave,16,FALSE,[List],[List],437-992-6053,437-992-6053,1000,TRUE,[Record],
+7281,Charles St W / Balmuto St - SMART,SMARTMAPFRAME,43.668427,-79.38725,,Charles St W / Balmuto St,24,FALSE,[List],[List],437-992-2844,437-992-2844,1000,TRUE,[Record],
+7282,Adelaide St W / Bay St,VAULT,43.650152,-79.379856,,Adelaide St W / Bay St,23,FALSE,[List],[List],437-992-6479,437-992-6479,1000,TRUE,[Record],
+7283,Front St W / Bay St (South Side),REGULAR,43.64595,-79.378761,,Front St W / Bay St (South Side),19,FALSE,[List],[List],647-388-9361,647-388-9361,1000,TRUE,[Record],
+7284,University Ave / King St W - SMART,SMARTMAPFRAME,43.6477785,-79.3847928,,University Ave / King St W,24,FALSE,[List],[List],437-992-4749,437-992-4749,1000,TRUE,[Record],M5H 1J9
+7285,Spadina Ave / Harbord St - SMART,SMARTMAPFRAME,43.6629228,-79.4018451,,Spadina Ave / Harbord St,36,FALSE,[List],[List],437-992-6585,437-992-6585,1000,TRUE,[Record],
+7286,Gerrard St E / Broadview Ave  - SMART,SMARTMAPFRAME,43.665656,-79.352055,,Gerrard St E / Broadview,18,FALSE,[List],[List],437-992-0777,437-992-0777,1000,TRUE,[Record],
+7287,Queen St E / Pape Ave - SMART,SMARTMAPFRAME,43.661673,-79.337789,,Queen St E / Pape Ave,16,FALSE,[List],[List],437-992-0758,437-992-0758,1000,TRUE,[Record],
+7288,Humber Bay Shores Park West,REGULAR,43.6224434,-79.480284,0,Humber Bay Shores Park West,31,FALSE,[List],[List],647-643-9762,647-643-9762,1000,TRUE,[Record],
+7289,Humber Bay Shores Park East,REGULAR,43.6308933,-79.4722622,0,Humber Bay Shores Park East,23,FALSE,[List],[List],647-643-9740,647-643-9740,1000,TRUE,[Record],
+7291,190 Queens Quay E,REGULAR,43.64542671,-79.36520839,,Lake Shore Blvd E / Parliament St,15,FALSE,[List],[List],437-770-9931,437-770-9931,1000,TRUE,[Record],M5A 1B6
+7292,Granby St / Church St - SMART,SMARTMAPFRAME,43.6614605,-79.3789457,,Granby St / Church St -SMART,24,FALSE,[List],[List],647-309-0035,647-309-0035,1000,TRUE,[Record],M5B 1J1
+7296,Westmoreland Ave / Fernbank Ave,REGULAR,43.665327,-79.43235,,Westmoreland Ave / Fernbank Ave,19,FALSE,[List],[List],437-771-6958,437-771-6958,1000,TRUE,[Record],
+7297,Havelock St / Dufferin Park,REGULAR,43.657343,-79.43112,,Havelock St / Dufferin Park,19,FALSE,[List],[List],437-772-3680,437-772-3680,1000,TRUE,[Record],
+7298,Bathurst St / Adelaide St W,REGULAR,43.645324,-79.40345,,Bathurst St / Adelaide St W,25,FALSE,[List],[List],437-776-9943,437-776-9943,1000,TRUE,[Record],
+7299,Mill St / Parliament St,REGULAR,43.650256,-79.36163,,Mill St / Parliament St,15,FALSE,[List],[List],437-922-8965,437-922-8965,1000,TRUE,[Record],
+7301,Primrose Ave / Davenport Rd,REGULAR,43.67142,-79.445947,,Primrose Ave / Davenport Rd,15,FALSE,[List],[List],437-928-7044,437-928-7044,1000,TRUE,[Record],
+7302,Winona Dr / Davenport Rd,REGULAR,43.674923,-79.430465,,Winona Dr / Davenport Rd,11,FALSE,[List],[List],647-308-8067,647-308-8067,1000,TRUE,[Record],
+7303,Queen St E / Woodward Ave,REGULAR,43.665269,-79.319796,,Queen St E / Woodward Ave,19,FALSE,[List],[List],437-990-2838,437-990-2838,1000,TRUE,[Record],
+7309,Queen St E / Rhodes Ave,REGULAR,43.666224,-79.317693,,Queen St. E / Rhodes Ave.,23,FALSE,[List],[List],647-308-0520,647-308-0520,1000,TRUE,[Record],
+7311,Sherbourne St / Isabella St,REGULAR,43.669576,-79.375961,,Sherbourne St / Isabella St,19,FALSE,[List],[List],437-991-5923,437-991-5923,1000,TRUE,[Record],
+7312,Amelia St / Sumach St,REGULAR,43.66852,-79.363525,,Amelia St. / Sumach St.,11,FALSE,[List],[List],437-991-7841,437-991-7841,1000,TRUE,[Record],
+7313,Emdaabiimok Ave / Lake Shore Blvd E,REGULAR,43.662771,-79.315223,,1420 Lake Shore Blvd E,15,FALSE,[List],[List],437-994-6254,437-994-6254,1000,TRUE,[Record],
+7314,Queen St. E / Eastern Ave,REGULAR,43.667208,-79.312315,,Queen St E / Eastern Ave,15,FALSE,[List],[List],437-995-6804,437-995-6804,1000,TRUE,[Record],
+7315,Queen St E / Hammersmith Ave,REGULAR,43.671349,-79.29451,,Queen St E / Hammersmith Ave,11,FALSE,[List],[List],437-995-8093,437-995-8093,1000,TRUE,[Record],
+7316,Queen St. E / Spruce Hill Rd.,REGULAR,43.672571,-79.289,,Queen St. E / Spruce Hill Rd.,15,FALSE,[List],[List],437-997-7187,437-997-7187,1000,TRUE,[Record],
+7317,Hubbard Blvd / Balsam Av,REGULAR,43.669328,-79.288949,,Hubbard Blvd / Balsam Av,19,FALSE,[List],[List],437-999-2694,437-999-2694,1000,TRUE,[Record],
+7318,Hubbard Blvd / Glen Manor Dr,REGULAR,43.668633,-79.291162,,Hubbard Blvd. / Glen Manor Dr.,15,FALSE,[List],[List],647-283-9121,647-283-9121,1000,TRUE,[Record],
+7319,Lake Shore Blvd E / Knox Ave,REGULAR,43.660206,-79.3244,,Lake Shore Blvd E / Knox Ave,11,FALSE,[List],[List],647-286-6124,647-286-6124,1000,TRUE,[Record],
+7320,Front St W / University Ave (1),REGULAR,43.6451635,-79.3831757,,Front St W / University Ave (1),19,FALSE,[List],[List],647-291-7762,647-291-7762,1000,TRUE,[Record],
+7321,Front St W / University Ave (2),REGULAR,43.6452972,-79.3827914,,Front St W / University Ave (2),19,FALSE,[List],[List],647-292-3168,647-292-3168,1000,TRUE,[Record],
+7322,East Liberty St / Western Battery Rd,REGULAR,43.6392777,-79.4115736,,E Liberty St / Western Battery Rd,19,FALSE,[List],[List],647-289-6923,647-289-6923,1000,TRUE,[Record],M6K 3P3
+7323,457 King St W,VAULT,43.6452091,-79.3960744,,457 King St W.,19,FALSE,[List],[List],416-726-2897,416-726-2897,1000,TRUE,[Record],
+7324,King St W / Charlotte St,REGULAR,43.645572,-79.39399,,King St W / Charlotte St,23,FALSE,[List],[List],647-297-6118,647-297-6118,1000,TRUE,[Record],
+7326,Davenport Rd / Lansdowne Ave,REGULAR,43.671526,-79.44874,,Davenport Rd / Landsdowne Rd,19,FALSE,[List],[List],647-308-7857,647-308-7857,1000,TRUE,[Record],
+7329,Crawford St / Queen St W,REGULAR,43.645665,-79.415345,,Crawford St / Queen St W,19,FALSE,[List],[List],647-328-3562,647-328-3562,1000,TRUE,[Record],
+7331,Coxwell Ave / Plains Rd,REGULAR,43.69595,-79.328535,,Coxwell Ave / Plains Rd,19,FALSE,[List],[List],647-338-3505,647-338-3505,1000,TRUE,[Record],
+7332,200 Bloor St E,REGULAR,43.671561,-79.38117,,200 Bloor St. E.,23,FALSE,[List],[List],647-669-3468,647-669-3468,1000,TRUE,[Record],
+7333,King St E / Victoria St,REGULAR,43.6495789,-79.3762096,,King St E / Victoria St,19,FALSE,[List],[List],647-339-5578,647-339-5578,1000,TRUE,[Record],A1a1a1
+7334,Simcoe St / Wellington St W (North),REGULAR,43.64646021,-79.38557722,,Simcoe St / Wellington St 2,15,FALSE,[List],[List],647-400-0149,647-400-0149,1000,TRUE,[Record],
+7335,Bay St / Bloor St W (West Side),REGULAR,43.669244,-79.3894,,1188 Bay St,19,FALSE,[List],[List],647-719-3074,647-719-3074,1000,TRUE,[Record],M6H1a1
+7336,Queen St E / Alton Av,REGULAR,43.663912,-79.327987,,Queen St E / Alton Av,19,FALSE,[List],[List],647-402-6382,647-402-6382,1000,TRUE,[Record],
+7337,Gerrard Square Mall (1010 Gerrard St E),REGULAR,43.668553,-79.338673,,Gerrard Square Mall (1010 Gerrard St E),23,FALSE,[List],[List],647-404-3197,647-404-3197,1000,TRUE,[Record],
+7338,Logan Ave / Bain Ave,REGULAR,43.6720273,-79.3470557,,Logan Ave / Bain Ave,19,FALSE,[List],[List],647-404-6830,647-404-6830,1000,TRUE,[Record],
+7339,Carlaw Ave / Strathcona Ave,REGULAR,43.6753188,-79.3462789,,Carlaw Ave / Strathcona Ave,15,FALSE,[List],[List],647-407-3193,647-407-3193,1000,TRUE,[Record],
+7340,Blake St / Boultbee Ave,REGULAR,43.672453,-79.338259,,Blake St / Boultbee Ave,15,FALSE,[List],[List],647-408-4316,647-408-4316,1000,TRUE,[Record],
+7341,Eastern Ave / Winnifred Ave,REGULAR,43.6592088,-79.3348396,0,Eastern Ave / Winnifred Ave,15,FALSE,[List],[List],647-500-1782,647-500-1782,1000,TRUE,[Record],
+7342,Morse St / Eastern Ave,REGULAR,43.657991,-79.340075,,Morse St / Eastern Ave,11,FALSE,[List],[List],647-449-8038,647-449-8038,1000,TRUE,[Record],
+7343,Alton Ave / Dundas St E (Greenwood Park),REGULAR,43.66745,-79.329408,,Alton Ave / Dundas St E (Greenwood Park),23,FALSE,[List],[List],647-449-0293,647-449-0293,1000,TRUE,[Record],
+7344,Cherry Beach,REGULAR,43.637764,-79.345359,,Cherry Beach,49,FALSE,[List],[List],647-501-9648,647-501-9648,1000,TRUE,[Record],
+7345,Cherry Beach Sports Fields (55 Unwin Ave),REGULAR,43.6408346,-79.3429074,,Cherry Beach Sports Field (55 Unwin Ave),30,FALSE,[List],[List],647-504-2481,647-504-2481,1000,TRUE,[Record],M5A 1A3
+7346,Logan Ave / Gerrard St E,REGULAR,43.6672144,-79.3452697,,Logan Av / Gerrard St E,23,FALSE,[List],[List],647-504-9664,647-504-9664,1000,TRUE,[Record],
+7347,Regal Rd / Dufferin St,REGULAR,43.673939,-79.441159,,Regal Rd / Dufferin St,15,FALSE,[List],[List],647-530-4259,647-530-4259,1000,TRUE,[Record],
+7348,Pape Ave / Gamble Ave,REGULAR,43.690237,-79.350119,,Pape Ave / Gamble Ave,19,FALSE,[List],[List],647-530-8374,647-530-8374,1000,TRUE,[Record],
+7349,Gamble Ave / Broadview Ave,REGULAR,43.689211,-79.35438,,Gamble Ave / Broadview Ave,23,FALSE,[List],[List],437-688-6110,437-688-6110,1000,TRUE,[Record],
+7350,Broadview Ave / Westwood Ave,REGULAR,43.6848652,-79.356602,,Broadview Ave/ Westwood Ave,23,FALSE,[List],[List],647-502-7565,647-502-7565,1000,TRUE,[Record],
+7351,Pretoria Ave / Broadview Ave,REGULAR,43.6783213,-79.35822,,Pretoria Av / Broadview Av,19,FALSE,[List],[List],647-537-6941,647-537-6941,1000,TRUE,[Record],
+7352,Cosburn Ave / Donlands Ave,REGULAR,43.690537,-79.341307,,Cosburn Ave / Donlands Ave,18,FALSE,[List],[List],647-620-2577,647-620-2577,1000,TRUE,[Record],
+7353,Fulton Ave / Pape Ave,REGULAR,43.68395,-79.347046,,Fulton Ave / Pape Ave,19,FALSE,[List],[List],647-719-4165,647-719-4165,1000,TRUE,[Record],
+7354,Tommy Thompson Park (Leslie Street Spit),REGULAR,43.65222662,-79.32295441,,Tommy Thompson Park (Leslie Street Spit),31,FALSE,[List],[List],W14-Tommy Thompson Park  - Parking Lot,W14-Tommy Thompson Park  - Parking Lot,16093.4,TRUE,[Record],M8Z4T4
+7355,Beltline Trail / Chaplin Cres,REGULAR,43.704461,-79.423122,,Beltline Trail / Chaplin Cres.,15,FALSE,[List],[List],647-621-3920,647-621-3920,1000,TRUE,[Record],
+7356,King St E / Berkeley St,VAULT,43.651885,-79.3649,,King St E / Ontario St.,31,FALSE,[List],[List],647-622-7822,647-622-7822,1000,TRUE,[Record],
+7357,Lake Shore Blvd E / Leslie St,REGULAR,43.659195,-79.329196,,Lake Shore Blvd E / Leslie St,19,FALSE,[List],[List],647-621-7986,647-621-7986,1000,TRUE,[Record],
+7358,Galbraith Rd / King's College Rd,VAULT,43.66038745,-79.39537832,,Galbraith Rd / King's College Rd,17,FALSE,[List],[List],1113,1113,1000,TRUE,[Record],M5S
+7359,Rosedale Park (20 Scholfield Ave),REGULAR,43.682645,-79.377557,,Rosedale Park (20 Schofield Ave),23,FALSE,[List],[List],647-627-7470,647-627-7470,1000,TRUE,[Record],
+7360,Concord Ave / Dewson St,REGULAR,43.656945,-79.424911,,Concord Av / Dewson St,17,FALSE,[List],[List],647-632-1495,647-632-1495,1000,TRUE,[Record],
+7361,Hocken Ave / Vaughan Rd,REGULAR,43.6817346,-79.4184725,,Hocken Ave./Vaughan Rd.,19,FALSE,[List],[List],647-632-3844,647-632-3844,1000,TRUE,[Record],
+7362,St. Clair Ave W / Bathurst St,REGULAR,43.683296,-79.418734,,St Clair Ave W / Bathurst St.,19,FALSE,[List],[List],647-631-4703,647-631-4703,1000,TRUE,[Record],
+7363,Wells Hill Ave / St. Clair Ave W,REGULAR,43.683351,-79.41562,,Wells Hill Ave / St Clair Ave W,15,FALSE,[List],[List],647-632-4134,647-632-4134,1000,TRUE,[Record],
+7364,Queen St E / Nursewood Rd,REGULAR,43.673831,-79.281455,,Queen St E / Nursewood Rd (Neville Park Loop),19,FALSE,[List],[List],647-638-6254,647-638-6254,1000,TRUE,[Record],
+7365,Kewbeach Ave / Kenilworth Ave,REGULAR,43.666325,-79.3014,,Kew Beach Ave / Kenilworth Ave,23,FALSE,[List],[List],647-640-6506,647-640-6506,1000,TRUE,[Record],
+7366,Fort York Blvd / Bathurst St - SMART,SMARTMAPFRAME,43.639052,-79.399792,,Fort York Blvd / Bathurst St SMART,20,FALSE,[List],[List],647-640-6519,647-640-6519,1000,TRUE,[Record],
+7367,Alma Ave / Gladstone Ave SMART,SMARTMAPFRAME,43.6448617,-79.42822,,Alma Ave / Gladstone Ave SMART,16,FALSE,[List],[List],647-642-3920,647-642-3920,1000,TRUE,[Record],
+7368,Lisgar St / Dundas St W - SMART,SMARTMAPFRAME,43.6493472,-79.42668,,Lisgar St / Dundas St SMART,8,FALSE,[List],[List],647-646-6416,647-646-6416,1000,TRUE,[Record],
+7371,Eglinton Ave W / Henning Ave SMART,SMARTMAPFRAME,43.7063473,-79.40161,,Eglinton Ave W / Henning Ave SMART,20,FALSE,[List],[List],647-640-6538,647-640-6538,1000,TRUE,[Record],
+7373,George St / King St E,REGULAR,43.6509552,-79.3707,,George St / King St E,15,FALSE,[List],[List],647-646-9532,647-646-9532,1000,TRUE,[Record],
+7374,Frederick St / The Esplanade,REGULAR,43.6487245,-79.36839,,Frederick St / The Esplanade,19,FALSE,[List],[List],647-710-2519,647-710-2519,1000,TRUE,[Record],
+7375,Front St E / Scott St,REGULAR,43.6476616,-79.37549,,Front St E / Scott St,11,FALSE,[List],[List],647-718-7245,647-718-7245,1000,TRUE,[Record],
+7376,Frobisher Ave / Lascelles Blvd,REGULAR,43.696708,-79.40045,,Frobisher Ave / Lascelles Blvd,19,FALSE,[List],[List],647-719-1504,647-719-1504,1000,TRUE,[Record],
+7377,Balliol St / Yonge St - SMART,SMARTMAPFRAME,43.6978701,-79.39419,,Balliol St / Yonge St - SMART,36,FALSE,[List],[List],647-719-2731,647-719-2731,1000,TRUE,[Record],
+7378,Yonge St / Davisville Ave,REGULAR,43.6975969,-79.39654,,Yonge St / Davisville Ave,15,FALSE,[List],[List],647-719-3185,647-719-3185,1000,TRUE,[Record],
+7379,Lawton Blvd / Yonge St,REGULAR,43.6910667,-79.39535,,Lawton Blvd / Yonge St,15,FALSE,[List],[List],437-688-9410,437-688-9410,1000,TRUE,[Record],
+7380,Erskine Ave / Yonge St SMART,SMARTMAPFRAME,43.7112153,-79.39894,,Erskine Ave / Yonge St SMART,16,FALSE,[List],[List],437-992-5714,437-992-5714,1000,TRUE,[Record],
+7381,Yonge St / Orchard View Blvd,REGULAR,43.7083577,-79.398862,,Roehampton Ave / Yonge St,35,FALSE,[List],[List],437-688-8762,437-688-8762,1000,TRUE,[Record],M4P 2E6
+7382,Simcoe St / Adelaide St W,VAULT,43.6481303,-79.38632,,Simcoe St / Adelaide St W,27,FALSE,[List],[List],437-688-7395,437-688-7395,1000,TRUE,[Record],
+7383,12 Harbour St,REGULAR,43.6425636,-79.3762,,12 Harbour St,15,FALSE,[List],[List],437-688-7570,437-688-7570,1000,TRUE,[Record],
+7384,Cumberland St / Bay St -  SMART,SMARTMAPFRAME,43.6704537,-79.39014,,Cumberland Ave / Bay St,9,FALSE,[List],[List],437-688-7658,437-688-7658,1000,TRUE,[Record],
+7385,20 Charles St E,ELECTRICBIKESTATION,43.6691099,-79.38551,,20 Charles St E,33,TRUE,[List],[List],437-688-7596,437-688-7596,1000,TRUE,[Record],
+7386,D'Arcy St / McCaul St - SMART,SMARTMAPFRAME,43.655227,-79.39201,,"D'Arcy St, /McCaul St. SMART",16,FALSE,[List],[List],647-719-3738,647-719-3738,1000,TRUE,[Record],
+7387,Mortimer Ave / Carlaw Ave SMART,SMARTMAPFRAME,43.685167,-79.34962,,Mortimer Ave / Carlaw Ave SMART,12,FALSE,[List],[List],647-271-5899,647-271-5899,1000,TRUE,[Record],
+7388,Broadview Subway Station,REGULAR,43.6772,-79.35858,,Broadview Ave / Danforth Ave,15,FALSE,[List],[List],437-688-7724,437-688-7724,1000,TRUE,[Record],
+7389,College Park - Gerrard Entrance,REGULAR,43.658938,-79.383518,0,College Park- Gerrard Entrance,25,FALSE,[List],[List],437-688-7824,437-688-7824,1000,TRUE,[Record],
+7391,Yonge St / Dundas Sq,REGULAR,43.655766,-79.3802,,Yonge St / Dundas Sq,31,FALSE,[List],[List],437-688-7962,437-688-7962,1000,TRUE,[Record],
+7395,Dentonia Park,REGULAR,43.694341,-79.291416,,Dentonia Park Station,23,FALSE,[List],[List],437-688-8093,437-688-8093,1609.34,TRUE,[Record],J4G 29
+7398,York St / Lake Shore Blvd W,REGULAR,43.641952,-79.380723,,York St / Lakeshore St W - South,19,FALSE,[List],[List],437-688-8725,437-688-8725,1609.34,TRUE,[Record],M5J 0A3
+7399,Lower Jarvis St / Queens Quay E,REGULAR,43.64422,-79.36927,,Lower Jarvis / Queens Quay E,18,FALSE,[List],[List],416-277-0432,416-277-0432,1609.34,TRUE,[Record],M5E 1Z2
+7400,Polson Pier,REGULAR,43.641675,-79.354006,,Polson Pier,23,FALSE,[List],[List],437-688-8219,437-688-8219,1609.34,TRUE,[Record],M5A 1A5
+7403,Lascelles Blvd / Eglinton Ave W,REGULAR,43.70547,-79.40355,,Lascelles Blvd / Eglinton Ave W,19,FALSE,[List],[List],416-301-4571,416-301-4571,1609.34,TRUE,[Record],M4R 1A6
+7404,Roehampton Ave / Mount Pleasant Rd,REGULAR,43.70942,-79.39139,,Roehampton Ave / Mount Pleasant Rd,19,FALSE,[List],[List],416-302-1740,416-302-1740,1609.34,TRUE,[Record],M4P 1R6
+7407,University Ave / Queen St W,REGULAR,43.65052424,-79.38672703,,250 University Ave ,23,FALSE,[List],[List],437-244-2537,437-244-2537,1609.34,TRUE,[Record],M5H 2N5
+7409,Isabella St / Church St,REGULAR,43.66834,-79.38235,,Isabella St / Church St,27,FALSE,[List],[List],437-688-8748,437-688-8748,1609.34,TRUE,[Record],M4Y 1M9
+7410,Howard St / Rose Ave,REGULAR,43.671278,-79.372127,,Howard St / Ontario St,19,FALSE,[List],[List],416-275-2509,416-275-2509,1609.34,TRUE,[Record],M4X 1J9
+7411,Little Norway Park,REGULAR,43.635023,-79.399505,,Little Norway Park,23,FALSE,[List],[List],416-294-9839,416-294-9839,1609.34,TRUE,[Record],M5V 2Y9
+7412,King St W / Crawford St,REGULAR,43.6417852,-79.4131148,,King St W / Crawford St ,23,FALSE,[List],[List],416-274-6829,416-274-6829,1609.34,TRUE,[Record],M6K 3M5
+7414,Keele St / Annette St,REGULAR,43.66402,-79.46418,,Keele St / Annette St,15,FALSE,[List],[List],416-294-0509,416-294-0509,1609.34,TRUE,[Record],M6P 2K9
+7415,Keele St / Vine Ave,REGULAR,43.66686,-79.46526,,Keele St / Vine Ave,23,FALSE,[List],[List],416-276-9729,416-276-9729,1609.34,TRUE,[Record],M6P 3K2
+7416,Spadina Ave / Blue Jays Way,REGULAR,43.641705,-79.393295,,Spadina Ave / Blue Jays Way,31,FALSE,[List],[List],437-688-3096,437-688-3096,1609.34,TRUE,[Record],M5V 0L7
+7417,King St W / Jordan St,VAULT,43.648928,-79.378623,,King St / Jordan St,11,FALSE,[List],[List],437-992-6768,437-992-6768,1609.34,TRUE,[Record],M5H 1C3
+7418,College Park - Yonge St Entrance,REGULAR,43.65988,-79.38279,,College Park - Yonge Entrance,25,FALSE,[List],[List],437-244-2552,437-244-2552,1609.34,TRUE,[Record],M5B 2H4
+7419,Bloor St W / Huron St,REGULAR,43.667023,-79.401805,,Bloor St W / Huron St,27,FALSE,[List],[List],437-992-6671,437-992-6671,1609.34,TRUE,[Record],M5S 2R7
+7420,Barton Ave / Howland Ave - SMART,SMARTMAPFRAME,43.66842,-79.410585,,Barton St / Howland St - SMART,27,FALSE,[List],[List],437-243-6447,437-243-6447,1609.34,TRUE,[Record],M5R 3B5
+7422,Tyndall Ave / King St W - SMART,SMARTMAPFRAME,43.638426,-79.429142,,Tyndall Ave / King St W - SMART,16,FALSE,[List],[List],437-243-6484,437-243-6484,1609.34,TRUE,[Record],M6K 2E2
+7425,The Queensway at South Kingsway,REGULAR,43.63632,-79.47307,,The Queensway at South Kingsway,23,FALSE,[List],[List],416-274-4381,416-274-4381,1609.34,TRUE,[Record],M6S 5B7
+7427,Northern Dancer Blvd / Lake Shore Blvd E,REGULAR,43.663162,-79.309765,,Northern Dancer Blvd / Lake Shore Blvd E,26,FALSE,[List],[List],437-243-6512,437-243-6512,1609.34,TRUE,[Record],M4L 6T1
+7428,Woodbine Ave / Lake Shore Blvd E,REGULAR,43.665645,-79.304711,,Woodbine Ave / Lake Shore Blvd E,27,FALSE,[List],[List],437-243-9195,437-243-9195,1609.34,TRUE,[Record],M4L 1B8
+7429,Woodbine Subway Station,REGULAR,43.686442,-79.313404,,Woodbine Subway Station,15,FALSE,[List],[List],416-272-3861,416-272-3861,1609.34,TRUE,[Record],M4C 4C1
+7430,Marilyn Bell Park Tennis Court,REGULAR,43.633537,-79.437461,,Marilyn Bell Park Tennis Court,27,FALSE,[List],[List],416-271-4978,416-271-4978,1609.34,TRUE,[Record],M6K 3C1
+7431,Gerrard St E / Leslie St,REGULAR,43.669813,-79.3335,,Gerrard St E / Leslie St,22,FALSE,[List],[List],437-243-9031,437-243-9031,1609.34,TRUE,[Record],M4M 2A1
+7432,Frederick St / King St E,REGULAR,43.651118,-79.369411,,Frederick St / King St E,47,FALSE,[List],[List],437-688-8434,437-688-8434,1609.34,TRUE,[Record],M5A 4L4
+7433,Dundas St E / Boulton Ave - SMART,SMARTMAPFRAME,43.663148,-79.347938,,Dundas St E / Boulton Ave - SMART,15,FALSE,[List],[List],437-243-9272,437-243-9272,1609.34,TRUE,[Record],M4M 2J6
+7434,91 Via Italia,ELECTRICBIKESTATION,43.67665014,-79.4450303,,91 Via Italia,39,TRUE,[List],[List],91 Via Italia  - EBS,91 Via Italia  - EBS,450,TRUE,[Record],M6H 3S2
+7435,Rushton Rd / St. Clair Ave W,REGULAR,43.68114,-79.4277,,Rushton Rd / St Clair Ave,10,FALSE,[List],[List],647-448-3863,647-448-3863,1609.34,TRUE,[Record],M6G 3J4
+7437,Concord Ave / Bloor St W,REGULAR,43.66189,-79.42679,,Concord Ave / Bloor St W,15,FALSE,[List],[List],437-243-9475,437-243-9475,1609.34,TRUE,[Record],M6H 1L1
+7438,Gothic Ave / Quebec Ave,REGULAR,43.65389,-79.4675,,High Park Subway,19,FALSE,[List],[List],416-278-4879,416-278-4879,1609.34,TRUE,[Record],M6P 2V9
+7441,Pacific Ave / Glenlake Ave,REGULAR,43.65716,-79.46478,,Pacific Ave / Glenlake Ave ,22,FALSE,[List],[List],416-278-8627,416-278-8627,1609.34,TRUE,[Record],12445
+7442,Lonsdale Rd / Spadina Rd,REGULAR,43.688526,-79.412903,,Lonsdale Rd / Spadina Rd,15,FALSE,[List],[List],416-274-4582,416-274-4582,1609.34,TRUE,[Record],M5T 2G7
+7443,Dundas St E / George St,REGULAR,43.6574766,-79.373446,,Dundas St E / George St,25,FALSE,[List],[List],437-243-6629,437-243-6629,1609.34,TRUE,[Record],M6H 1N6
+7444,Clendenan Ave / Rowland St - SMART,SMARTMAPFRAME,43.66073,-79.47149,,Clendenan Ave / Rowland St - SMART,20,FALSE,[List],[List],437-243-6516,437-243-6516,1609.34,TRUE,[Record],M6P 2X6
+7445,Eastwood Rd / Coxwell Ave,REGULAR,43.673118,-79.318651,,Eastwood Rd / Coxwell Ave,19,FALSE,[List],[List],437-244-2762,437-244-2762,1609.34,TRUE,[Record],M4L 3B5
+7446,Orchard Park,REGULAR,43.66908,-79.3149,,Orchard Park,19,FALSE,[List],[List],437-244-2385,437-244-2385,1609.34,TRUE,[Record],M4L 1M7
+7447,Trent Ave / Danforth Ave,REGULAR,43.689293,-79.295895,,Trent Ave / Danforth Ave,23,FALSE,[List],[List],437-244-2458,437-244-2458,1609.34,TRUE,[Record],M4C 1M2
+7448,Goodwood Park Crt / Dentonia Park,REGULAR,43.694826,-79.295208,,Goodwood Park Ct / Dentonia Park,19,FALSE,[List],[List],437-244-2392,437-244-2392,1609.34,TRUE,[Record],M4C2G5
+7449,Cosburn Ave / Cedarvale Ave,REGULAR,43.697139,-79.31469,,Cosburn Ave / Cedarvale Ave,15,FALSE,[List],[List],437-244-1847,437-244-1847,1609.34,TRUE,[Record],M4C 4K7
+7450,Carlaw Ave / Danforth Ave,REGULAR,43.67824814,-79.34709655,,Carlaw Ave / Danforth Ave,15,FALSE,[List],[List],437-244-2674,437-244-2674,1609.34,TRUE,[Record],M4K 1P7
+7451,Western Battery Rd / Pirandello St,REGULAR,43.640075,-79.414156,,Western Battery Rd / Pirandello St,30,FALSE,[List],[List],437-244-2559,437-244-2559,1609.34,TRUE,[Record],M6K 3S4
+7452,Bleecker St / St James Ave,REGULAR,43.669232,-79.374495,,Bleecker St / St James Ave,23,FALSE,[List],[List],437-244-2078,437-244-2078,1609.34,TRUE,[Record],M4X 1M2
+7453,Jarvis St / Maitland Pl,REGULAR,43.6647688,-79.3772602,,Jarvis St / Maitland Pl,17,FALSE,[List],[List],437-243-9422,437-243-9422,1609.34,TRUE,[Record],M4Y 2G8
+7454,Pottery Rd / Lower Don River Trail,REGULAR,43.688148,-79.362101,,Pottery Rd / Lower Don River Trail,15,FALSE,[List],[List],437-244-2781,437-244-2781,1609.34,TRUE,[Record],M4K 2B9
+7455,E.T. Seton Park (Eglinton Ave E / Leslie St),REGULAR,43.715951,-79.351246,,E.T. Seton Park (Eglinton Ave E / Leslie St),27,FALSE,[List],[List],437-243-9385,437-243-9385,1609.34,TRUE,[Record],M4P 1A2
+7457,Queen's Park Cres W / Hoskin Ave,REGULAR,43.665221,-79.394009,,Queen's Park Cres W / Hoskin Ave,23,FALSE,[List],[List],437-243-6418,437-243-6418,1609.34,TRUE,[Record],M5S 1H7
+7458,Church St / Lombard St,REGULAR,43.651678,-79.375233,,Church St / Lombard St,17,FALSE,[List],[List],437-244-2438,437-244-2438,1609.34,TRUE,[Record],M5C 3H9
+7459,St. Clair Ave W / Winona Dr,REGULAR,43.680466,-79.432522,,St Clair Ave W / Winona Dr,11,FALSE,[List],[List],437-244-2434,437-244-2434,1609.34,TRUE,[Record],M6C 1C2
+7460,High Park Outdoor Pool,REGULAR,43.650154,-79.464934,,High Park Outdoor Pool,26,FALSE,[List],[List],437-244-2149,437-244-2149,1609.34,TRUE,[Record],M6R 2Z3
+7461,High Park Amphitheatre,REGULAR,43.646251,-79.46472,,High Park Amphitheatre,23,FALSE,[List],[List],437-244-2557,437-244-2557,17702.74,TRUE,[Record],M6R 2Z3
+7462,Richmond St E / Yonge St,REGULAR,43.651838,-79.378743,,Richmond St E / Yonge St,17,FALSE,[List],[List],437-243-6481,437-243-6481,1609.34,TRUE,[Record],M5C 1X7
+7465,Russell Hill Rd / St. Clair Ave W,REGULAR,43.685569,-79.408019,,Russell Hill Rd / St Clair Ave W,19,FALSE,[List],[List],437-244-2514,437-244-2514,1609.34,TRUE,[Record],M4V 1R8
+7466,Glendonwynne Rd / Bloor St W,REGULAR,43.65182,-79.47421,,Glendonwynne Ave / Bloor St W,19,FALSE,[List],[List],437-244-2085,437-244-2085,1609.34,TRUE,[Record],M6S 1N3
+7467,Lower Simcoe St / Bremner Blvd,REGULAR,43.64283,-79.38409,,Lower Simcoe St / Bremner Blvd,15,FALSE,[List],[List],437-244-2849,437-244-2849,1609.34,TRUE,[Record],M5J 3A6
+7468,Front St W / Simcoe St,REGULAR,43.64448004,-79.38698781,,Front St / Simcoe St,27,FALSE,[List],[List],437-244-2882,437-244-2882,1609.34,TRUE,[Record],M5V 2W6
+7469,York St / Wellington St W (1) ,REGULAR,43.646734,-79.38301,,Wellington St W / York St,23,FALSE,[List],[List],437-244-2670,437-244-2670,1609.34,TRUE,[Record],M5J 2R2
+7471,2300 Lakeshore Blvd W,ELECTRICBIKESTATION,43.61868,-79.48674,,Lake Shore Blvd W / Louisa St,15,TRUE,[List],[List],437-241-5670,437-241-5670,1609.34,TRUE,[Record],M8V 1B4
+7473,Adelaide St W / Strachan Ave,REGULAR,43.64325309,-79.4123047,,Adelaide St W / Strachan Ave,15,FALSE,[List],[List],437-244-1546,437-244-1546,1609.34,TRUE,[Record],M6J 2S7
+7474,Clarence Square,REGULAR,43.64407,-79.3929,,Clarence Square,23,FALSE,[List],[List],437-244-1303,437-244-1303,1609.34,TRUE,[Record],M5V 1H1
+7475,Jarvis St / Richmond St E,REGULAR,43.652777,-79.372637,,Jarvis St / Richmond St E,19,FALSE,[List],[List],437-241-5732,437-241-5732,1609.34,TRUE,[Record],M5C 2H6
+7476,Symington Ave / Dupont St,REGULAR,43.665538,-79.451263,,Symington Ave / Dupont St,15,FALSE,[List],[List],437-243-9512,437-243-9512,1609.34,TRUE,[Record],M6P 3S3
+7477,Antler St / Campbell Ave - SMART,SMARTMAPFRAME,43.664182,-79.449066,,Antler St / Campbell Ave - SMART,20,FALSE,[List],[List],437-241-5622,437-241-5622,1609.34,TRUE,[Record],M6P 3V5
+7478,Ellis Ave / The Queensway,REGULAR,43.63855,-79.46693,,Ellis Ave / The Queensway,19,FALSE,[List],[List],437-244-1121,437-244-1121,1609.34,TRUE,[Record],M6S 2X1
+7479,Jane St / Bloor St W (Jane Subway Station),REGULAR,43.64976,-79.48477,,Jane St / Bloor St W (Jane Subway Station),15,FALSE,[List],[List],437-244-2417,437-244-2417,1609.34,TRUE,[Record],M6S 3Y2
+7480,Neil McLellan Park,REGULAR,43.65143,-79.47779,,Neil McLellan Park,14,FALSE,[List],[List],437-241-5714,437-241-5714,1609.34,TRUE,[Record],M6S 3B4
+7483,Southwood Dr / Kingston Rd - SMART,SMARTMAPFRAME,43.678685,-79.297974,,Southwood Dr / Kingston Rd - SMART,12,FALSE,[List],[List],437-243-8986,437-243-8986,1609.34,TRUE,[Record],M4E 1R3
+7484,Briar Hill Ave / Yonge St - SMART,SMARTMAPFRAME,43.713524,-79.400162,,Briar Hill Ave / Yonge St - SMART,16,FALSE,[List],[List],437-243-5891,437-243-5891,1609.34,TRUE,[Record],M4P 2J2
+7485,Blythwood Rd / Yonge St - SMART,SMARTMAPFRAME,43.716652,-79.399993,,Blythwood Rd / Yonge St - SMART,15,FALSE,[List],[List],437-244-1061,437-244-1061,1609.34,TRUE,[Record],M4P 2J6
+7486,Gerrard St E / Main St,REGULAR,43.684261,-79.299332,,Gerrard St E / Main St,21,FALSE,[List],[List],437-241-6030,437-241-6030,1609.34,TRUE,[Record],M4E 2E1
+7487,Eastwood Rd / Woodbine Ave - SMART,SMARTMAPFRAME,43.676216,-79.309395,,Eastwood Rd / Woodbine Ave,14,FALSE,[List],[List],437-243-9359,437-243-9359,1609.34,TRUE,[Record],M4E 2H8
+7488,Summerhill Ave / Maclennan Ave,REGULAR,43.685924,-79.376304,,Summerhill Ave / Maclennan Ave,11,FALSE,[List],[List],437-243-9051,437-243-9051,1609.34,TRUE,[Record],M4M 2Z9
+7489,Sumach St  / Queen St E,REGULAR,43.656638,-79.358749,,Sumach St  / Queen St E,19,FALSE,[List],[List],437-241-6394,437-241-6394,1609.34,TRUE,[Record],M5A 1V1
+7492,Cherry St / Lake Shore Blvd E,REGULAR,43.64827016,-79.35651734,,324 Cherry St,15,FALSE,[List],[List],Ward 10 - (324 Cherry St),Ward 10 - (324 Cherry St),350,TRUE,[Record],M5A 3L2
+7493,Sackville St / Eastern Ave - SMART,SMARTMAPFRAME,43.653809,-79.3595,,Sackville St / Eastern Ave - SMART,12,FALSE,[List],[List],437-243-9049,437-243-9049,1609.34,TRUE,[Record],M5A 3E1
+7494,Davenport Rd / McAlpine St - SMART,SMARTMAPFRAME,43.673768,-79.391253,,Davenport Rd / McAlpine St - SMART,12,FALSE,[List],[List],437-243-6475,437-243-6475,1609.34,TRUE,[Record],M5R 1H4
+7496,Sunnyside Ave / The Queensway - SMART,SMARTMAPFRAME,43.6397,-79.44865,,Sunnyside Ave / The Queensway - SMART,20,FALSE,[List],[List],437-243-9725,437-243-9725,1609.34,TRUE,[Record],M6R 1B4
+7497,128 Sterling Rd - SMART,SMARTMAPFRAME,43.654004,-79.444792,,128 Sterling Ave - SMART,20,FALSE,[List],[List],437-241-6264,437-241-6264,1609.34,TRUE,[Record],M6P 0A1
+7501,Humberside Grounds - SMART,SMARTMAPFRAME,43.65917,-79.46997,,Humberside Grounds - SMART,20,FALSE,[List],[List],437-243-9655,437-243-9655,1609.34,TRUE,[Record],M6P 3G4
+7502,University Ave / College St (East),REGULAR,43.65995,-79.38964,,University Ave / College St (East),20,FALSE,[List],[List],437-241-6388,437-241-6388,1609.34,TRUE,[Record],M5G 1L7
+7503,Gerrard St E / Malvern Ave - SMART,SMARTMAPFRAME,43.685221,-79.294766,,Gerrard St E / Malvern Ave - SMART,19,FALSE,[List],[List],437-242-7296,437-242-7296,1609.34,TRUE,[Record],M4E 2E1
+7504,Gerrard St E / Victoria Park Ave - SMART,SMARTMAPFRAME,43.686962,-79.286864,,Gerrard St E / Victoria Park Ave,16,FALSE,[List],[List],4372446997,4372446997,1609.34,TRUE,[Record],M4E 3T6
+7505,Ontario St / Adelaide St E -SMART,SMARTMAPFRAME,43.6535052,-79.3667689,,Ontario St / Adelaide St E -SMART,19,FALSE,[List],[List],437-243-9011,437-243-9011,1609.34,TRUE,[Record],M5A 2V1
+7506,Berkeley St / Adelaide St E - SMART,SMARTMAPFRAME,43.65326871,-79.36481975,,Berkeley St / Adelaide St E - SMART,12,FALSE,[List],[List],437-688-8179,437-688-8179,1609.34,TRUE,[Record],M5A 2W7
+7508,Berkeley St / Dundas St E - SMART,SMARTMAPFRAME,43.658816,-79.367318,,Berkeley St / Dundas St E - SMART,20,FALSE,[List],[List],437-243-9390,437-243-9390,1609.34,TRUE,[Record],M5A 2A7
+7514,Humber Bay Shores Park / Marine Parade Dr,REGULAR,43.626265,-79.476723,0,Humber Bay Shores Park / Marine Parade Dr,63,FALSE,[List],[List],437-245-8082,437-245-8082,1609.34,TRUE,[Record],1324
+7515,Amos Waites Park,REGULAR,43.613606,-79.4883535,0,Amos Waites Park,27,FALSE,[List],[List],437-239-8119,437-239-8119,1609.34,TRUE,[Record],M8V 1C5
+7516,Superior Ave / Lake Shore Blvd W,REGULAR,43.6146692,-79.4873148,0,Superior Ave / Lake Shore Blvd W,17,FALSE,[List],[List],437-245-8205,437-245-8205,1609.34,TRUE,[Record],M8V 2M1
+7517,Ripley Ave / Ormskirk Ave,REGULAR,43.6390437,-79.4760109,0,Ripley Ave / Ormskirk Ave,23,FALSE,[List],[List],437-245-7858,437-245-7858,1609.34,TRUE,[Record],M6S 3N9
+7518,Lake Shore Blvd W / Colborne Lodge Dr,REGULAR,43.63771,-79.458173,0,Lake Shore Blvd W / Colborne Lodge Dr,27,FALSE,[List],[List],437-245-7491,437-245-7491,1609.34,TRUE,[Record],M6S 5A3
+7519,406 Oakwood Ave,REGULAR,43.6882706,-79.43937767,0,"406 Oakwood Ave, York, ON M6E 2W3",19,FALSE,[List],[List],437-245-7175,437-245-7175,1609.34,TRUE,[Record],L5C 1E4
+7520,St Clarens Ave / Shirley St,REGULAR,43.6486599,-79.4376413,0,St Clarens Ave / Shirley Ave,15,FALSE,[List],[List],437-245-7286,437-245-7286,1609.34,TRUE,[Record],M6K 1S9
+7521,Emerson Ave / Bloor St W,REGULAR,43.658739,-79.440691,0,Emerson Ave / Bloor St W,23,FALSE,[List],[List],437-388-3260,437-388-3260,1609.34,TRUE,[Record],M6H 1N6
+7522,Wallace Ave / Pauline Ave,REGULAR,43.6632257,-79.4397052,0,Wallace Ave / Pauline Ave,17,FALSE,[List],[List],437-240-3049,437-240-3049,1609.34,TRUE,[Record],M6H 1T5
+7523,Lynn Williams St / East Liberty St,REGULAR,43.638925,-79.4168659,0,Lynn Williams St / East Liberty St,15,FALSE,[List],[List],437-388-5351,437-388-5351,1609.34,TRUE,[Record],M6K 3N6
+7524,Lisgar Park,REGULAR,43.6423847,-79.4240277,0,Lisgar Park,35,FALSE,[List],[List],437-245-6934,437-245-6934,1609.34,TRUE,[Record],M6J 3X6
+7526,Bartlett Parkette,REGULAR,43.6702236,-79.4360232,0,Bartlett Parkette,23,FALSE,[List],[List],437-245-6254,437-245-6254,1609.34,TRUE,[Record],M6H 2B8
+7527,Joseph J Piccininni Community Centre,REGULAR,43.675648,-79.4527619,0,Joseph J Piccininni Community Centre,19,FALSE,[List],[List],437-245-6129,437-245-6129,1609.34,TRUE,[Record],M6E 1C5
+7528,Spadina Rd / Austin Terrace,REGULAR,43.67883,-79.408723,0,Spadina Rd / Austin Terrace,17,FALSE,[List],[List],437-388-5612,437-388-5612,1609.34,TRUE,[Record],M5R 2V5
+7529,Symington Ave / Davenport Rd,REGULAR,43.6704403,-79.4532855,0,Symington Ave / Davenport Rd,15,FALSE,[List],[List],437-388-2709,437-388-2709,1609.34,TRUE,[Record],M6N 1B9
+7530,Sherbourne St N / Elm Ave,REGULAR,43.6752732,-79.3778458,0,Sherbourne St N / Elm Ave,22,FALSE,[List],[List],437-388-5525,437-388-5525,1609.34,TRUE,[Record],M4W 2T4
+7531,541 Huron St - SMART,SMARTMAPFRAME,43.670206,-79.402643,0,541 Huron St,20,FALSE,[List],[List],437-388-1073,437-388-1073,1609.34,TRUE,[Record],M5R 2R6
+7533,Housey St / Dan Leckie Way,REGULAR,43.63811,-79.397877,0,Housey St / Dan Leckie Way,27,FALSE,[List],[List],437-388-3076,437-388-3076,1609.34,TRUE,[Record],M5V 3Y2
+7534,Walnut Ave / Queen St W,REGULAR,43.645469,-79.411084,0,Walnut Ave / Queen St W,14,FALSE,[List],[List],437-388-5316,437-388-5316,1609.34,TRUE,[Record],M6J 1G4
+7536,Palmerston Ave / Dundas St W,REGULAR,43.651603,-79.408346,0,Palmerston Ave / Dundas St W,23,FALSE,[List],[List],437-388-1225,437-388-1225,1609.34,TRUE,[Record],M6J 1V2
+7537,Euclid Ave / Herrick St - SMART,SMARTMAPFRAME,43.661559,-79.413845,0,Euclid Ave / Herrick St,16,FALSE,[List],[List],437-333-8915,437-333-8915,1609.34,TRUE,[Record],M6G 2T4
+7538,Vaughan Rd /Wychwood Ave,REGULAR,43.6882821,-79.4253856,0,Vaughan Rd /Wychwood Ave,19,FALSE,[List],[List],437-388-1459,437-388-1459,1609.34,TRUE,[Record],M6C 2N5
+7539,Davisville Ave / Pailton Cres,REGULAR,43.69933,-79.39199,0,Davisville Ave / Pailton Cres,19,FALSE,[List],[List],437-388-2404,437-388-2404,1609.34,TRUE,[Record],M4S 1E8
+7540,Alvin Ave / St. Clair Ave E,REGULAR,43.68871,-79.39264,0,Alvin Ave / St Clair Ave E,19,FALSE,[List],[List],437-227-3652,437-227-3652,1609.34,TRUE,[Record],M4T 1M9
+7541,Bellwoods Ave / Treford Pl - SMART,SMARTMAPFRAME,43.65246,-79.413528,0,Bellwoods Ave / Treford Pl,20,FALSE,[List],[List],,,1609.34,TRUE,[Record],M6J 2R3
+7542,Queen St W / John St,REGULAR,43.650077,-79.391291,0,Queen St W / John St,23,FALSE,[List],[List],437-333-9830,437-333-9830,1609.34,TRUE,[Record],M5V 1Z8
+7543,Nassau St / Bellevue Ave,REGULAR,43.65484216,-79.40351232,0,Nassau St / Bellvue Ave,15,FALSE,[List],[List],437-333-9510,437-333-9510,1609.34,TRUE,[Record],M5T 2N4
+7545,Baldwin St / Henry St,REGULAR,43.6560758,-79.393259,0,Baldwin St / Henry St,15,FALSE,[List],[List],437-333-8865,437-333-8865,1609.34,TRUE,[Record],M5T 1L2
+7546,Ross St / Cecil St - SMART,SMARTMAPFRAME,43.6568254,-79.3966159,0,Ross St / Cecil St,18,FALSE,[List],[List],437-333-8180,437-333-8180,1609.34,TRUE,[Record],M5T 1N3
+7547,Orde St / McCaul St,REGULAR,43.6580442,-79.3927404,0,Orde St / McCaul St,15,FALSE,[List],[List],,,1609.34,TRUE,[Record],M5T 1W6
+7549,439 Sherbourne St,REGULAR,43.666051,-79.374161,0,439 Sherbourne St,47,FALSE,[List],[List],437-388-2640,437-388-2640,1609.34,TRUE,[Record],M4X 1K6
+7551,The Esplanade / Hahn Pl,VAULT,43.649709,-79.364184,0,The Esplanade / Hahn Pl,15,FALSE,[List],[List],437-388-1665,437-388-1665,1609.34,TRUE,[Record],M5A 4J6
+7552,Lake Shore Blvd W / Thirty Ninth Street,REGULAR,43.5927419,-79.5403301,0,Lake Shore Blvd W / Thirty Ninth Street,17,FALSE,[List],[List],437-333-7918,437-333-7918,1609.34,TRUE,[Record],M8W 1P9
+7553,Lake Shore Blvd W / Twenty Fourth St,REGULAR,43.597082,-79.522768,0,Lake Shore Blvd W / Twenty Fourth St,19,FALSE,[List],[List],437-388-5658,437-388-5658,1609.34,TRUE,[Record],M8V 1M1
+7554,Humber College (Lakeshore Campus),REGULAR,43.5961692,-79.5160575,0,Humber College,27,FALSE,[List],[List],437-388-5700,437-388-5700,1609.34,TRUE,[Record],M8V 4B6
+7555,Royal York Rd / Mimico Ave,REGULAR,43.612063,-79.496573,0,Royal York Rd / Mimico Ave,20,FALSE,[List],[List],437-388-5958,437-388-5958,1609.34,TRUE,[Record],M8V 1R6
+7556,Windsor St / Newcastle St,REGULAR,43.6171635,-79.4971065,0,Windsor St / Newcastle St,31,FALSE,[List],[List],437-388-5890,437-388-5890,1609.34,TRUE,[Record],M8Y 0A6
+7557,The Queensway / High St,REGULAR,43.630874,-79.482407,0,The Queensway / High St,23,FALSE,[List],[List],437-388-2784,437-388-2784,1609.34,TRUE,[Record],M8Y 1H6
+7558,Berry Rd / Bell Manor Dr,REGULAR,43.63732,-79.489083,0,Berry Rd / Bell Manor Dr,19,FALSE,[List],[List],437-388-6054,437-388-6054,1609.34,TRUE,[Record],M8Y 1W5
+7559,Swansea Community Centre,REGULAR,43.6438036,-79.4770327,0,Swansea Community Centre,15,FALSE,[List],[List],,,1609.34,TRUE,[Record],M6S 4Z9
+7561,Annette St / Jane St,REGULAR,43.658574,-79.487246,0,Annette St / Jane St,15,FALSE,[List],[List],,,1609.34,TRUE,[Record],M6S 3Z5
+7562,Priscilla Ave / Dundas St W,REGULAR,43.664665,-79.489385,0,Priscilla  Ave / Dundas St W,23,FALSE,[List],[List],,,1609.34,TRUE,[Record],M6S 2S1
+7563,St. Clair Ave W / Castleton Ave,REGULAR,43.668496,-79.485426,0,St Clair Ave W / Castleton Ave,19,FALSE,[List],[List],473-333-5383,473-333-5383,1609.34,TRUE,[Record],M6N 4Z5
+7564,Durie St / Dundas St W,REGULAR,43.665523,-79.484892,0,Durie St / Dundas St W,23,FALSE,[List],[List],437-333-4072,437-333-4072,1609.34,TRUE,[Record],M6S 2S1
+7565,St. Clair Ave W / Gunns Rd,REGULAR,43.672079,-79.470171,0,St Clair Ave W / Gunns Rd,23,FALSE,[List],[List],437-333-3509,437-333-3509,1609.34,TRUE,[Record],M6N 4X9
+7566,Weston Rd / St. Clair Ave W,REGULAR,43.673019,-79.467994,0,Weston Rd / St Clair Ave W,19,FALSE,[List],[List],,,1609.34,TRUE,[Record],M6N 3P4
+7567,Weston Lions Park,REGULAR,43.698841,-79.519472,0,Weston Lions Park,27,FALSE,[List],[List],437-333-3873,437-333-3873,1609.34,TRUE,[Record],M9N 1H7
+7568,Jameson Ave / Queen St W,REGULAR,43.63985,-79.43703,0,Jameson Ave / Queen St W,26,FALSE,[List],[List],437-288-9921,437-288-9921,1609.34,TRUE,[Record],M6K 1M3
+7569,Toronto Inukshuk Park,REGULAR,43.6329818,-79.40950821,,Toronto Inukshuk Park,47,FALSE,[List],[List],437-388-4688,437-388-4688,1609.34,TRUE,[Record],M6K 3C3
+7570,Carlaw Ave / Dundas St E,REGULAR,43.665076,-79.341509,0,Carlaw Ave / Dundas St E,17,FALSE,[List],[List],437-388-5077,437-388-5077,1609.34,TRUE,[Record],M4M 2T1
+7571,Highfield Rd / Gerrard St E,REGULAR,43.671771,-79.324961,0,Highfield Rd / Gerrard St E,19,FALSE,[List],[List],437-388-4899,437-388-4899,1609.34,TRUE,[Record],M4L 1Y7
+7572,Cosburn Ave / Durant Ave,REGULAR,43.6935477,-79.3301658,0,Cosburn Ave / Durant Ave,15,FALSE,[List],[List],437-388-4591,437-388-4591,1609.34,TRUE,[Record],M4J 3R7
+7575,Bayview Ave / Lawren Harris Square,REGULAR,43.6548521,-79.3539768,0,207 Eastern Avenue,15,FALSE,[List],[List],437-388-2838,437-388-2838,1609.34,TRUE,[Record],M5A 1H7
+7576,Front St E / Bayview Avenue,REGULAR,43.6535,-79.354068,0,Front St E / Bayview Avenue,22,FALSE,[List],[List],437-388-2680,437-388-2680,1609.34,TRUE,[Record],M5A 1H7
+7577,Oak St / Sumach St,REGULAR,43.6617908,-79.361515,0,Oak St / Sumach St,27,FALSE,[List],[List],437-388-1962,437-388-1962,1609.34,TRUE,[Record],M5A 2H4
+7579,Glebe Rd W / Yonge St,REGULAR,43.7005976,-79.397345,0,Glebe Rd / Yonge St,19,FALSE,[List],[List],437-388-2475,437-388-2475,1609.34,TRUE,[Record],M4S 1Z7
+7580,Hillsdale Ave W / Yonge St,REGULAR,43.7029672,-79.3979073,0,Hillsdale Ave W / Yonge St,15,FALSE,[List],[List],437-230-8826,437-230-8826,1609.34,TRUE,[Record],M4S 2A5
+7581,High Park Ave / Dundas St W,REGULAR,43.6653032,-79.4701178,0,345 High Park Ave,15,FALSE,[List],[List],437-229-5037,437-229-5037,1609.34,TRUE,[Record],M6P 2S8
+7582,Alameda Ave / Vaughan Rd - SMART,SMARTMAPFRAME,43.690903,-79.4375028,0,Amaleda Ave / Vaughan Rd,16,FALSE,[List],[List],437-227-7595,437-227-7595,1609.34,TRUE,[Record],M6C 2R1
+7583,Eglinton Ave W / Scarlett Rd,REGULAR,43.6834703,-79.5108942,0,Eglinton Ave W / Scarlett Rd,23,FALSE,[List],[List],437-226-9799,437-226-9799,1609.34,TRUE,[Record],M9A
+7584,The Pond Rd / Sentinel Rd,REGULAR,43.7696262,-79.5025943,0,The Pond Rd / Sentinel Rd,27,FALSE,[List],[List],437-226-5422,437-226-5422,1609.34,TRUE,[Record],M3J 2S5
+7587,Dufferin St / Finch Corridor Trail,REGULAR,43.77299392,-79.46762962,,Dufferin St / Finch Hydro Recreational Trail,19,FALSE,[List],[List],437-213-1564,437-213-1564,1609.34,TRUE,[Record],M3H 5T3
+7588,G Ross Lord Park,REGULAR,43.7781116,-79.467963,0,G Ross Lord Park,19,FALSE,[List],[List],437-225-0810,437-225-0810,1609.34,TRUE,[Record],M3H 5T4
+7589,Torresdale Ave / Antibes Dr,REGULAR,43.77953,-79.45233,0,Torresdale Ave / Antibes Dr,14,FALSE,[List],[List],437-241-5412,437-241-5412,1609.34,TRUE,[Record],M2R 3T2
+7590,Esther Shiner Stadium,REGULAR,43.7774374,-79.4447096,0,Ester Shiner Stadium,23,FALSE,[List],[List],437-240-9164,437-240-9164,1609.34,TRUE,[Record],M2R 1Y6
+7591,Elwood Blvd / Avenue Rd,REGULAR,43.707049,-79.40966,0,Elwood Blvd / Avenue Rd,23,FALSE,[List],[List],437-225-3075,437-225-3075,1609.34,TRUE,[Record],M5N 3B1
+7593,Roehampton Ave / Bayview Ave,REGULAR,43.711751,-79.378615,0,Roehampton St / Bayview Ave,27,FALSE,[List],[List],,,1609.34,TRUE,[Record],M4P 1S7
+7594,Fleming Cres / Bayview Ave,REGULAR,43.707045,-79.375437,0,Fleming Cres / Bayview Ave,15,FALSE,[List],[List],437-221-3249,437-221-3249,1609.34,TRUE,[Record],M4G 3C1
+7595,Moore Park,REGULAR,43.693256,-79.383238,0,Moore Park,15,FALSE,[List],[List],,,1609.34,TRUE,[Record],M4T 2H3
+7596,Langford Ave / Danforth Ave - SMART,SMARTMAPFRAME,43.6800218,-79.3405681,0,840 Danforth Ave,32,FALSE,[List],[List],,,1609.34,TRUE,[Record],M4J 1L7
+7597,Yonge St / Golfdale Rd,REGULAR,43.732016,-79.403637,0,Yonge St / Golfdale Rd,15,FALSE,[List],[List],437-223-4626,437-223-4626,1609.34,TRUE,[Record],M4N 2M6
+7598,Teddington Park Ave,REGULAR,43.732975,-79.40401,0,Teddington Park Ave,15,FALSE,[List],[List],437-221-7591,437-221-7591,1609.34,TRUE,[Record],M4N 2M8
+7599,Richmond St W / York St,REGULAR,43.650745,-79.383633,0,Richmond St W / York St,17,FALSE,[List],[List],437-235-9628,437-235-9628,1609.34,TRUE,[Record],M5H 3K6
+7600,Ursula Franklin St / Huron St - SMART,SMARTMAPFRAME,43.660274,-79.398049,0,Ursula Franklin St / Huron St,20,FALSE,[List],[List],437-220-4937,437-220-4937,1609.34,TRUE,[Record],M5S 2S2
+7601,Brick Works,REGULAR,43.683884,-79.36647,0,Brick Works,24,FALSE,[List],[List],437-220-8757,437-220-8757,1609.34,TRUE,[Record],M4W
+7602,Woodbine Ave / O'Connor Dr,REGULAR,43.699281,-79.318802,0,Woodbine Ave / O'Connor Dr,19,FALSE,[List],[List],437-2439359,437-2439359,1609.34,TRUE,[Record],M4C 4G9
+7603,O'Connor Dr / Curity Ave,REGULAR,43.707582,-79.311439,0,O'Connor Dr / Curity Ave,14,FALSE,[List],[List],437-219-1169,437-219-1169,1609.34,TRUE,[Record],M4B 3L6
+7604,St. Columba Pl / St. Clair Ave E,REGULAR,43.70567,-79.310554,0,St Columba Pl / St Clair Ave E,19,FALSE,[List],[List],437-213-8222,437-213-8222,1609.34,TRUE,[Record],M4B 1M8
+7605,Lumsden Ave / Eastdale Ave,REGULAR,43.69413548,-79.30058719,0,Lumsden Ave / Eastdale Ave,20,FALSE,[List],[List],437-236-2545,437-236-2545,1609.34,TRUE,[Record],M4C 4Z9
+7606,Dawes Rd / Taylor Creek Trl,REGULAR,43.696631,-79.297436,0,Dawes Rd / Taylor Creek Trl,19,FALSE,[List],[List],437-234-4358,437-234-4358,1609.34,TRUE,[Record],M4C 5L3
+7607,Fairmount Park,REGULAR,43.6765897,-79.3163022,0,Fairmount Park,19,FALSE,[List],[List],437-235-8009,437-235-8009,1609.34,TRUE,[Record],A1a1a1
+7608,Wilket Creek Park,REGULAR,43.720645,-79.355474,0,Wilket Creek Park,27,FALSE,[List],[List],437-236-1899,437-236-1899,1609.34,TRUE,[Record],M3C 2J7
+7609,Sunnybrook Park,REGULAR,43.720233,-79.362092,0,Sunnybrook Park,27,FALSE,[List],[List],1812000361,1812000361,1609.34,TRUE,[Record],M3C 3L7
+7610,Kingston Rd / Beech Ave,REGULAR,43.680095,-79.291714,0,Kingston Rd / Beech Ave,15,FALSE,[List],[List],437-240-2580,437-240-2580,1609.34,TRUE,[Record],M4E 1R9
+7611,Victoria Park Ave / Danforth Ave,REGULAR,43.691468,-79.288619,0,Victoria Park Ave / Danforth Ave,19,FALSE,[List],[List],437-240-1301,437-240-1301,1609.34,TRUE,[Record],M4C 1N2
+7612,Livingston Rd / Guildwood Pkwy,REGULAR,43.747854,-79.199327,0,Livingston Rd / Guildwood Pkwy,19,FALSE,[List],[List],437-242-1692,437-242-1692,1609.34,TRUE,[Record],M1E 1P4
+7613,Livingston Rd (Highland Creek Trail),REGULAR,43.7561681,-79.2026694,0,Livingston Rd (Highland Creek Trail),19,FALSE,[List],[List],437-242-8864,437-242-8864,1609.34,TRUE,[Record],M1E 1M4
+7614,Morningside Park (Highland Creek Trail),REGULAR,43.779353,-79.193023,0,Morningside Park (Highland Creek Trail),23,FALSE,[List],[List],437-238-4415,437-238-4415,1609.34,TRUE,[Record],M1E 3E8
+7615,Colonel Danforth Park,REGULAR,43.7777114,-79.1659711,0,Colonel Danforth Park,19,FALSE,[List],[List],437-238-5317,437-238-5317,1609.34,TRUE,[Record],M1C 1P8
+7616,Waterfront Trail (Rouge Hill),REGULAR,43.778015,-79.131911,0,Waterfront Trail (Rouge Hill),19,FALSE,[List],[List],,,1609.34,TRUE,[Record],M1C 5G5
+7617,Starspray Blvd / Lawrence Ave E,REGULAR,43.78852521,-79.12318448,0,Starspray Ave / Lawrence Ave E,19,FALSE,[List],[List],437-238-7894,437-238-7894,1609.34,TRUE,[Record],M1C 4P5
+7618,Vaughan Rd / Oakwood Ave,REGULAR,43.6926825,-79.441042,0,Vaughan Rd / Oakwood Ave,19,FALSE,[List],[List],437-237-4562,437-237-4562,1609.34,TRUE,[Record],A1a1a1
+7619,Braemar Ave / Eglinton Ave W,REGULAR,43.7041957,-79.4094472,0,Braemar Ave / Eglinton Ave W,15,FALSE,[List],[List],437-237-2133,437-237-2133,1609.34,TRUE,[Record],A1a1a1
+7620,Eglinton Ave E / Redpath Ave,REGULAR,43.7078691,-79.39248,0,Eglinton Ave E / Redpath Av,31,FALSE,[List],[List],437-236-7168,437-236-7168,1609.34,TRUE,[Record],A1a1a1
+7622,Marie Curtis Park,REGULAR,43.5880774,-79.5432067,0,Marie Curtis Park,23,FALSE,[List],[List],437-236-4104,437-236-4104,1609.34,TRUE,[Record],M8W 3P3
+7623,Royal York Rd / Lake Shore Blvd W,REGULAR,43.60338468,-79.49310512,,Royal York Rd / Lake Shore Blvd W,19,FALSE,[List],[List],437-239-5463,437-239-5463,1609.34,TRUE,[Record],M8V 1W3
+7624,Guildwood GO Station (South),REGULAR,43.754978,-79.1971289,0,Guildwood GO Station (South),11,FALSE,[List],[List],437-239-3229,437-239-3229,1609.34,TRUE,[Record],M1E 2M3
+7625,Yonge St / Lawrence Ave E,REGULAR,43.72514086,-79.40102575,,24 Lawrence Ave East,23,FALSE,[List],[List],437-239-3419,437-239-3419,1000,TRUE,[Record],M4N 1S1
+7626,Rouge Hill GO Station,REGULAR,43.7805505,-79.1301203,0,Rouge Hill GO Station,25,FALSE,[List],[List],437-238-7002,437-238-7002,1609.34,TRUE,[Record],M1C 5G4
+7627,Shaw St / Essex St - SMART,SMARTMAPFRAME,43.667076,-79.425116,0,Shaw St / Essex St - SMART,15,FALSE,[List],[List],,,1609.34,TRUE,[Record],M6G 3M4
+7629,Lundy Ave / Étienne Brûlé Park,REGULAR,43.6625395,-79.5030161,0,Lundy Ave / Etienne Brule Park,15,FALSE,[List],[List],437-239-7974,437-239-7974,1609.34,TRUE,[Record],M6S 2R5
+7630,Twelfth St / Thirteenth St,REGULAR,43.6002896,-79.5108692,0,Twelfth St / Thirteenth St,22,FALSE,[List],[List],437-247-2289,437-247-2289,1609.34,TRUE,[Record],M8V 4E2
+7631,Florence Gell Park,REGULAR,43.66196582,-79.49851065,,Florence Gell Park,15,FALSE,[List],[List],437-240-4174,437-240-4174,1609.34,TRUE,[Record],M6S 4Z4
+7632,Chiltern Hill Rd / Eglinton Ave W,REGULAR,43.7004017,-79.4275305,0,Chiltern Hill Rd / Eglinton Ave W,17,FALSE,[List],[List],437-233-9741,437-233-9741,1609.34,TRUE,[Record],M6C 2C1
+7633,Noble St / Queen St W,REGULAR,43.64226917,-79.42920979,,1266 Queen St W,15,FALSE,[List],[List],437-239-9032,437-239-9032,1609.34,TRUE,[Record],M6K 1L3
+7635,Runnymede Rd / Annette St,REGULAR,43.6596299,-79.4799176,0,Runnymede Rd / Annette St,15,FALSE,[List],[List],437-249-4977,437-249-4977,1609.34,TRUE,[Record],M6S 2Z6
+7636,Bloor St W / Riverside Dr,REGULAR,43.647663,-79.487583,0,2511 bloor st w,23,FALSE,[List],[List],,,1609.34,TRUE,[Record],M6S 5A6
+7637,Judson St / Royal York Rd,REGULAR,43.6162721,-79.4990363,0,10 Judson St,19,FALSE,[List],[List],,,1609.34,TRUE,[Record],M8Z 1A6
+7639,135 Queens Wharf Rd - SMART,SMARTMAPFRAME,43.6399714,-79.399404,0,135 Queens Warf,16,FALSE,[List],[List],0,0,1609.34,TRUE,[Record],M5V 0E4
+7640,Spadina Rd / St. Clair Ave W,REGULAR,43.683979,-79.410657,0,333 St.Clair Ave West,15,FALSE,[List],[List],,,1609.34,TRUE,[Record],M4V
+7641,Annette St / Dundas St W,REGULAR,43.6641174,-79.4588522,0,2659 Dundas St W,15,FALSE,[List],[List],,,1609.34,TRUE,[Record],M6P 1X9
+7642,Yonge St / St. Clair Ave,REGULAR,43.6885046,-79.39416077,0,1451 Yonge Street,19,FALSE,[List],[List],,,1609.34,TRUE,[Record],M4T 1Z2
+7643,Oriole Pkwy / Kilbarry Rd,REGULAR,43.6954486,-79.4026176,0,80 Oriole Parkway,19,FALSE,[List],[List],,,1609.34,TRUE,[Record],M5P 2G8
+7644,East Lynn Ave / Danforth Ave,REGULAR,43.6850809,-79.3149901,0,108 East Lynn Avenue,15,FALSE,[List],[List],,,1609.34,TRUE,[Record],M4C 1J7
+7645,University of Toronto Scarborough,REGULAR,43.7842419,-79.1849889,0,1295-1307 Military Trail,16,FALSE,[List],[List],,,1609.34,TRUE,[Record],M1C 1A5
+7646,University Ave / Richmond St W,REGULAR,43.64981903,-79.3864127,0,200 University Avenue,14,FALSE,[List],[List],,,1609.34,TRUE,[Record],M5H 4G1
+7647,Elm St/ University Ave (East Side),REGULAR,43.656373,-79.3878104,0,117 Elm Street,17,FALSE,[List],[List],,,1609.34,TRUE,[Record],M5G 1X8
+7650,St. Clair West Subway Station - Heath St. W,REGULAR,43.686352,-79.415894,0,2 Heath Street West,23,FALSE,[List],[List],,,1609.34,TRUE,[Record],M5P 3L6
+7654,Bloor St W / Pacific Ave,REGULAR,43.6541245,-79.4636388,0,3 Pacific Avenue,7,FALSE,[List],[List],,,1609.34,TRUE,[Record],M6P 3K6
+7655,Danforth Ave / Dewhurst Blvd,REGULAR,43.680207,-79.339243,0,896 Danforth Avenue,15,FALSE,[List],[List],,,1609.34,TRUE,[Record],M4J 1L9
+7656,Bloor St W / Brock Ave,REGULAR,43.6589882,-79.438715,0,Bloor St W / Brock Av,11,FALSE,[List],[List],,,1609.34,TRUE,[Record],M6H 1M9
+7657,1 Market St,ELECTRICBIKESTATION,43.6469928,-79.3706665,0,1 Market St,20,TRUE,[List],[List],,,1609.34,TRUE,[Record],M5E 1N1
+7658,King's Mill Park,REGULAR,43.64920407,-79.49336334,0,2639 Bloor St W,27,FALSE,[List],[List],,,1609.34,TRUE,[Record],M8X 1A3
+7659,Amroth Ave / Danforth Ave,REGULAR,43.6856128,-79.3116827,0,Amroth Ave / Danforth Ave,19,FALSE,[List],[List],,,1609.34,TRUE,[Record],M4C 1K1
+7660,285 Victoria St,REGULAR,43.656633,-79.379625,0,285 Victoria St,39,FALSE,[List],[List],,,1609.34,TRUE,[Record],M5B 2L6
+7662,Beaty Ave / Queen St W,REGULAR,43.6393107,-79.4408141,0,85 Beaty Avenue,19,FALSE,[List],[List],,,1609.34,TRUE,[Record],M6K 3B3
+7663,Kilgour Rd / Rumsey Rd,REGULAR,43.718039,-79.371914,0,98 Glenvale Boulevard,17,FALSE,[List],[List],,,1609.34,TRUE,[Record],M4G 2V9
+7664,Sunnybrook Health Centre - L Wing,REGULAR,43.72268,-79.37644,0,60 Raab Blvd,15,FALSE,[List],[List],,,1609.34,TRUE,[Record],M4N 1J7
+7665,Sunnybrook Health Centre - S Wing,REGULAR,43.720998,-79.377456,0,Test,11,FALSE,[List],[List],,,1609.34,TRUE,[Record],M4N 3M5
+7666,Dundas St W / St Helen's Ave - SMART,SMARTMAPFRAME,43.6504218,-79.4407647,0,505 College Street,26,FALSE,[List],[List],,,1609.34,TRUE,[Record],M6K 1V6
+7667,Spadina Ave / Sussex Ave ,REGULAR,43.664028,-79.4029787,0,698 Spadina Avenue,35,FALSE,[List],[List],000-000-000,000-000-000,1609.34,TRUE,[Record],M5S 2H8
+7668,Simcoe St / Dundas St W,ELECTRICBIKESTATION,43.655103,-79.389295,0,Simcoe St / Dundas St W,20,TRUE,[List],[List],4168489062,4168489062,1609.34,TRUE,[Record],M5G 1W7
+7671,Yonge St / Montgomery Ave - SMART,SMARTMAPFRAME,43.7096086,-79.39915125,0,25 Montgomery Ave,12,FALSE,[List],[List],4372381831,4372381831,1609.34,TRUE,[Record],M4R 0A1
+7675,1525 Dundas St W,REGULAR,43.64957,-79.432446,0,1529 Dundas Street West,15,FALSE,[List],[List],,,16093.4,TRUE,[Record],M6K 1T6
+7676,York University (Glendon Campus) - SMART,SMARTMAPFRAME,43.72736549,-79.38142546,0,"1 Chedington Pl, North York, ON M4N 3R4",16,FALSE,[List],[List],,,16093.4,TRUE,[Record],M4N 3R4
+7677,1303 Yonge St - SMART,SMARTMAPFRAME,43.6846177,-79.3924592,0,1303 YONGE Street,15,FALSE,[List],[List],437-243-6382,437-243-6382,16093.4,TRUE,[Record],M4T 2Y9
+7678,York University Station (South) - SMART,SMARTMAPFRAME,43.77345,-79.5002,0,York University Station - SMART,16,FALSE,[List],[List],437-992-6306,437-992-6306,16093.4,TRUE,[Record],M3J
+7679,York University Station (North),REGULAR,43.7741,-79.5005,0,York University Station,15,FALSE,[List],[List],437-388-2557,437-388-2557,100,TRUE,[Record],M3J
+7680,Princes' Blvd / Nunavut Rd,REGULAR,43.63335235,-79.41436313,0,PRINCES' BLVD / NOVA SCOTIA AVE,19,FALSE,[List],[List],437-241-4560,437-241-4560,1609.34,TRUE,[Record],M6K 3C3
+7681,25 Booth Ave,ELECTRICBIKESTATION,43.6544839,-79.341057,0,25 BOOTH AVE,24,TRUE,[List],[List],,,1609.34,TRUE,[Record],M4M 2M3
+7682,Bathurst St / Front St W,REGULAR,43.6413479,-79.4013882,0,Bathurst St / Front St W,35,FALSE,[List],[List],647-620-9421,647-620-9421,3218.68,TRUE,[Record],M5V 2P1
+7684,Bay St / Harbour St ,REGULAR,43.64215,-79.377,0,Bay St / Harbour St (East),23,FALSE,[List],[List],,,1609.34,TRUE,[Record],M5E
+7685,King St W / Brant St,REGULAR,43.645102,-79.3974498,0,522 King Street West,23,FALSE,[List],[List],,,1000,TRUE,[Record],M5V 1L7
+7686,Lower Jarvis St / The Esplanade,VAULT,43.6478206,-79.3704721,0,The Esplanade & Lower Jarvis St,15,FALSE,[List],[List],,,1000,TRUE,[Record],M5E 1Z2
+7687,Bloor St W / Gladstone Ave - SMART,SMARTMAPFRAME,43.6602021,-79.4342726,0,"1101 Bloor Street West, Toronto",11,FALSE,[List],[List],,,1000,TRUE,[Record],M6H 1M8
+7688,High Park Blvd / Parkside Dr,REGULAR,43.64456432,-79.45737059,,200 Parkside Drive,15,FALSE,[List],[List],,,1000,TRUE,[Record],M6R 0A1
+7691,Christie St / Dupont St,REGULAR,43.67168,-79.421192,0,Christie St / Dupont St,19,FALSE,[List],[List],,,1000,TRUE,[Record],M6G 1Z4
+7692,85 Lee Ave,ELECTRICBIKESTATION,43.6700692,-79.2971326,0,85 Lee Ave,26,TRUE,[List],[List],,,50,TRUE,[Record],M4E 2P1
+7693,Mutual St / Shuter St,VAULT,43.65491968,-79.37496087,,77 Mutual Street ,23,FALSE,[List],[List],,,1000,TRUE,[Record],M5B 2A9
+7694,Victoria Park Ave / Dawes Rd,VAULT,43.706466,-79.29511,0,Victoria Park Ave / Dawes Rd,19,FALSE,[List],[List],,,1000,TRUE,[Record],M4B 2K3
+7695,Queen St E / Joseph Duggan Rd,VAULT,43.6677628,-79.3081171,0,Queen St E and Joseph Duggan Rd,19,FALSE,[List],[List],,,1000,TRUE,[Record],M4L 3Y2
+7696,Heyworth Cres / Kingston Rd,VAULT,43.6750806,-79.3068697,0,Heyworth Cres / Kingston Rd ,19,FALSE,[List],[List],,,1000,TRUE,[Record],M4L 1T7
+7698,St. Clair Ave W / Caledonia Rd,VAULT,43.67566643,-79.45393093,,St Clair Ave W / Caledonia Rd,13,FALSE,[List],[List],,,1000,TRUE,[Record],M6E 1C7
+7699,St Clair Ave W / Oakwood Ave,VAULT,43.678177,-79.435364,0,St Clair Ave W / Oakwood Ave,15,FALSE,[List],[List],,,1000,TRUE,[Record],M6H 2M1
+7700,St. Clair Ave W / Robina Ave,VAULT,43.68005,-79.43469,0,St Clair Ave W / Robina Ave,15,FALSE,[List],[List],,,1000,TRUE,[Record],M6C1C6
+7701,Roncesvalles Ave / Fermanagh Ave,VAULT,43.64631447,-79.44879407,0,Roncesvalles Ave / Fermanagh Ave,19,FALSE,[List],[List],,,1000,TRUE,[Record],M6R
+7702,111 Broadview Ave,ELECTRICBIKESTATION,43.6593483,-79.3499366,0,111 Broadview Ave,18,TRUE,[List],[List],,,1000,TRUE,[Record],M4M 1H1
+7703,Oak St / Sackville St,REGULAR,43.6613642,-79.3641171,10,274 Oak St,19,FALSE,[List],[List],,,100,TRUE,[Record],M5A 3S7
+7704,24 Mountjoy Ave,VAULT,43.6804935,-79.33044553,,24 Mountjoy Ave,19,FALSE,[List],[List],,,1000,TRUE,[Record],M4J 1J6
+7705,Colgate Ave / Carlaw Ave,VAULT,43.6623658,-79.3413344,0,88 Colgate Ave,19,FALSE,[List],[List],,,1000,TRUE,[Record],M4M 3L1
+7706,Felstead Ave/Gillard Ave (Monarch Park),VAULT,43.6791345,-79.3263159,0,Felstead Ave / Gillard Ave (Monarch Park),27,FALSE,[List],[List],,,1000,TRUE,[Record],M4J 1G4
+7707,Coronation Park (Martin Goodman Trail),REGULAR,43.635007,-79.403341,0,7972 Remembrance Drive,19,FALSE,[List],[List],,,350,TRUE,[Record],M5V 3T7
+7708,101 Cedarvale Ave,ELECTRICBIKESTATION,43.6868681,-79.3110942,0,101 cedarvale Ave,28,TRUE,[List],[List],,,50,TRUE,[Record],M4C 4J7
+7709,Beltline Trail / Yonge St,REGULAR,43.6962302,-79.3950434,0,5 Merton Street,23,FALSE,[List],[List],,,350,TRUE,[Record],M4S 3G4
+7710,11 Spadina Rd,ELECTRICBIKESTATION,43.6677246,-79.4041365,0,11 SPADINA RD,18,TRUE,[List],[List],,,350,TRUE,[Record],M5R2S9
+7711,Havelock St / Dewson St,REGULAR,43.6554793,-79.4302462,0,71 Havelock Street,15,FALSE,[List],[List],,,350,TRUE,[Record],M6H 3B3
+7712,Queen St W / Shaw St,REGULAR,43.6442457,-79.4161044,0,999 Queen Street West,23,FALSE,[List],[List],,,350,TRUE,[Record],M6J 2W2
+7713,Temperance St / Bay St,VAULT,43.6506,-79.381285,0,55 Temperance St,23,FALSE,[List],[List],,,350,TRUE,[Record],M5H 2V6
+7715,Lumsden Ave / Cedarvale Ave,REGULAR,43.693187,-79.314283,0,324 Cedarvale Avenue,11,FALSE,[List],[List],,,350,TRUE,[Record],M4C 4K4
+7716,Church St / The Esplanade,REGULAR,43.6469251,-79.3733192,0,75 The Esplanade,19,FALSE,[List],[List],,,350,TRUE,[Record],M5E 1Z4
+7717,Niagara St / Portland St,REGULAR,43.64245343,-79.39959004,,18 Portland Street,11,FALSE,[List],[List],,,350,TRUE,[Record],M5V 1C2
+7718,St. Andrew's Playground Park,REGULAR,43.646552,-79.399586,0,8 Maud Street,11,FALSE,[List],[List],,,350,TRUE,[Record],M5V 2M5
+7719,Wolseley St / Augusta Ave,REGULAR,43.6484201,-79.4005192,0,15 Denison Ave,19,FALSE,[List],[List],,,350,TRUE,[Record],M5T 2M4
+7720,King St W / Portland St - SMART,SMARTMAPFRAME,43.644395,-79.4006543,0,620 King Street West,32,FALSE,[List],[List],,,350,TRUE,[Record],M5V 1M6
+7721,Widmer St / King St W,REGULAR,43.6463574,-79.391206,0,360 King Street West,11,FALSE,[List],[List],,,350,TRUE,[Record],M5V 1J9
+7724,Wellesley St E / Parliament St,REGULAR,43.6682342,-79.3702641,0,280 Wellesley Street East,15,FALSE,[List],[List],,,350,TRUE,[Record],M4X 1G5
+7728,Randolph Ave / Perth Ave,REGULAR,43.6585504,-79.4497659,0,152 Perth Avenue,19,FALSE,[List],[List],,,350,TRUE,[Record],M6P 4G5
+7729,265 Armadale Ave,ELECTRICBIKESTATION,43.6501644,-79.4829691,0,265 Armadale Ave,44,TRUE,[List],[List],,,1000,TRUE,[Record],M6S 1P5
+7730,800 Fleet St (South),ELECTRICBIKESTATION,43.63670985,-79.40880518,0,800 Fleet Street,43,TRUE,[List],[List],,,350,TRUE,[Record],M5V 1A9
+7731,Victoria Park Ave / Kingston Rd,VAULT,43.68035,-79.28357,0,1085 Kingston Rd,15,FALSE,[List],[List],,,400,TRUE,[Record],M4E 3S8
+7732,Kingston Rd / Warden Ave,VAULT,43.68824136,-79.27046628,0,Kingston Rd / Warden Ave,14,FALSE,[List],[List],,,1000,TRUE,[Record],M1N 1R5
+7733,Pharmacy Ave / Danforth Ave,VAULT,43.6929478,-79.2833998,0,Pharmacy Ave / Danforth Ave,15,FALSE,[List],[List],,,1000,TRUE,[Record],M1L 4N7
+7734,Danforth Ave / Warden Ave,VAULT,43.6950192,-79.2718066,0,Danforth Ave / Warden Ave,15,FALSE,[List],[List],,,1000,TRUE,[Record],M1L 4G2
+7735,Birchcliff Ave / Kingston Rd,VAULT,43.691688,-79.265027,0,Birchcliff Ave / Kingston Rd,15,FALSE,[List],[List],,,1000,TRUE,[Record],M1M 1R9
+7736,Birchmount Rd / Kingston Rd,VAULT,43.69401298,-79.26257205,0,Birchmount Rd / Kingston Rd,15,FALSE,[List],[List],,,1000,TRUE,[Record],M1N 3J6
+7737,Kingston Rd / Glen Everest Rd,VAULT,43.69749005,-79.25655146,0,5 Glen Everest Rd (Rosetta McClain Gardens),15,FALSE,[List],[List],,,1000,TRUE,[Record],M1N 1J2
+7738,Highview Ave / Kennedy Rd,VAULT,43.70241858,-79.25631671,0,150 Highview Avenue,15,FALSE,[List],[List],,,1000,TRUE,[Record],M1N
+7739,Kingston Rd / Ridgemoor Ave,VAULT,43.70643614,-79.25104443,0,2301 Kingston Rd,15,FALSE,[List],[List],,,1000,TRUE,[Record],M1N 1V1
+7740,Sharpe St / Park St (Sandown Park),VAULT,43.7105975,-79.2541175,0,50 Natal St,15,FALSE,[List],[List],,,1000,TRUE,[Record],M1N
+7741,Howard Park Ave / Parkside Dr,REGULAR,43.648657,-79.458111,0,119 Constance Street,15,FALSE,[List],[List],,,350,TRUE,[Record],M6R 1S7
+7742,Eglinton Ave W / Prospect Cemetery,VAULT,43.69415,-79.4578258,0,2067 EglintonAve W,19,FALSE,[List],[List],,,1000,TRUE,[Record],M6E 2K7
+7743,Eglinton Ave W / Gilbert Ave,VAULT,43.69254717,-79.46332759,0,2343 Eglinton Ave W,19,FALSE,[List],[List],,,1000,TRUE,[Record],M6E 2L6
+7744,Rogers Rd / Prospect Cemetery,VAULT,43.68323,-79.455765,0,200 Rogers Rd,23,FALSE,[List],[List],,,1000,TRUE,[Record],M6E 4L1
+7745,Bert Robinson Park,VAULT,43.688028,-79.460265,0,BERT ROBINSON PARK,15,FALSE,[List],[List],,,1000,TRUE,[Record],M6E 4T8
+7746,Marlee Ave / York Beltline Trail,VAULT,43.70163,-79.44099,0,120 Marlee Ave,19,FALSE,[List],[List],,,1000,TRUE,[Record],M6E 3B6
+7747,Eglinton Ave W / Ennerdale Rd,VAULT,43.69503235,-79.45302971,0,1963 Eglinton Ave W,15,FALSE,[List],[List],,,1000,TRUE,[Record],M6E 4E2
+7748,Bloor St W / Old Mill Trl,VAULT,43.6501687,-79.4963345,0,2682 Bloor St W,19,FALSE,[List],[List],,,1000,TRUE,[Record],M8X 1A5
+7749,Wendover Rd / Bloor St W (Green P),VAULT,43.6492,-79.50602,0,342 Prince Edward Dr N,15,FALSE,[List],[List],,,1000,TRUE,[Record],M8X 1B2
+7750,Luttrell Ave / Danforth Ave,REGULAR,43.6897656,-79.2939525,0,Luttrell Ave / Danforth Ave,15,FALSE,[List],[List],,,1000,TRUE,[Record],M4C 1M3
+7751,Willingdon Blvd / Bloor St W (Green P),VAULT,43.64817,-79.510392,0,9 Willingdon Blvd,15,FALSE,[List],[List],,,1000,TRUE,[Record],M8X 2H1
+7752,1926 Lake Shore Blvd W,VAULT,43.6357643,-79.4674917,0,1926 Lake Shore Blvd W,23,FALSE,[List],[List],,,1000,TRUE,[Record],M6S 1A1
+7753,36 Park Lawn Rd,VAULT,43.6236917,-79.4838132,0,36A Park Lawn Road,15,FALSE,[List],[List],,,350,TRUE,[Record],M8V 0E5
+7754,Walter Saunders Park,VAULT,43.69932707,-79.44936304,0,481 Locksley Avenue,14,FALSE,[List],[List],,,350,TRUE,[Record],M6E 2S5
+7755,Park Lawn Rd / Berry Rd,VAULT,43.63605238,-79.49325239,0,316 Park Lawn Road,15,FALSE,[List],[List],,,350,TRUE,[Record],M8Y 3K2
+7756,Tobermory Dr / Finch Corridor Trail,VAULT,43.76181724,-79.51070491,,Tobemory Dr / Finch Hydro Recreational Trail,19,FALSE,[List],[List],,,350,TRUE,[Record],M3N 2R7
+7757,The Well,ELECTRICBIKESTATION,43.64302506,-79.39430138,0,The Well,19,TRUE,[List],[List],,,350,TRUE,[Record],M5V 2H6
+7758,Driftwood Ave / Finch Corridor Trail,VAULT,43.7603624,-79.5162777,0,Driftwood Ave / Finch Hydro Trail,19,FALSE,[List],[List],,,1000,TRUE,[Record],M3N 2N4
+7759,The Pond Rd / Shoreham Dr,VAULT,43.772445,-79.511912,0,1804 Ian Macdonald Boulevard,15,FALSE,[List],[List],,,350,TRUE,[Record],M3J 3M4
+7760,Grand Avenue Park,VAULT,43.623708,-79.490054,,45 Grand Avenue,23,FALSE,[List],[List],,,350,TRUE,[Record],M8Y 0A7
+7761,Moss Park,REGULAR,43.655972,-79.370638,0,152 Shuter Street,15,FALSE,[List],[List],,,350,TRUE,[Record],M5A 1V9
+7762,College St / Henry St ,REGULAR,43.6591529,-79.3947953,0,184 College St,14,FALSE,[List],[List],,,350,TRUE,[Record],M5S 3E4
+7765,St. John's Rd / Dundas St W,REGULAR,43.66526762,-79.47502123,0,St. John's Rd / Dundas St W,15,FALSE,[List],[List],4168938980,4168938980,400,TRUE,[Record],M6P 1T7
+7766,Albany Ave / Bloor St W,REGULAR,43.66554144,-79.41010318,0,496 Bloor St W,15,FALSE,[List],[List],W11- University - Rosedale,W11- University - Rosedale,300,TRUE,[Record],M5S 1Y3
+7767,Pioneer Village Subway Station,REGULAR,43.77649016,-79.50853649,0,Pioneer Village Subway Station,11,FALSE,[List],[List],416-893-8980,416-893-8980,1000,TRUE,[Record],M7A 2C5
+7768,Armoury St / Chestnut St,REGULAR,43.653518,-79.38591064,0,361 University Ave,14,FALSE,[List],[List],Ward 10 - Spadina -Fort York,Ward 10 - Spadina -Fort York,200,TRUE,[Record],M5G 1T3
+7769,Lake Shore Blvd W / Brow Dr,REGULAR,43.59141,-79.5441819,0,Lake Shore Blvd W / Brow Dr,15,FALSE,[List],[List],Long Branch Loop ,Long Branch Loop ,350,TRUE,[Record],M8W 3P6
+7770,Spadina Ave / Sullivan St,REGULAR,43.65082786,-79.396981,0,215 Spadina Ave,23,FALSE,[List],[List],South-East of intersection ,South-East of intersection ,300,TRUE,[Record],M5T 2C7
+7771,St. Clair Ave W / Osler St,VAULT,43.67392698,-79.46068479,0,St. Clair Ave W / Osler St,11,FALSE,[List],[List],1753 St. Clair Ave W,1753 St. Clair Ave W,350,TRUE,[Record],M6N 1J4
+7772,Simcoe St / King St W,REGULAR,43.64750835,-79.38604437,0,Simcoe St / King St W,15,FALSE,[List],[List],North- East of the Intersection ,North- East of the Intersection ,350,TRUE,[Record],
+7773,Grenoble Dr / Gateway Blvd,VAULT,43.71513211,-79.33413623,0,5 Grenoble Dr,14,FALSE,[List],[List],Ward 16 - Fronting Grenoble Dr,Ward 16 - Fronting Grenoble Dr,500,TRUE,[Record],M3C 1C3
+7774,Grenoble Dr / Deauville Ln,VAULT,43.71649676,-79.3308944,0,48 Grenoble Dr,15,FALSE,[List],[List],Ward 16 - 48 Grenoble drive ,Ward 16 - 48 Grenoble drive ,500,TRUE,[Record],M3C 1C8
+7775,Grenoble Dr / Vendome Pl,VAULT,43.715538,-79.32811428,0,75 Grenoble Dr,11,FALSE,[List],[List],Ward 16 - 75 Grenoble Dr,Ward 16 - 75 Grenoble Dr,500,TRUE,[Record],M3C 1E1
+7776,Ferrand Dr / Rochefort Dr,VAULT,43.71963254,-79.33199951,0,250 Ferrand Dr,19,FALSE,[List],[List],Ward 16 - 250 Ferrand Dr,Ward 16 - 250 Ferrand Dr,500,TRUE,[Record],M3C 3G8
+7777,Thorncliffe Park Dr / Leaside Park Trail,VAULT,43.70400405,-79.34807015,0,12 Thorncliffe Park Dr,15,FALSE,[List],[List],Ward 15 - 12 Thorncliffe Park Dr,Ward 15 - 12 Thorncliffe Park Dr,498,TRUE,[Record],M4H 1N8
+7778,75 Thorncliffe Park Dr,VAULT,43.70518328,-79.3422473,0,75 Thorncliffe Park Dr,11,FALSE,[List],[List],Ward 15 - 75 Thorncliffe Park Dr,Ward 15 - 75 Thorncliffe Park Dr,500,TRUE,[Record],M4H 1L4
+7779,165 McRae Dr,VAULT,43.70587455,-79.36800596,0,165 McRae Dr,15,FALSE,[List],[List],Ward 15 - 165 McRae Dr ,Ward 15 - 165 McRae Dr ,500,TRUE,[Record],M4G 1S8
+7780,Mount Pleasant Rd / Davisville Ave - SMART,SMARTMAPFRAME,43.70088226,-79.38736017,0,220 Davisville Ave (June Rowlands Park),16,FALSE,[List],[List],Ward 12 - 220 Davisville Ave (JR Park),Ward 12 - 220 Davisville Ave (JR Park),500,TRUE,[Record],M4S
+7781,St. Clair Ave W / Avenue Rd ,VAULT,43.68688938,-79.40099513,0,525 Avenue Rd (Amsterdam Square),15,FALSE,[List],[List],Ward 12 - 525 avenue Rd (Amsterdam Sq),Ward 12 - 525 avenue Rd (Amsterdam Sq),500,TRUE,[Record],M4V 2J7
+7782,Downsview Park Subway Station - SMART,SMARTMAPFRAME,43.753107,-79.479626,0,25 Vitti St,20,FALSE,[List],[List],Ward 6 - 25 Vitti St,Ward 6 - 25 Vitti St,500,TRUE,[Record],M3K 2C1
+7783,60 Carl Hall Rd - SMART,SMARTMAPFRAME,43.74796393,-79.47521217,0,60 Carl Hall Rd,20,FALSE,[List],[List],Ward 6 - 60 Carl Hall Rd,Ward 6 - 60 Carl Hall Rd,950,TRUE,[Record],M3K 2C1
+7784,Downsview Park Blvd / Keele St  - SMART,SMARTMAPFRAME,43.73673829,-79.48227196,0,60 George Butchart Dr,20,FALSE,[List],[List],Ward 6 - 60 George Butchart Dr,Ward 6 - 60 George Butchart Dr,500,TRUE,[Record],M3K
+7785,Keele St / Dovehouse Ave - SMART,SMARTMAPFRAME,43.7494501,-79.4869662,0,2 John Drury Dr,16,FALSE,[List],[List],Ward 6 - 2 John Drury Dr,Ward 6 - 2 John Drury Dr,500,TRUE,[Record],M3M 2Y9
+7787,HTO Park West,REGULAR,43.63737146,-79.38976959,0,375 Queens Quay West,31,FALSE,[List],[List],HTO Park West - Queen Quay W ,HTO Park West - Queen Quay W ,200,TRUE,[Record],M5V 1A2
+7788,Queens Quay E / Lower Jarvis St ,REGULAR,43.64392767,-79.36873017,0,Queens Quay E / Lower Jarvis St ,23,FALSE,[List],[List],,,100,TRUE,[Record],
+7790,Lynn Williams St / Pirandello St ,REGULAR,43.63912451,-79.41423167,0,Lynn William St / Pirandello St ,17,FALSE,[List],[List],,,200,TRUE,[Record],M6K
+7791,Ossington Ave / Bruce St,REGULAR,43.64570237,-79.41933192,0,Ossington Ave / Bruce St,15,FALSE,[List],[List],,,350,TRUE,[Record],
+7792,Gladstone Ave / Queen St W,VAULT,43.64314139,-79.42728016,0,8 Gladstone Ave,15,FALSE,[List],[List],8 Gladstone Ave,8 Gladstone Ave,50,TRUE,[Record],M6J 0B3
+7794,York St / Harbour St (Love Park),,43.64101663,-79.38035904,0,York St / Harbour St (Love Park),16,FALSE,,[List],96 Queens Quay W,96 Queens Quay W,350,TRUE,[Record],M5J
+7796,Dundas St E / River St,VAULT,43.661152,-79.358505,0,Dundas St E / River St,19,FALSE,[List],[List],,,1000,TRUE,[Record],
+7798,Shuter St/River St,VAULT,43.659296,-79.358035,0,Shuter St / River St,15,FALSE,[List],[List],,,100,TRUE,[Record],
+7799,Danforth Ave / Danforth Rd,VAULT,43.69362207,-79.2771053,0,Danforth Ave / Danforth Rd,15,FALSE,[List],[List],Ward 20  @ 3475 Danforth Ave,Ward 20  @ 3475 Danforth Ave,500,TRUE,[Record],M1L 1E2
+7800,Brimley Rd / McCowan District Park,VAULT,43.72704086,-79.24391402,0,Brimley Rd / McCowan District Park,19,FALSE,[List],[List],Ward 20 -150 Brimley Rd,Ward 20 -150 Brimley Rd,1000,TRUE,[Record],M1M 3T1
+7801,Parkcrest Dr / Kingston Rd,VAULT,43.73596719,-79.21995221,0,39-45 Parkcrest Dr,15,FALSE,[List],[List],Ward 20 - (39 -45  Parkcrest Dr),Ward 20 - (39 -45  Parkcrest Dr),1000,TRUE,[Record],M1M 3S5
+7802,King St W / Jameson Ave - SMART,SMARTMAPFRAME,43.63735796,-79.43617976,0,1430 King St W,12,FALSE,[List],[List],Ward 4 - (1430 King St W),Ward 4 - (1430 King St W),350,TRUE,[Record],M6K 1H8
+7803,Scarborough Soccer Centre,VAULT,43.7154661,-79.2876595,0,"45 Fairfax Crescent, Toronto, ON, M1L 1Z6",19,FALSE,[List],[List],Ward 20 - ( 45 Fairfax Cres),Ward 20 - ( 45 Fairfax Cres),300,TRUE,[Record],M1L 1Z6
+7804,Lansdowne Ave / Seaforth Ave ,VAULT,43.6429044,-79.43746059,0,75 Lansdowne Ave,12,FALSE,[List],[List],Ward 4 - (75 Lansdowne Ave),Ward 4 - (75 Lansdowne Ave),350,TRUE,[Record],M6K 2W1
+7805,Pharmacy Ave / Teesdale Pl,VAULT,43.69735608,-79.28528711,0,125 Pharmacy Ave,19,FALSE,[List],[List],Ward 20 - (125 Pharmacy Ave),Ward 20 - (125 Pharmacy Ave),500,TRUE,[Record],M1L 3E7
+7806,Danforth Rd / Birchmount Rd ,VAULT,43.70688,-79.26851,0,438 Danforth Rd,15,FALSE,[List],[List],Ward 20 - (438 Danforth Rd ),Ward 20 - (438 Danforth Rd ),500,TRUE,[Record],M1L 3X6
+7807,552 Birchmount Rd,VAULT,43.71176279,-79.27028153,0,552 Birchmount Rs,15,FALSE,[List],[List],Ward 20 - (552 Birchmount Rd),Ward 20 - (552 Birchmount Rd),350,TRUE,[Record],M1K 1P4
+7808,Eastgate Cres / Pharmacy Ave ,VAULT,43.71104424,-79.29127314,0,Eastgate Ct / Pharmacy Ave ,14,FALSE,[List],[List],Ward 20 -(645 Pharmacy Ave),Ward 20 -(645 Pharmacy Ave),350,TRUE,[Record],M1L 3H3
+7809,Firvalley Ct / Warden Ave,VAULT,43.7032112,-79.2787149,0,Firvalley Ct / Warden Ave,19,FALSE,[List],[List],Ward 20 -(49 Firvalley Ct),Ward 20 -(49 Firvalley Ct),350,TRUE,[Record],M1L 1P2
+7810,Avenue Rd / Cumberland St ,VAULT,43.6698217,-79.39444615,0,13 Avenue Rd,15,FALSE,[List],[List],Ward 11 - (13 Avenue Rd),Ward 11 - (13 Avenue Rd),100,TRUE,[Record],M5R 1A8
+7811,Midland Ave / Kingston Rd,VAULT,43.7128578,-79.2487086,0,425 Midland Ave,19,FALSE,[List],[List],Ward 20-(425 Midland Ave),Ward 20-(425 Midland Ave),350,TRUE,[Record],M1N 4A5
+7812,Bellamy Rd S / Kingston Rd,VAULT,43.73232779,-79.2249662,0,10 Bellamy Rd S,19,FALSE,[List],[List],Ward 20-(10 Bellamy Rd S),Ward 20-(10 Bellamy Rd S),35,TRUE,[Record],M1M 3N8
+7813,Yonge St / Merton St ,VAULT,43.69627507,-79.39629396,0,1835 Yonge St. ,23,FALSE,[List],[List],Ward 12 - (Davisville TTC Subway Station),Ward 12 - (Davisville TTC Subway Station),100,TRUE,[Record],M4S1X8
+7814,Fenwood Ht / Kingston Rd,VAULT,43.7269017,-79.22920397,0,Fenwood Ht / Kingston Rd,15,FALSE,[List],[List],Ward 20 - (3105 Kingston Rd),Ward 20 - (3105 Kingston Rd),350,TRUE,[Record],M1M 1P1
+7815,Avenue Rd / Macpherson Ave ,VAULT,43.67794376,-79.39836279,0,Avenue Rd / Macpherson Ave ,15,FALSE,[List],[List],Ward 12 - (226 Macpherson Ave),Ward 12 - (226 Macpherson Ave),500,TRUE,[Record],M4V 2M2
+7816,Bay St / Dundas St W,VAULT,43.65535078,-79.38345967,0,Bay St / Dundas St W,55,FALSE,[List],[List],Ward 13 - (65 Dundas St W),Ward 13 - (65 Dundas St W),200,TRUE,[Record],M5G 2C3
+7817,Shaw St / King St W,VAULT,43.64125616,-79.41502994,0,Shaw St / King St W,15,FALSE,[List],[List],Ward 10 - (1007 King St W),Ward 10 - (1007 King St W),350,TRUE,[Record],M6K 3N3
+7818,Soudan Ave / Yonge St ,VAULT,43.7043096,-79.3972815,0,3 Soudan Ave,19,FALSE,[List],[List],Ward 12 - (3 Soudan Ave),Ward 12 - (3 Soudan Ave),350,TRUE,[Record],M4S 0C6
+7819,Avenue Rd / Oxton Ave ,VAULT,43.6971116,-79.40537298,0,755 Avenue Rd,15,FALSE,[List],[List],Ward 12 - (755 Avenue Rd),Ward 12 - (755 Avenue Rd),350,TRUE,[Record],M5P 2J9
+7820,1612 Danforth Ave ,ELECTRICBIKESTATION,43.68370788,-79.32262454,0,1612 Danforth Ave ,15,TRUE,[List],[List],EBS - (1612 Danforth Ave @CP110),EBS - (1612 Danforth Ave @CP110),350,TRUE,[Record],M4C 1H6
+7821,Lisgar St / Queen St W - SMART,SMARTMAPFRAME,43.64299174,-79.42355912,0,1117 Queen St W ,20,FALSE,[List],[List],Ward 9 - (1117 Queen St W ),Ward 9 - (1117 Queen St W ),100,TRUE,[Record],M6J 3X7
+7822,Leslie St / Commissioners St  ,VAULT,43.6572755,-79.32661544,0,Leslie St / Commissioners St  ,19,FALSE,[List],[List],Ward14 - (1165 Lake Shore Blvd E),Ward14 - (1165 Lake Shore Blvd E),300,TRUE,[Record],M4M 3M9
+7824,Warden Subway Station,VAULT,43.71161098,-79.28055566,0,701 Warden Ave,19,FALSE,[List],[List],Ward 20 - (701 Warden Ave),Ward 20 - (701 Warden Ave),350,TRUE,[Record],M1L 3Z5
+7825,Kingston Rd / Scarborough Golf Club Rd,VAULT,43.74531104,-79.20970651,0,Kingston Rd / Scarborough Golf Club Rd,14,FALSE,[List],[List],Ward 24 - (78 Scarborough Gulf Club Rd),Ward 24 - (78 Scarborough Gulf Club Rd),500,TRUE,[Record],M1M 3C5
+7826,Greenwood Ave / Gerrard St E,VAULT,43.67036918,-79.32782699,0,Greenwood Ave / Gerrard St E,15,FALSE,[List],[List],Ward 14 (208 Greenwood Ave),Ward 14 (208 Greenwood Ave),350,TRUE,[Record],M4L 2R1
+7827,Chatham Ave / Byron Ave,VAULT,43.67986783,-79.33424614,0,163 Chatham Ave,15,FALSE,[List],[List],Ward 14 - (163 Chatham Ave),Ward 14 - (163 Chatham Ave),500,TRUE,[Record],M4J 1K8
+7828,Wakunda Pl / O'Connor Dr,VAULT,43.71602024,-79.30470925,0,Wakunda Pl / O'Connor Dr,11,FALSE,[List],[List],Ward 19 - (1665 O'Connor Dr),Ward 19 - (1665 O'Connor Dr),500,TRUE,[Record],M4A 1W5
+7830,Plaxton Dr / St. Clair Ave E,VAULT,43.70751756,-79.30252066,0,Plaxton Dr / St Clair Ave E,14,FALSE,[List],[List],Ward 19 - (2889 St Clair Ave E),Ward 19 - (2889 St Clair Ave E),500,TRUE,[Record],M4B 1N5
+7831,Victoria Park Ave / Edge Park Ave,VAULT,43.71767868,-79.2996158,0,Victoria Park Ave / Edge Park Ave,19,FALSE,[List],[List],Ward 20 - (15 Edge Park Ave),Ward 20 - (15 Edge Park Ave),500,TRUE,[Record],M1L 2E7
+7832,Finch Subway Station ,VAULT,43.78187716,-79.41528503,0,Finch Subway Station ,19,FALSE,[List],[List],Ward 18 - (2 Bishop Ave),Ward 18 - (2 Bishop Ave),500,TRUE,[Record],M2M 3T2
+7833,Glencairn Subway Station,VAULT,43.70925764,-79.44169105,0,Glencairn TTC Subway Station (Glencairn Ave / Hilmount Ave),15,FALSE,[List],[List],Ward 8 (Glencairn TTC Subway),Ward 8 (Glencairn TTC Subway),500,TRUE,[Record],M6B
+7834,Glen Long Community Centre,VAULT,43.70820993,-79.45627809,0,35 Glen Long Ave,15,FALSE,[List],[List],Ward 8 - (35 Glen Long Ave),Ward 8 - (35 Glen Long Ave),500,TRUE,[Record],M6B 2M1
+7835,Caledonia Rd / Lotherton Pathway,VAULT,43.70756437,-79.46571475,0,215 Lotherton Pathway,19,FALSE,[List],[List],Ward 8 - (215 Lotherton Pathway),Ward 8 - (215 Lotherton Pathway),500,TRUE,[Record],M6B 2G6
+7836,Harvie Ave / Rogers Rd,VAULT,43.68402031,-79.45297885,0,200 Rogers Rd,19,FALSE,[List],[List],Ward 9 - (200 Rogers Rd),Ward 9 - (200 Rogers Rd),530,TRUE,[Record],M6E 1R1
+7837,Ling Rd / Morningside Ave,VAULT,43.76666382,-79.18521765,0,217 Morningside Rd,19,FALSE,[List],[List],Ward 25 - (217 Morningside Ave),Ward 25 - (217 Morningside Ave),500,TRUE,[Record],M1E 3E1
+7838,Lake Shore Blvd W / Legion Rd,VAULT,43.62052631,-79.48320224,0,2225 Lake Shore Blvd W,19,FALSE,[List],[List],Ward 3 - (12355 Lake Shore Blvd W),Ward 3 - (12355 Lake Shore Blvd W),350,TRUE,[Record],M8V 0B1
+7839,Lake Shore Blvd W / Seventeenth St,VAULT,43.59841926,-79.51561102,0,3140 Lake Shore Blvd W,11,FALSE,[List],[List],Ward 3 - (3140 Lake Shore Blvd W),Ward 3 - (3140 Lake Shore Blvd W),350,TRUE,[Record],M8V 1L4
+7840,Mabelle Park,VAULT,43.64538948,-79.52768222,0,38 Mabelle Ave,15,FALSE,[List],[List],Ward 3 - (38 Mabelle Ave),Ward 3 - (38 Mabelle Ave),350,TRUE,[Record],M9A 4X9
+7841,Islington Subway Station (Aberfoyle Cres),VAULT,43.64565859,-79.52339939,0,1243 Islington Ave ,15,FALSE,[List],[List],Ward 3 - (1243 Islington Ave),Ward 3 - (1243 Islington Ave),350,TRUE,[Record],M8X 1Y9
+7842,Lake Shore Blvd W / Long Branch Ave,VAULT,43.59445833,-79.53387391,0,3560 Lake Shore Blvd W,11,FALSE,[List],[List],Ward 3 - (3560 Lake Shore Blvd W),Ward 3 - (3560 Lake Shore Blvd W),350,TRUE,[Record],M8W 1N6
+7843,Uno Dr / The Queensway,VAULT,43.6264933,-79.50358168,0,748 The Queensway,15,FALSE,[List],[List],Ward 3 - (748 The Queensway),Ward 3 - (748 The Queensway),350,TRUE,[Record],M8Z 1M9
+7844,Second St / Lake Shore Blvd W,VAULT,43.60191488,-79.49941889,0,,15,FALSE,[List],[List],Ward 3 - (2765 Lake Shore Blvd W),Ward 3 - (2765 Lake Shore Blvd W),350,TRUE,[Record],M8V 1H2
+7845,Sixth St / Lake Shore Blvd W,VAULT,43.60116229,-79.50416047,0,131 Sixth St,15,FALSE,[List],[List],Ward 3 - (131 Sixth St ),Ward 3 - (131 Sixth St ),350,TRUE,[Record],M8V 1J4
+7846,Bloor St W / Dundas St W (2),VAULT,43.64285245,-79.53199489,0,3710 Bloor St W,15,FALSE,[List],[List],Ward 3 - ( 3710 Bloor St W),Ward 3 - ( 3710 Bloor St W),100,TRUE,[Record],M9A 1A2
+7848,Gerrard St E / Nasmith Ave ,REGULAR,43.66273619,-79.36253101,0,Gerrard St E / Gifford St,23,FALSE,[List],[List],Ward 13 - (407 Gerrard St E) ,Ward 13 - (407 Gerrard St E) ,350,TRUE,[Record],M5A 2H5
+7849,Viewmount Park,VAULT,43.70735573,-79.43723072,0,169 Viewmount Ave,15,FALSE,[List],[List],Ward 8 - (169 Viewmount Ave),Ward 8 - (169 Viewmount Ave),350,TRUE,[Record],M6B 1T5
+7850,Maud St / Adelaide St W - SMART,SMARTMAPFRAME,43.64601457,-79.39960498,0,Maud St / Adelaide St W,16,FALSE,[List],[List],Ward 10 - (across 460 Adelaide St W),Ward 10 - (across 460 Adelaide St W),100,TRUE,[Record],M5V 1Y3
+7851,Keele St / Ingram Dr,VAULT,43.69870695,-79.47565865,0,2221 Keele St ,15,FALSE,[List],[List],Ward 5 - (2221 Keele St),Ward 5 - (2221 Keele St),350,TRUE,[Record],M6M 3Z5
+7852,York Recreation Centre,VAULT,43.68815308,-79.4821979,0,115 Black Creek Dr,23,FALSE,[List],[List],Ward 5 - (115 Black Creek Dr),Ward 5 - (115 Black Creek Dr),350,TRUE,[Record],M6M 5B4
+7853,Trethewey Dr / Black Creek Dr,VAULT,43.6954984,-79.48809394,0,500 Black Creek Dr,15,FALSE,[List],[List],Ward 5 - (500 Trethewey Dr),Ward 5 - (500 Trethewey Dr),350,TRUE,[Record],M6M 4C2
+7854,Jane St / Haney Ave,VAULT,43.67434571,-79.49484378,0,797 Jane St,19,FALSE,[List],[List],Ward 5 - (797Jane St),Ward 5 - (797Jane St),350,TRUE,[Record],M6N 4B6
+7855,Scarlett Rd / Eileen Ave,VAULT,43.66851091,-79.50076484,0,75 Scarlett Rd ,15,FALSE,[List],[List],Ward 5 - (75 Scarlett Rd),Ward 5 - (75 Scarlett Rd),350,TRUE,[Record],M6N 4K3
+7856,Scarlett Rd / Old Scarlett Rd ,VAULT,43.67827631,-79.50667332,0,287 Scarlett Rd,14,FALSE,[List],[List],Ward 5 - (287 Scarlett Rd),Ward 5 - (287 Scarlett Rd),350,TRUE,[Record],M6N 4L1
+7857,Eglinton Ave W / Venn Cres,VAULT,43.69143921,-79.46908635,0,2485 Eglinton Ave W,18,FALSE,[List],[List],Ward 5 - (2485 Eglinton Ave W),Ward 5 - (2485 Eglinton Ave W),350,TRUE,[Record],M6M 1S8
+7858,Rogers Rd / Bicknell Ave,VAULT,43.68189526,-79.47363824,0,605 Rogers Rd,23,FALSE,[List],[List],Ward 5 - (605 Rogers Rd),Ward 5 - (605 Rogers Rd),350,TRUE,[Record],M6M 1B9
+7859,Mallaby Park ,VAULT,43.70619109,-79.53262796,0,2394 Weston Rd,15,FALSE,[List],[List],Ward 5 - (2394 Weston Rd),Ward 5 - (2394 Weston Rd),350,TRUE,[Record],M9N 1R5
+7860,Cruickshank Park,VAULT,43.70238607,-79.52594758,0,2196 Weston Rd,15,FALSE,[List],[List],Ward 5 - (2196 Weston Rd),Ward 5 - (2196 Weston Rd),350,TRUE,[Record],M9N 1X9
+7861,Emmett Ave,VAULT,43.68735514,-79.50623314,0,100 Emmett Ave,19,FALSE,[List],[List],Ward 5 - (100 Emmett Ave),Ward 5 - (100 Emmett Ave),350,TRUE,[Record],M6M 2E6
+7862,Jane St / Weston Rd,VAULT,43.69144464,-79.50154584,0,1390 Weston Rd,15,FALSE,[List],[List],Ward 5 - (1390 Weston Rd),Ward 5 - (1390 Weston Rd),350,TRUE,[Record],M6M 4S2
+7863,Jane St / Queens Dr,VAULT,43.70673805,-79.50477544,0,Jane St / John St,15,FALSE,[List],[List],Ward 5 - (1815 Jane St),Ward 5 - (1815 Jane St),350,TRUE,[Record],M6L 3C6
+7864,Sussex Ave / St George St,REGULAR,43.66530428,-79.39938264,0,140 St George St,15,FALSE,[List],[List],Ward 11 - 140 St George St,Ward 11 - 140 St George St,300,TRUE,[Record],M5S 3G6
+7865,2700 Eglinton Ave W,ELECTRICBIKESTATION,43.69074601,-79.47820143,0,2700 Eglinton Ave W,43,TRUE,[List],[List],Ward 5 - ( CP 669 ),Ward 5 - ( CP 669 ),500,TRUE,[Record],M6M 1V1
+7866,697 Lansdowne Ave ,ELECTRICBIKESTATION,43.65922184,-79.4427741,0,697 Lansdowne Ave ,23,TRUE,[List],[List],Ward 9 - (697 Lansdowne Ave - CP 81),Ward 9 - (697 Lansdowne Ave - CP 81),348,TRUE,[Record],M6H 3Y9
+7867,15 Price St ,ELECTRICBIKESTATION,43.67994778,-79.38994814,0,15 Price St ,15,TRUE,[List],[List],Ward 11 - (CP 195 -15 Price St ),Ward 11 - (CP 195 -15 Price St ),300,TRUE,[Record],M4W 1Y7
+7868,Sheppard Ave W / Chesswood Dr,VAULT,43.75558397,-79.47446033,0,3710  Chesswood Dr,19,FALSE,[List],[List],Ward 6 - (3710 Chesswood Dr),Ward 6 - (3710 Chesswood Dr),350,TRUE,[Record],M3J 2W4
+7869,Sentinel Rd / Sheppard Ave W,VAULT,43.74386581,-79.49181654,0,1 Inlet Mews,15,FALSE,[List],[List],Ward 6 - ( 1 Inlet Mews),Ward 6 - ( 1 Inlet Mews),350,TRUE,[Record],M3M 3J8
+7870,Humber River Hospital ,VAULT,43.72537884,-79.48719674,0,Humber River Hospital ,15,FALSE,[List],[List],Ward 6 - (1235 Wilson Ave),Ward 6 - (1235 Wilson Ave),350,TRUE,[Record],M3M 3G8
+7871,Jane St / Lawrence Ave W,VAULT,43.70234022,-79.5034739,0,Jane St / Lawrence Ave W,14,FALSE,[List],[List],Ward 5 - (1675 Jane St),Ward 5 - (1675 Jane St),350,TRUE,[Record],M9N 2R8
+7872,Keele St / Catford Rd,VAULT,43.75919331,-79.49001047,0,Keele St / Catford Rd,15,FALSE,[List],[List],Ward 7 - (11 Catford Rd),Ward 7 - (11 Catford Rd),350,TRUE,[Record],M3J 1P9
+7874,The Pond Rd / Ian Macdonald Blvd,VAULT,43.77086729,-79.49812991,0,85 The Pond Rd ,15,FALSE,[List],[List],Ward 7 - (85 The Pond Rd),Ward 7 - (85 The Pond Rd),350,TRUE,[Record],M3J
+7875,Oakdale Community Centre,VAULT,43.74751496,-79.51325699,0,350 Grandravine Dr,15,FALSE,[List],[List],Ward 7 - (350 Grandravine Dr),Ward 7 - (350 Grandravine Dr),350,TRUE,[Record],M3N 1J4
+7877,Jane St / Yorkwoods Gt,VAULT,43.7503017,-79.51577557,0,2801 Jane St,15,FALSE,[List],[List],Ward 7 - (2801 Jane St),Ward 7 - (2801 Jane St),350,TRUE,[Record],M3N 2H8
+7878,Weston Rd / Sheppard Ave W,VAULT,43.73262849,-79.53819932,0,3100 Weston Rd,15,FALSE,[List],[List],Ward 7 - (3100 Weston Rd),Ward 7 - (3100 Weston Rd),350,TRUE,[Record],M9M 2S7
+7880,Lindylou Rd / Lanyard Rd,VAULT,43.74845421,-79.550404,0,137 Lindylou Rd ,15,FALSE,[List],[List],Ward 7 - (137 Lindylou Rd),Ward 7 - (137 Lindylou Rd),350,TRUE,[Record],M9M 2B5
+7881,Queens Quay E / Merchants' Wharf,VAULT,43.64643026,-79.36181632,0,265 Queens Quay E,27,FALSE,[List],[List],Ward 10 - 265 Queens Quay E,Ward 10 - 265 Queens Quay E,200,TRUE,[Record],M5A 4K9
+7883,Wynford Heights Cres / Concorde Pl,VAULT,43.72749778,-79.32714222,0,48 Wynford Heights Cres,11,FALSE,[List],[List],Ward 16 - (48 Wynford Heights Cres),Ward 16 - (48 Wynford Heights Cres),350,TRUE,[Record],M3C 1K6
+7884,Bartley Park ,VAULT,43.72211166,-79.30864831,0,112 Bartley Dr,15,FALSE,[List],[List],Ward 16 - (112 Bartley Dr),Ward 16 - (112 Bartley Dr),350,TRUE,[Record],M4A 1C5
+7885,Brooklawn Ave / Kingston Rd,VAULT,43.7217614,-79.23591372,0,2853 Kingston Rd,11,FALSE,[List],[List],Ward 20 - (2853 Kingston Rd),Ward 20 - (2853 Kingston Rd),350,TRUE,[Record],M1M 1N3
+7887,800 Fleet St (North),ELECTRICBIKESTATION,43.63682856,-79.4088416,0,800 Fleet St (@CP 271 - Ward 10) ,43,TRUE,[List],[List],800 Fleet St (@CP 271 - Ward 10) ,800 Fleet St (@CP 271 - Ward 10) ,200,TRUE,[Record],M5V 1A9
+7888,The Kingsway / Ashley Rd,VAULT,43.66279594,-79.51959828,0,289 The kingsway,15,FALSE,[List],[List],Ward 2 - (289 The kingsway),Ward 2 - (289 The kingsway),350,TRUE,[Record],M9A 3T9
+7889,Dundas St W / Prince Edward Dr N,VAULT,43.66032427,-79.5115435,0,4208 Dundas St W,19,FALSE,[List],[List],Ward 2 - (4208 Dundas St W),Ward 2 - (4208 Dundas St W),300,TRUE,[Record],M8X 1Y6
+7890,60 Broadway Ave,VAULT,43.7102443,-79.39578745,0,60 Broadway Ave,23,FALSE,[List],[List],Ward 15 - (60 Broadway Ave),Ward 15 - (60 Broadway Ave),300,TRUE,[Record],M4P 1T6
+7891,Opposite 1103 Leslie St,VAULT,43.72093165,-79.34989416,0,Opposite 1103 Leslie St,19,FALSE,[List],[List],Ward 15 - (opposite 1103 Leslie St),Ward 15 - (opposite 1103 Leslie St),300,TRUE,[Record],M3C 4G8
+7892,Erskine Ave / Redpath Ave,VAULT,43.71215479,-79.39425906,0,130 Erskine Ave ,14,FALSE,[List],[List],Ward 15 - (130 Erskine Ave),Ward 15 - (130 Erskine Ave),300,TRUE,[Record],M4P 1Z1
+7893,Overlea Blvd / Thorncliffe Park Dr,VAULT,43.70755597,-79.34272024,0,65 Overlea Blvd,19,FALSE,[List],[List],Ward 15 - (65 Overlea Blvd),Ward 15 - (65 Overlea Blvd),300,TRUE,[Record],M4H 1P1
+7894,Millwood Rd / Southvale Dr,REGULAR,43.70241717,-79.36175933,0,955 Millwood Rd,15,FALSE,[List],[List],Ward 15 -(955 Millwood Rd),Ward 15 -(955 Millwood Rd),300,TRUE,[Record],M4G 4E3
+7895,Keele St / Lloyd Ave,VAULT,43.67115533,-79.46701598,0,590 Keele St,15,FALSE,[List],[List],Ward 5 - (590 Keele St),Ward 5 - (590 Keele St),300,TRUE,[Record],M6N 3E4
+7896,Arlington Parkette,VAULT,43.69105005,-79.43281746,0,460 Arlington Ave,15,FALSE,[List],[List],Ward 12- (460 Arlington Ave),Ward 12- (460 Arlington Ave),300,TRUE,[Record],M6C 3A2
+7897,50 Overlea Blvd,VAULT,43.707225,-79.345324,0,50 Overlea Blvd,14,FALSE,[List],[List],Ward 15 - (50 Overlea Blvd),Ward 15 - (50 Overlea Blvd),300,TRUE,[Record],M4H 1B6
+7898,University Ave / Gerrard St W - SMART(South),SMARTMAPFRAME,43.65748153,-79.38921396,0,545 University Ave ,16,FALSE,[List],[List],Ward 11 - (545 University Ave),Ward 11 - (545 University Ave),100,TRUE,[Record],M5G 1X8
+7899,Queens Park Cres / College St ,REGULAR,43.66018128,-79.39083272,0,144 College St ,23,FALSE,[List],[List],Ward 11 - (144 College St ),Ward 11 - (144 College St ),200,TRUE,[Record],M5S 3M2
+7900,Simcoe St / Elm St,REGULAR,43.65603884,-79.38970388,0,Simcoe St / Elm St,11,FALSE,[List],[List],Ward 11 - (1001 - 522 University Ave),Ward 11 - (1001 - 522 University Ave),100,TRUE,[Record],M5G 1W7
+7901,Bloor St W / Kingsmill Rd,VAULT,43.6492789,-79.50312996,0,2836 Bloor St W,11,FALSE,[List],[List],Ward 3 - (2836 Bloor St W),Ward 3 - (2836 Bloor St W),300,TRUE,[Record],M8X 1A8
+7902,Gunns Rd / Lavender Creek Trail,VAULT,43.67553197,-79.4719974,0,Gunns Rd / Lavender Creek Trail,15,FALSE,[List],[List],Ward 5 - (75 Gunns Rd),Ward 5 - (75 Gunns Rd),300,TRUE,[Record],M6N 1X5
+7903,St. Clair Ave W / Symes Rd,VAULT,43.67004213,-79.47894248,0,2236 St Clair Ave W,15,FALSE,[List],[List],Ward 5 - (2236 St Clair Ave W),Ward 5 - (2236 St Clair Ave W),300,TRUE,[Record],M6N 5C1
+7904,Palmerston Blvd / Lennox St,VAULT,43.66335071,-79.41312798,0,523 Palmerston Blvd,11,FALSE,[List],[List],Ward 11 - (523 Palmerston Blvd),Ward 11 - (523 Palmerston Blvd),300,TRUE,[Record],M6G 2P4
+7906,Princess St / Front St E,REGULAR,43.65029757,-79.3664846,0,201/207 Princess St,14,FALSE,[List],[List],Ward 13 - (207 Front St E),Ward 13 - (207 Front St E),300,TRUE,[Record],M5A 1E8
+7907,365 Lippincott St,ELECTRICBIKESTATION,43.6649482,-79.40947,0,365 lippincott St,41,TRUE,[List],[List],365 Lippincott - EBS @ CP 51,365 Lippincott - EBS @ CP 51,300,TRUE,[Record],M5S 1Y5
+7909,E.T Seton Park - South ,VAULT,43.70503462,-79.33547292,0,E.T Seton Park - South ,23,FALSE,[List],[List],E.T Seton Park South - Area 2,E.T Seton Park South - Area 2,300,TRUE,[Record],M3C
+7910,Eglinton Ave E / Brentcliffe Rd,VAULT,43.71430579,-79.36089045,0,939 Eglinton Ave E,15,FALSE,[List],[List],Ward 15 - (939 Eglinton Ave E ),Ward 15 - (939 Eglinton Ave E ),300,TRUE,[Record],M4G 4E8
+7911,King St W / York St (2),VAULT,43.64796882,-79.38316961,0,59 King St W,19,FALSE,[List],[List],Ward 10 - (59 King St W),Ward 10 - (59 King St W),1,TRUE,[Record],M5H 1A1
+7912,Joe Shuster Way / King St W ,VAULT,43.64039672,-79.42374241,0,30 Joe Shuster Way,19,FALSE,[List],[List],Ward 10 - (30 Joe Shuster Way),Ward 10 - (30 Joe Shuster Way),100,TRUE,[Record],M6K
+7913,St. George St / Willcocks St,VAULT,43.66245274,-79.39783842,0,St George St / Willcocks St,35,FALSE,[List],[List],Ward 11 - (100 St. George St),Ward 11 - (100 St. George St),100,TRUE,[Record],M5S 3G3
+7914,York St / Wellington St W (2),VAULT,43.64704306,-79.38314121,0,100 Wellington St W ,27,FALSE,[List],[List],Ward 10 - (100 Wellington St W),Ward 10 - (100 Wellington St W),5,TRUE,[Record],M5J 2R2
+7915,Rogers Rd / Watt Ave,VAULT,43.6823368,-79.4680594,0,500 Rogers Rd,15,FALSE,[List],[List],Ward 5 - (500 Rogers Rd),Ward 5 - (500 Rogers Rd),300,TRUE,[Record],M6M 1B3
+7916,University Ave / Pearl St ,VAULT,43.64836809,-79.38535102,0,University Ave / Pearl St ,19,FALSE,[List],[List],Ward 10 - (118 Pearl St),Ward 10 - (118 Pearl St),100,TRUE,[Record],M5H 1L2
+7917,King St W / University Ave,VAULT,43.64781809,-79.38427999,0,150 King St W,38,FALSE,[List],[List],Ward 10 - (150 King St W),Ward 10 - (150 King St W),50,TRUE,[Record],M5H 1J9
+7918,Albion Rd/ Arcot Blvd,VAULT,43.72762171,-79.55254903,0,Albion Rd/ Arcot Blvd (Summerlea Park),14,FALSE,[List],[List],Ward 1 - (2 Arcot Blvd - Summerlea Park),Ward 1 - (2 Arcot Blvd - Summerlea Park),500,TRUE,[Record],M9W
+7919,Armel Ct / Albion Rd,VAULT,43.72153297,-79.54558348,0,Armel Ct / Albion Rd,19,FALSE,[List],[List],Ward 1 - ( 2 Armel Ct),Ward 1 - ( 2 Armel Ct),300,TRUE,[Record],M9W 6L4
+7920,75 Tandridge Cres,VAULT,43.72957827,-79.54699794,0,75 Tandridge Cres,15,FALSE,[List],[List],Ward 1 - (75 Tandridge Cres),Ward 1 - (75 Tandridge Cres),300,TRUE,[Record],M9W 2N9
+7922,35 Erindale Ave,ELECTRICBIKESTATION,43.67729,-79.35741,0,35 Erindale Ave,23,TRUE,[List],[List],Ward 13 - (35 Erindale Ave@CP 78),Ward 13 - (35 Erindale Ave@CP 78),100,TRUE,[Record],M4K 1R9
+7923,Trethewey Dr / Jane St,VAULT,43.69741707,-79.50079831,0,725 Trethewey Dr ,19,FALSE,[List],[List],Ward 5 - (725 Trethewey Dr),Ward 5 - (725 Trethewey Dr),500,TRUE,[Record],M6M 5J7
+7924,Duncan St / Adelaide St W - SMART,SMARTMAPFRAME,43.64813058,-79.38858106,0,19 Duncan St ,12,FALSE,[List],[List],Ward 10 - (19 Duncan St),Ward 10 - (19 Duncan St),350,TRUE,[Record],M5H 3G6
+7925,Niagara St / King St W - SMART,SMARTMAPFRAME,43.64281323,-79.40751416,0,801 King St W ,24,FALSE,[List],[List],Ward 10 - (801 King St W),Ward 10 - (801 King St W),350,TRUE,[Record],M5V 3C9
+7926,McRae Dr / Laird Dr - SMART,SMARTMAPFRAME,43.70979297,-79.36389214,0,McRae Dr / Laird Dr,24,FALSE,[List],[List],Ward 15 - ( 180 Laird Dr),Ward 15 - ( 180 Laird Dr),300,TRUE,[Record],M4G 3V7
+7927,Strachan Ave / East Liberty St - SMART,SMARTMAPFRAME,43.6390647,-79.41080996,0,Strachan Ave / East Liberty St,24,FALSE,[List],[List],Ward 10 -  (39 East Liberty St),Ward 10 -  (39 East Liberty St),100,TRUE,[Record],M6K 0A7
+7928,Simcoe St / Pullan Pl,REGULAR,43.6510529,-79.38764943,0,Simcoe St / Pullan Pl,79,FALSE,[List],[List],Ward 10 - (180 Simcoe St),Ward 10 - (180 Simcoe St),100,TRUE,[Record],M5T 2W5
+7929,Spadina Ave / Bulwer St- SMART ,SMARTMAPFRAME,43.64935448,-79.39675713,0,Spadina Ave / Bulwer St- SMART ,12,FALSE,[List],[List],Ward 10 - (174 Spadina Ave),Ward 10 - (174 Spadina Ave),100,TRUE,[Record],M5T 2C2
+7930,Dunn Ave / Queen St W,REGULAR,43.63952275,-79.43395977,0,240 Dunn Ave,15,FALSE,[List],[List],Ward 4 - (240 Dunn Ave),Ward 4 - (240 Dunn Ave),300,TRUE,[Record],M6K 3K6
+7931,Symes Rd / Glen Scarlett Rd - SMART,SMARTMAPFRAME,43.67339152,-79.47798368,0,Symes Rd / Glen Scarlett Rd,16,FALSE,[List],[List],Ward 5 - ( 150 Symes Rd),Ward 5 - ( 150 Symes Rd),300,TRUE,[Record],M6N 0B1
+7932,Boston Ave / Queen St E- SMART,SMARTMAPFRAME,43.66160165,-79.33894583,0,Boston Ave / Queen St E- SMART,12,FALSE,[List],[List],Ward 14 - (1014 Queen St E),Ward 14 - (1014 Queen St E),300,TRUE,[Record],M4M 1K1
+7933,Elizabeth St / Elm St,REGULAR,43.65709082,-79.38593669,0,Elizabeth St/ Elm St,23,FALSE,[List],[List],Ward 11 - (170 Elizabeth St),Ward 11 - (170 Elizabeth St),200,TRUE,[Record],M5G 1E8
+7934,19 Glendora Ave,ELECTRICBIKESTATION,43.75921144,-79.40960365,0,19 Glendora Ave,11,TRUE,[List],[List],Ward 18 - (19 Glendora Ave),Ward 18 - (19 Glendora Ave),300,TRUE,[Record],M2N 4S8
+7935,Ramsden Park,REGULAR,43.67618456,-79.38962496,0,Ramsden Park,15,FALSE,[List],[List],Ward 11 - (1020 Yonge St),Ward 11 - (1020 Yonge St),300,TRUE,[Record],M5R
+7936,Adelaide St W / Bay St (South),VAULT,43.65011638,-79.37953069,0,Adelaide St W / Bay St ( South ),15,FALSE,[List],[List],Ward 10- (11 Adelaide St W),Ward 10- (11 Adelaide St W),100,TRUE,[Record],M5H 1H1
+7937,Adelaide St W / Yonge St,VAULT,43.65038002,-79.37872771,0,Adelaide St W / Yonge St,19,FALSE,[List],[List],Ward 10- (8 Adelaide St W ),Ward 10- (8 Adelaide St W ),100,TRUE,[Record],M5H 0A9
+7938,Portland St / Wellington St W,VAULT,43.64290167,-79.39937033,0,Portland St / Wellington St W,15,FALSE,[List],[List],Ward 10- (517 Wellington St W),Ward 10- (517 Wellington St W),100,TRUE,[Record],M5V 1V1
+7939,Princes' Gates,REGULAR,43.63467324,-79.40897322,0,Princes' Gates,17,FALSE,[List],[List],Ward 10- ( 11 Princes' Blvd ),Ward 10- ( 11 Princes' Blvd ),50,TRUE,[Record],M6K 3C3
+7940,Lillian St / Soudan Ave - SMART,SMARTMAPFRAME,43.70607287,-79.39356162,0,44 Lillian St ,32,FALSE,[List],[List],Ward 12 - (44 Lillian St),Ward 12 - (44 Lillian St),100,TRUE,[Record],M4S 0B7
+7941,Hanna Ave / Snooker St,VAULT,43.639547,-79.420022,0,40 Hanna Ave,15,FALSE,[List],[List],Ward 10  (40 Hanna Ave) ,Ward 10  (40 Hanna Ave) ,100,TRUE,[Record],M6K 3N7
+7942,Hillsdale Ave E / Mount Pleasant Rd,VAULT,43.70512127,-79.38902711,0,Hillsdale Ave E / Mount Pleasant Rd,15,FALSE,[List],[List],Ward 12- (650 Mount Pleasant Rd),Ward 12- (650 Mount Pleasant Rd),300,TRUE,[Record],M4S 2N5
+7943,OCAD University,VAULT,43.65231552,-79.39091185,0,OCAD  University (Grange Rd / McCaul St),23,FALSE,[List],[List],Ward 10 (5 Grange Rd) ,Ward 10 (5 Grange Rd) ,100,TRUE,[Record],M5T 1C3
+7944,Harbord St / Grace St (Bickford Park),VAULT,43.65995364,-79.41787389,0,Harbord St / Grace St (Bickford Park),23,FALSE,[List],[List],Ward 11 (Harbord St / Grace St),Ward 11 (Harbord St / Grace St),200,TRUE,[Record],M6G 3A9
+7945,Front St W / Spadina Ave,VAULT,43.6423548,-79.39519752,0,486 Front St W ,31,FALSE,[List],[List],Ward 10 ,Ward 10 ,100,TRUE,[Record],M5V 0V2
+7946,Richmond St W / Bathurst St,VAULT,43.64666748,-79.40299591,0,612 Richmond St W ,15,FALSE,[List],[List],Ward 10 (Richmond St W / Bathurst St),Ward 10 (Richmond St W / Bathurst St),200,TRUE,[Record],M5V 1Y9
+7947,Niagara St / Queen St W ,VAULT,43.64572868,-79.4099068,0,839 Queen St W ,11,FALSE,[List],[List],Ward 10 (839 Queen St W),Ward 10 (839 Queen St W),50,TRUE,[Record],M6J 1G4
+7948,Bathurst St / Housey St,VAULT,43.63781904,-79.40013177,0,Bathurst St / Housey St,23,FALSE,[List],[List],Ward 10 (95 Housey St),Ward 10 (95 Housey St),100,TRUE,[Record],M5V 0S4
+7949,Thompson St / Carroll St,VAULT,43.65907065,-79.35240134,0,Thompson St / Carroll St,15,FALSE,[List],[List],Ward 14 -(10 Thompson St),Ward 14 -(10 Thompson St),100,TRUE,[Record],M4M 2A6
+7950,Crawford St / Lobb Ave,VAULT,43.64654941,-79.415589,0,Crawford St / Lobb Ave,23,FALSE,[List],[List],Ward 10 (155 Crawford St),Ward 10 (155 Crawford St),100,TRUE,[Record],M6J 2V5
+7951,Fort York Blvd / Grand Magazine St,VAULT,43.63758783,-79.40314232,0,Fort York Blvd / Grand Magazine St,19,FALSE,[List],[List],Ward 10 (183 Fort York Blvd),Ward 10 (183 Fort York Blvd),100,TRUE,[Record],M5V 0C1
+7952,Adelaide St W / York St ,VAULT,43.64919198,-79.38363237,0,Adelaide St W / York St ,19,FALSE,[List],[List],Ward 10 (109 Adelaide St W),Ward 10 (109 Adelaide St W),100,TRUE,[Record],M5H 1P9
+7953,Church St / Shuter St,REGULAR,43.65505698,-79.37651025,0, Church St / Shuter St,14,FALSE,[List],[List],Ward 13 (185 Church St),Ward 13 (185 Church St),100,TRUE,[Record],M5B 1Y7
+7954,Adelaide St E / Parliament St,VAULT,43.65378337,-79.36335973,0,113 Parliament St,23,FALSE,[List],[List],Ward 13 (113 Parliament St),Ward 13 (113 Parliament St),150,TRUE,[Record],M5A 3Y7
+7955,Wellesley St E / Jarvis St,VAULT,43.6662047,-79.3790122,0,Wellesley St E / Jarvis St,23,FALSE,[List],[List],Ward 13 (100 Wellesley St E),Ward 13 (100 Wellesley St E),100,TRUE,[Record],M4Y 1H5
+7956,Benshire Dr / The Meadoway,VAULT,43.76174092,-79.24473961,0,Benshire Dr / The Meadoway,11,FALSE,[List],[List],Ward 24 (61 Benshire Dr),Ward 24 (61 Benshire Dr),3400,TRUE,[Record],M1H 1M4
+7957,Brimley Rd / Lawrence Ave E ,VAULT,43.75404854,-79.25531676,0,925 Brimley Rd,19,FALSE,[List],[List],Ward 21 (925 Brimley Rd),Ward 21 (925 Brimley Rd),400,TRUE,[Record],M1P 3E8
+7958,Centennial College (Ashtonbee Campus),VAULT,43.73003602,-79.29200365,0,75 Ashtonbee Rd,19,FALSE,[List],[List],Ward 21 - (75 Ashtobee Rd),Ward 21 - (75 Ashtobee Rd),500,TRUE,[Record],M1L 4C9
+7959,Bellamy Rd N / The Meadoway,VAULT,43.76507272,-79.23835382,0,645 Bellamy Rd N,15,FALSE,[List],[List],Ward 24 (645 Bellamy Rd N),Ward 24 (645 Bellamy Rd N),200,TRUE,[Record],M1H 2H1
+7960,Markham Rd / The Meadoway ,VAULT,43.77121895,-79.22956527,0,960 Markham Rd,19,FALSE,[List],[List],Ward 24 (960 Markham Rd),Ward 24 (960 Markham Rd),200,TRUE,[Record],M1H 2Y4
+7961,Ellesmere Rd / Markham Rd,VAULT,43.77682939,-79.23050036,0,2180 Ellesmere Rd,15,FALSE,[List],[List],Ward 24 (2180 Ellesmere Rd),Ward 24 (2180 Ellesmere Rd),200,TRUE,[Record],M1G 3M4
+7962,Slan Ave / Scarborough Golf Club Rd,VAULT,43.77327262,-79.21971485,0,Slan Ave / Scarborough Golf Club Rd,15,FALSE,[List],[List],Ward 24 (21 Slan Ave),Ward 24 (21 Slan Ave),200,TRUE,[Record],M1G 3B1
+7963,Cedar Dr / Eglinton Ave E,VAULT,43.7442082,-79.21564637,0,Cedar Dr / Eglinton Ave E,11,FALSE,[List],[List],Ward 24 (5 Cedar Dr),Ward 24 (5 Cedar Dr),300,TRUE,[Record],M1J
+7964,Kennedy Rd/Ranstone Gdns (Jack Goodlad Park),VAULT,43.74190571,-79.27181888,0,Kennedy Rd / Ranstone Gardens ,15,FALSE,[List],[List],Ward 21 (929 Kennedy Rd),Ward 21 (929 Kennedy Rd),2000,TRUE,[Record],M1K 2E9
+7965,Eglinton Ave E / Brimley Rd,VAULT,43.73695257,-79.24798367,0,Eglinton Ave E / Brimley Rd,19,FALSE,[List],[List],Ward 21 (2730 Eglinton Ave E),Ward 21 (2730 Eglinton Ave E),1100,TRUE,[Record],M1J 2C6
+7966,Albany Ave / Dupont St,VAULT,43.673489,-79.41339521,0,Albany Ave / Dupont St,15,FALSE,[List],[List],Ward 11 (275 Albany Ave),Ward 11 (275 Albany Ave),150,TRUE,[Record],M5R 3E1
+7967,Gordonridge Pl / Danforth Rd,VAULT,43.72729077,-79.25237907,0,Gordonridge Pl / Danforth Rd,15,FALSE,[List],[List],Ward 20 (10 Gordonridge Pl),Ward 20 (10 Gordonridge Pl),1600,TRUE,[Record],M1K 4H6
+7968,McCowan Rd / Trudelle St,VAULT,43.74033902,-79.2393532,0,McCowan Rd / Trudelle St,19,FALSE,[List],[List],Ward 21 (370 McCowan Rd),Ward 21 (370 McCowan Rd),1000,TRUE,[Record],M1J 1J3
+7969,Bayview Ave / Finch Recreational Trail,VAULT,43.7890687,-79.39315096,0,Bayview Ave / Finch Recreational Trail,19,FALSE,[List],[List],Ward 18 (3292 Bayview Ave),Ward 18 (3292 Bayview Ave),2000,TRUE,[Record],M2M
+7970,Willowdale Ave / Bishop Ave ,VAULT,43.78387252,-79.4078681,0,Willowdale Ave / Bishop Ave ,19,FALSE,[List],[List],Ward 18 (903 Willowdale Ave),Ward 18 (903 Willowdale Ave),300,TRUE,[Record],M2M 3C2
+7971,Talbot Rd / Finch Hydro Corridor,VAULT,43.78225298,-79.42367063,0,Talbot Rd / Finch Hydro Corridor,15,FALSE,[List],[List],Ward 18 (105 Talbot Rd),Ward 18 (105 Talbot Rd),300,TRUE,[Record],M2M 1S2
+7972,Eglinton Ave E / Mason Rd ,VAULT,43.74203744,-79.2248868,0,Eglinton Ave E / Mason Rd ,11,FALSE,[List],[List],Ward 24 (3132 Eglinton Ave E),Ward 24 (3132 Eglinton Ave E),400,TRUE,[Record],M1J 2H1
+7973,Lawrence Ave E / Don Mills Trail,VAULT,43.73458186,-79.35485399,0,Lawrence Ave E / Don Mills Trail,19,FALSE,[List],[List],Ward 16 - (813 Lawrence Ave E),Ward 16 - (813 Lawrence Ave E),300,TRUE,[Record],M3C 3W2
+7974,Kempford Blvd / Yonge St,VAULT,43.77685724,-79.41511614,0,Kempford Blvd / Yonge St,19,FALSE,[List],[List],Ward 18 - ( 5440 Kempford Blvd),Ward 18 - ( 5440 Kempford Blvd),100,TRUE,[Record],M2N 5R8
+7975,Empress Ave / Yonge St,VAULT,43.76939546,-79.41266522,,2 Empress Ave,19,FALSE,[List],[List],Ward 18 - (2 Empress Ave),Ward 18 - (2 Empress Ave),300,TRUE,[Record],M2N 5P5
+7976,Yonge St / Sheppard Ave E,VAULT,43.76128606,-79.41071644,0,Yonge St / Sheppard Ave E (south side),19,FALSE,[List],[List],Ward 18 - ( 4789 Yonge St),Ward 18 - ( 4789 Yonge St),300,TRUE,[Record],M2N 0G3
+7977,Leslie Subway Station,VAULT,43.77037892,-79.36702734,0,Leslie Subway Station,15,FALSE,[List],[List],Ward 17 - (2760 Old Leslie St),Ward 17 - (2760 Old Leslie St),300,TRUE,[Record],M2K 1J2
+7978,Yonge St / North York Blvd,VAULT,43.7672659,-79.4126349,0,Yonge St / North York Blvd,23,FALSE,[List],[List],Ward 18 (5090 Yonge St),Ward 18 (5090 Yonge St),250,TRUE,[Record],M2N 5V7
+7979,Bond Ave / Don Mills Trail,VAULT,43.74475834,-79.3534807,0,Bond Ave / Don Mills Trail,19,FALSE,[List],[List],Ward 16 (50 Bond Ave),Ward 16 (50 Bond Ave),400,TRUE,[Record],M3B 3R8
+7981,Duncan Mill Rd / Valleybrook Dr,VAULT,43.76167125,-79.35258303,0,Duncan Mill Rd / Valleybrook Dr,15,FALSE,[List],[List],Ward 16 (225 Duncan Mill Rd),Ward 16 (225 Duncan Mill Rd),300,TRUE,[Record],M3B 3K9
+7982,Finch Ave W / Wilmington Ave,VAULT,43.77060244,-79.45997589,0,Finch Ave W / Wilmington Ave,19,FALSE,[List],[List],Ward 6 (700 Finch Ave W),Ward 6 (700 Finch Ave W),400,TRUE,[Record],M3H 5W5
+7983,York Mills Rd / Lesmill Rd,VAULT,43.75492156,-79.35174838,0,York Mills Rd / Lesmill Rd,14,FALSE,[List],[List],Ward 16 (860 York Mills Rd),Ward 16 (860 York Mills Rd),500,TRUE,[Record],M3B 1Y4
+7984,Lake Shore Blvd W / Bathurst St,REGULAR,43.63675592,-79.39920539,0,Lakeshore Blvd W / Bathurst St,23,FALSE,[List],[List],Ward 10 (530 Lakeshore Blvd W),Ward 10 (530 Lakeshore Blvd W),200,TRUE,[Record],M5V 1A5
+7985,Hawksbury Dr / Sheppard Ave E ,VAULT,43.76816239,-79.38312075,0,Hawksbury Dr / Sheppard Ave E ,15,FALSE,[List],[List],Ward 17 (640 Sheppard Ave E),Ward 17 (640 Sheppard Ave E),400,TRUE,[Record],M2K 1B8
+7986,Sheppard Ave E / Leslie St,VAULT,43.7711483,-79.36381166,0,Sheppard Ave E / Leslie St,19,FALSE,[List],[List],Ward 17 (1295 Sheppard Ave E),Ward 17 (1295 Sheppard Ave E),400,TRUE,[Record],M2J 1V1
+7987,Shaughnessy Blvd / Sheppard Ave E,VAULT,43.77351463,-79.35306224,0,Shaughnessy Blvd / Sheppard Ave E,15,FALSE,[List],[List],Ward 17 (65 Shaughnessy Blvd),Ward 17 (65 Shaughnessy Blvd),400,TRUE,[Record],M2J 1J2
+7988,Brahms Ave / Finch Ave E,VAULT,43.79236326,-79.35836318,0,Brahms Ave / Finch Ave E,19,FALSE,[List],[List],Ward 17 (2 Brahms Ave),Ward 17 (2 Brahms Ave),400,TRUE,[Record],M2H 1H1
+7989,Don Mills Rd / Fairview Mall Dr,VAULT,43.77888551,-79.3483717,0,Don Mills Rd / Fairview Mall Dr,15,FALSE,[List],[List],Ward 17 (5 Fairview Mall Dr),Ward 17 (5 Fairview Mall Dr),400,TRUE,[Record],M2J 2Z1
+7990,Don Mills Rd / Goodview Rd,VAULT,43.78394401,-79.35325023,,Don Mills Rd / Goodview Rd,11,FALSE,[List],[List],Ward 17 (58 Goodview Rd),Ward 17 (58 Goodview Rd),400,TRUE,[Record],M2J 2K6
+7991,Kingston Rd / Markham Rd,VAULT,43.73878439,-79.21746486,,Kingston Rd / Markham Rd,15,FALSE,[List],[List],Ward 24 (3490 Kingston Rd),Ward 24 (3490 Kingston Rd),500,TRUE,[Record],M1M 1R5
+7992,Fairglen Cres / Weston Rd,VAULT,43.70876747,-79.53445192,0,Fairglen Cres / Weston Rd,11,FALSE,[List],[List],Ward 5 (2530 Weston Rd),Ward 5 (2530 Weston Rd),1000,TRUE,[Record],M9N 0A2
+7993,Wells St / Brunswick Ave,VAULT,43.67105164,-79.40904755,0,Wells St / Brunswick Ave,15,FALSE,[List],[List],Ward 11 (50 Kendal Ave),Ward 11 (50 Kendal Ave),500,TRUE,[Record],M5R 1L5
+7994,Eglinton Ave E / Victoria Park Ave,VAULT,43.72486103,-79.30351306,0,Eglinton Ave E / Victoria Park Ave,11,FALSE,[List],[List],Ward 16 (1780 Eglinton Ave E),Ward 16 (1780 Eglinton Ave E),400,TRUE,[Record],M4A 2T2
+7995,Eglinton Ave W / Oakwood Ave,VAULT,43.69705023,-79.4437599,0,Eglinton Ave W / Oakwood Ave,15,FALSE,[List],[List],Ward 12 - ( 1615 Eglinton Ave W),Ward 12 - ( 1615 Eglinton Ave W),300,TRUE,[Record],M6E 2H1
+7996,Scarborough GO Station,ELECTRICBIKESTATION,43.71704721,-79.25461031,0,Scarborough Go Station,22,TRUE,[List],[List],Scarborough GO Station,Scarborough GO Station,300,TRUE,[Record],M1N 3W6
+7997,3220 Bloor St W,ELECTRICBIKESTATION,43.64618676,-79.51762537,0,3220 Bloor St W,38,TRUE,[List],[List],3220 Bloor St W ,3220 Bloor St W ,300,TRUE,[Record],M8X
+7998,Eglinton West Subway Station,VAULT,43.69867104,-79.43680739,0,Eglinton West Subway Station,19,FALSE,[List],[List],Ward 8 - ( 1350 Eglinton Ave W) ,Ward 8 - ( 1350 Eglinton Ave W) ,300,TRUE,[Record],M6C 3M8
+7999,Lawrence Ave W / Marlee Ave,VAULT,43.71555269,-79.44615446,0,Lawrence Ave W / Marlee Ave,15,FALSE,[List],[List],Ward 8- ( 689 Lawrence Ave w),Ward 8- ( 689 Lawrence Ave w),500,TRUE,[Record],M6A 1B3
+8000,16 Riverview Gardens ,ELECTRICBIKESTATION,43.64883712,-79.48675294,0,16 Riverview Gardens ,31,TRUE,[List],[List],16 Riverview Gardens,16 Riverview Gardens,500,TRUE,[Record],M6S 4E6
+8001,Union Station (North),SMARTMAPFRAME,43.64564962,-79.38116314,,Union Station (North),16,FALSE,[List],[List],Union Station (North),Union Station (North),100,TRUE,[Record],M5J 1E3
+8002,Grantbrook St / Finch Hydro Corridor Trail,VAULT,43.78046831,-79.43280415,,Grantbrook St / Finch Hydro Corridor,15,FALSE,[List],[List],Ward 18 - ( 54 Grantbrook St ),Ward 18 - ( 54 Grantbrook St ),300,TRUE,[Record],M2M 1C1
+8003,Tecumseth St / Tecumseth Pl,VAULT,43.642698,-79.40499937,0,Tecumseth St / Tecumseth Pl,11,FALSE,[List],[List],,,100,TRUE,[Record],M5V 2R8
+8004,21 Pleasant Blvd (1),ELECTRICBIKESTATION,43.68721181,-79.39269592,0,21 Pleasant Blvd (1),11,TRUE,[List],[List],EBS @ CP11 - 21 Pleasant Blvd,EBS @ CP11 - 21 Pleasant Blvd,10,TRUE,[Record],M4T 1G5
+8005,21 Pleasant Blvd (2),ELECTRICBIKESTATION,43.68720426,-79.39269727,0,21 Pleasant Blvd (2),11,TRUE,[List],[List],EBS @ CP11 - 21 Pleasant Blvd (2),EBS @ CP11 - 21 Pleasant Blvd (2),10,TRUE,[Record],M4T 1G5
+8006,803 Richmond St W,ELECTRICBIKESTATION,43.6443819,-79.41085338,0,803 Richmond St W,23,TRUE,[List],[List],EBS @ CP53 - 803 Richmond St W ,EBS @ CP53 - 803 Richmond St W ,150,TRUE,[Record],M6J 3N7
+8007,385 Pacific Ave,ELECTRICBIKESTATION,43.66510947,-79.46833581,0,385 Pacific Ave,29,TRUE,[List],[List],EBS @ CP19 - 385 Pacific Ave,EBS @ CP19 - 385 Pacific Ave,200,TRUE,[Record],M6P 1Z2
+8008,Brookdale Ave / Yonge St,SMARTMAPFRAME,43.72991999,-79.4037272,0,Brookdale Ave/ Yonge St,16,FALSE,[List],[List],Ward 8 - (4 Brookdale Ave),Ward 8 - (4 Brookdale Ave),300,TRUE,[Record],M5M 1P3
+8009,1 Shortt St,ELECTRICBIKESTATION,43.69592993,-79.4519014,0,1 Shortt St,39,TRUE,[List],[List],CP663 - 1 Shortt St,CP663 - 1 Shortt St,300,TRUE,[Record],M6E 2J6
+8010,Finch Ave W / Bathurst St,VAULT,43.77356136,-79.44404831,,521 Finch Ave W,19,FALSE,[List],[List],Ward 6 - (521 Finch Ave W),Ward 6 - (521 Finch Ave W),300,TRUE,[Record],M2R 1N3
+8011,33 Queen St E,ELECTRICBIKESTATION,43.65231961,-79.37684858,0,33 Queen St E,31,TRUE,[List],[List],CP 26 - 33 Queen St E,CP 26 - 33 Queen St E,100,TRUE,[Record],M5C 1R5
+8012,Cherry St / Polson St,ELECTRICBIKESTATION,43.64332093,-79.35120949,0,Cherry St / Polson St,19,TRUE,[List],[List],Ward 14 (226 Cherry St),Ward 14 (226 Cherry St),300,TRUE,[Record],M5A 1A5
+8013,Logan Ave / Eastern Ave - SMART,SMARTMAPFRAME,43.6579255,-79.34143487,,Logan Ave / Eastern Ave - SMART,12,FALSE,[List],[List],Ward 14 (470 Eastern Ave),Ward 14 (470 Eastern Ave),150,TRUE,[Record],M4M 1C2
+8014,Wellington St W / Blue Jays Way,VAULT,43.64473387,-79.39168963,0,Wellington St W /Blue Jays way,23,FALSE,[List],[List],277 Wellington St W,277 Wellington St W,150,TRUE,[Record],M5V 3H2
+8015,Spadina Ave / Dundas St W - SMART,SMARTMAPFRAME,43.6523523,-79.39801618,,Spadina Ave / Dundas St W - SMART,12,FALSE,[List],[List],272 Spadina Ave,272 Spadina Ave,150,TRUE,[Record],M5T 2E7
+8016,Queens Quay E / Freeland St,VAULT,43.64249948,-79.37285779,0,Queens Quay E / Freeland St,23,FALSE,[List],[List],33 Queens Quay E ,33 Queens Quay E ,150,TRUE,[Record],M5E 1L7
+8017,Pharmacy Ave / Eglinton Ave E ,VAULT,43.72534467,-79.29768741,0,Pharmacy Ave / Eglinton Ave E ,15,FALSE,[List],[List],100 Eglinton Sq (Ward 10) ,100 Eglinton Sq (Ward 10) ,300,TRUE,[Record],M1L 2K1
+8018,Saulter St / Queen St E - SMART,SMARTMAPFRAME,43.65897697,-79.34715317,0,Saulter St / Queens St E - SMART,16,FALSE,[List],[List],771 Queen St E (Ward 10),771 Queen St E (Ward 10),200,TRUE,[Record],M4M 1H5
+8020,Euclid Ave / Queen St W - SMART,SMARTMAPFRAME,43.64656806,-79.40768689,0,Euclid Ave / Queen St W,9,FALSE,[List],[List],Ward 10 (684 Queen St W),Ward 10 (684 Queen St W),300,TRUE,[Record],M6J 1G1
+8021,Torresdale Ave / Finch Ave W,REGULAR,43.77245563,-79.45102085,0,Torresdale Ave / Finch Ave W,19,FALSE,[List],[List],Ward 6 - (10 Torresdale Ave),Ward 6 - (10 Torresdale Ave),300,TRUE,[Record],M2R 3V8
+8022,Sunrise Ave / Victoria Park Ave,VAULT,43.71940913,-79.30226117,,25 Sunrise Ave,11,FALSE,[List],[List],Ward 19 (25 Sunrise Ave),Ward 19 (25 Sunrise Ave),500,TRUE,[Record],M4A 2S2
+8023,Shaw St / College St,REGULAR,43.6551193,-79.4201454,,Shaw St / College St,11,FALSE,[List],[List],Ward 11 ,Ward 11 ,500,TRUE,[Record],M6G 1C4
+8025,Front St E / Scott St (2),REGULAR,43.64762414,-79.37552499,,Front St E / Scott St (2),11,FALSE,[List],[List],,,50,TRUE,[Record],M5E 1X6
+8026,Jack Layton Ferry Terminal,VAULT,43.64103162,-79.37670443,0,Jack Layton Ferry Terminal,23,FALSE,[List],[List],9 Queens Quay W ,9 Queens Quay W ,50,TRUE,[Record],M5J 2H3
+8031,Ancaster Rd / Spalding Rd,VAULT,43.73359486,-79.46651489,0,Ancaster Rd / Spalding Rd,15,FALSE,[List],[List],Ward 6 (43 Ancaster Rd),Ward 6 (43 Ancaster Rd),1000,TRUE,[Record],M3K 1S7
+8032,Roding St / Nash Dr,VAULT,43.72885965,-79.49202998,0,Roding St / Nash Dr,15,FALSE,[List],[List],Ward 6 (600 Roding St),Ward 6 (600 Roding St),1000,TRUE,[Record],M3M 2A6
+8033,Ridge Rd / Wilson Ave ,VAULT,43.72378696,-79.4941627,0,Ridge Rd / Wilson Ave ,19,FALSE,[List],[List],Ward 6 (1303 Wilson Ave),Ward 6 (1303 Wilson Ave),1000,TRUE,[Record],M3M 1J1
+8034,Exbury Rd / Jane St,VAULT,43.72952249,-79.51014251,,Exbury Rd / Jane St,15,FALSE,[List],[List],Ward 6 (195 Exbury Rd),Ward 6 (195 Exbury Rd),500,TRUE,[Record],M3M 1R9
+8035,Dubray Ave / Wilson Ave,VAULT,43.72861763,-79.47800123,0,Dubray Ave / Wilson Ave,19,FALSE,[List],[List],Ward 6 (1006 Wilson Ave),Ward 6 (1006 Wilson Ave),1000,TRUE,[Record],M3K 1G6
+8036,Jane St / Sheppard Ave W,VAULT,43.73901341,-79.51286318,0,Jane St / Sheppard Ave W,19,FALSE,[List],[List],Ward 6 (2645 Jane St),Ward 6 (2645 Jane St),1000,TRUE,[Record],M3L 1R9
+8037,Bathurst St / Sheppard Ave W,VAULT,43.75517623,-79.43812183,0,Bathurst St / Sheppard Ave W,15,FALSE,[List],[List],Ward 6 (4383 Bathurst St),Ward 6 (4383 Bathurst St),1000,TRUE,[Record],M3H 3P8
+8038,Finch Ave E / Upper Don Recreational Trail ,VAULT,43.78893788,-79.37488869,0,Finch Ave E / Upper Don Recreational Trail ,11,FALSE,[List],[List],Ward 6 (750 Finch Ave E),Ward 6 (750 Finch Ave E),1000,TRUE,[Record],M2J 2P9
+8039,Ruddington Dr / Finch Recreational Trail,VAULT,43.78978189,-79.38988622,0,Ruddington Dr / Finch Recreational Trail,19,FALSE,[List],[List],Ward 6 (38 Ruddington Dr),Ward 6 (38 Ruddington Dr),1000,TRUE,[Record],M2K 2J8
+8040,Old Cummer GO Station,VAULT,43.79442338,-79.3692588,0,Old Cummer GO Station,23,FALSE,[List],[List],Ward 6 (5760 Leslie St),Ward 6 (5760 Leslie St),1000,TRUE,[Record],M2H 1W6
+8041,Wilmington Ave / Kennard Ave,VAULT,43.76115848,-79.456,0,Wilmington Ave / Kennard Ave,11,FALSE,[List],[List],Ward 6 (205 Wilmington Ave),Ward 6 (205 Wilmington Ave),998,TRUE,[Record],M3H 6B3
+8042,Fairview Mall Dr / Fairview Mall Dr E,VAULT,43.77967215,-79.34295005,0,Fairview Mall Dr / Fairview Mall Dr E,19,FALSE,[List],[List],Ward 6 (146 Fairview Mall Dr),Ward 6 (146 Fairview Mall Dr),1000,TRUE,[Record],M2J 5B9
+8043,Birchmount Rd / The Meadoway,VAULT,43.73893212,-79.28118033,0,Birchmount Rd / The Meadoway,15,FALSE,[List],[List],1 Ranstone Gardens,1 Ranstone Gardens,1000,TRUE,[Record],M1K 2T3
+8044,Scarborough Village Park,VAULT,43.74715113,-79.21450236,0,Scarborough Village Park,11,FALSE,[List],[List],23 Gatesview Ave,23 Gatesview Ave,996,TRUE,[Record],M1J 3G4
+8045,Prudential Dr / Midland Ave,VAULT,43.74956621,-79.26572191,0,Prudential Dr / Midland Ave,15,FALSE,[List],[List],1380 Midland Ave,1380 Midland Ave,1000,TRUE,[Record],M1P 4W5
+8046,Markham Rd / Cougar Crt,VAULT,43.74498897,-79.21944366,0,Markham Rd / Cougar Crt,11,FALSE,[List],[List],215 Markham Rd,215 Markham Rd,1000,TRUE,[Record],M1J 3C4
+8047,Lawrence Ave E / Overture Rd,VAULT,43.76564054,-79.19961493,0,Lawrence Ave E / Overture Rd,11,FALSE,[List],[List],4000 Lawrence Ave E ,4000 Lawrence Ave E ,1000,TRUE,[Record],M1E 2R3
+8048,Morningside Ave / Kingston Rd,VAULT,43.76907927,-79.18711363,0,Morningside Ave / Kingston Rd,15,FALSE,[List],[List],4479 Kingston Rd,4479 Kingston Rd,1000,TRUE,[Record],M1E 2N7
+8049,YZD,VAULT,43.7368015,-79.4687878,,YZD,19,FALSE,[List],[List],34 Hanover Rd,34 Hanover Rd,1000,TRUE,[Record],M3K 0E2
+8050,Wilson Ave / Transit Rd (TTC Subway Station),VAULT,43.73345899,-79.45338807,,Wilson Ave / Transit Rd (TTC Subway Station),23,FALSE,[List],[List],30 Billy bishop way,30 Billy bishop way,1000,TRUE,[Record],M3K 0C2
+8051,Homewood Ave / Wellesley St E - SMART,SMARTMAPFRAME,43.66697801,-79.37594519,0,Homewood Ave / Wellesley St E - SMART,12,FALSE,[List],[List],120 Homewood Ave ,120 Homewood Ave ,300,TRUE,[Record],M4Y 2J3
+8052,Warden Ave / The Meadoway,VAULT,43.73554781,-79.29051908,0,Warden Ave / The Meadoway,11,FALSE,[List],[List],978 Warden Ave ,978 Warden Ave ,1000,TRUE,[Record],M1R 2N7
+8053,Galloway Rd / Kingston Rd ,VAULT,43.76247245,-79.19469251,0,Galloway Rd / Kingston Rd ,17,FALSE,[List],[List],4250 kingston Rd,4250 kingston Rd,500,TRUE,[Record],M1E 1X3
+8054,Sheppard Ave E / Brian Dr,VAULT,43.77518332,-79.33044338,0,Sheppard Ave E / Brian Dr,19,FALSE,[List],[List],2000 Sheppard Ave E,2000 Sheppard Ave E,1000,TRUE,[Record],M2J 4W6
+8055,Sheppard Ave E / Willowdale Ave ,VAULT,43.76411174,-79.398337,0,Sheppard Ave E / Willowdale Ave ,11,FALSE,[List],[List],209 Sheppard Ave E,209 Sheppard Ave E,1000,TRUE,[Record],M1S 1V2
+8056,Parkway Forest Dr / Forest Manor Rd (North),VAULT,43.77470558,-79.34275329,0,Parkway Forest Dr / Forest Manor Rd (North),19,FALSE,[List],[List],110 Parkway Forest Dr,110 Parkway Forest Dr,500,TRUE,[Record],M2J 1L7
+8057,Parkway Forest Dr / Forest Manor Rd (South),VAULT,43.76952969,-79.34338171,0,36 Parkway Forest Dr ,19,FALSE,[List],[List],36 Parkway Forest Dr ,36 Parkway Forest Dr ,500,TRUE,[Record],M2J
+8058,Maxome Ave / Finch Hydro Corridor,VAULT,43.78611619,-79.40039054,0,Maxome Ave / Finch Hydro Corridor,19,FALSE,[List],[List],190 Bishop Ave ,190 Bishop Ave ,1000,TRUE,[Record],M2M 1Z7
+8059,Ionview Rd / Eglinton Ave E,VAULT,43.73170279,-79.27149202,0,Ionview Rd / Eglinton Ave E,11,FALSE,[List],[List],10 Ionview Rd,10 Ionview Rd,1000,TRUE,[Record],M1K 2P3
+8060,Gilder Dr / Midland Ave,VAULT,43.7365986,-79.2578451,0,Gilder Dr / Midland Ave,15,FALSE,[List],[List],20 Gilder Dr,20 Gilder Dr,1000,TRUE,[Record],M1K 5E1
+8061,Stansbury Cr / Midland Ave,VAULT,43.74251353,-79.2612431,0,Stansbury Cr / Midland Ave,11,FALSE,[List],[List],1085 Midland Ave,1085 Midland Ave,1000,TRUE,[Record],M1K 4G7
+8062,Bay St / King St W,REGULAR,43.64837534,-79.37998281,0,Bay St / King St W,23,FALSE,[List],[List],199 Bay St,199 Bay St,150,TRUE,[Record],M5L 1G9
+8063,Maida Vale Park,VAULT,43.73310397,-79.2770282,,Maida Vale Park,11,FALSE,[List],[List],1 Reno Dr,1 Reno Dr,1000,TRUE,[Record],M1K 2V5
+8064,Kennedy Rd / Bertrand Ave,VAULT,43.73746177,-79.26995938,0,Kennedy Rd / Bertrand Ave,11,FALSE,[List],[List],855 Kennedy Rd,855 Kennedy Rd,1000,TRUE,[Record],M1K 2E3
+8065,Brockley Dr / Lawrence Ave E,VAULT,43.75235485,-79.26279659,0,Brockley Dr / Lawrence Ave E,11,FALSE,[List],[List],2640 Lawrence Ave E,2640 Lawrence Ave E,500,TRUE,[Record],M1P
+8066,Danforth Rd / Savarin St,VAULT,43.74307247,-79.24531812,0,Danforth Rd / Saverin St,15,FALSE,[List],[List],1340 Danforth Rd,1340 Danforth Rd,500,TRUE,[Record],M1J 1G2
+8073,Finch Ave E / Midland Ave,VAULT,43.80356565,-79.28669605,0,Finch Ave E / Midland Ave,15,FALSE,[List],[List],3030 Midland Ave,3030 Midland Ave,2000,TRUE,[Record],M1S 3T1
+8074,Huntingwood Dr / Midland Ave,VAULT,43.79690349,-79.28376282,,Huntingwood Dr / Midland Ave,11,FALSE,[List],[List],1077 Huntingwood Dr,1077 Huntingwood Dr,1000,TRUE,[Record],M1S 3H4
+8075,Marine Parade Dr / Humber Bay Shores Park Trl,VAULT,43.62646183,-79.47675102,0,Marine Parade Dr / Humber Bay Shores Park Trl,19,FALSE,[List],[List],62 Marine Parade Dr,62 Marine Parade Dr,500,TRUE,[Record],M8V 4G1
+8076,Warden Ave / Huntingwood Dr,VAULT,43.78571682,-79.3108104,0,Warden Ave / Huntingwood Dr,11,FALSE,[List],[List],2385 Warden Ave,2385 Warden Ave,2000,TRUE,[Record],M1W 1G8
+8077,Silver Springs Blvd / Birchmount Rd,VAULT,43.80073701,-79.30671242,0,Silver Springs Blvd / Birchmount Rd,11,FALSE,[List],[List],25 Silver Springs Blvd,25 Silver Springs Blvd,1500,TRUE,[Record],M1V 1M9
+8078,Victoria Park Ave / Patrick Blvd ,VAULT,43.77775929,-79.32390892,0,Victoria Park Ave / Patrick Blvd ,15,FALSE,[List],[List],2727 Victoria Park Ave ,2727 Victoria Park Ave ,1000,TRUE,[Record],M1T 1A6
+8079,Aurora Ct / Bridletowne Cir,VAULT,43.79283962,-79.31685173,,Aurora Ct / Bridletowne Cir,11,FALSE,[List],[List],200 Bridletowne Cir,200 Bridletowne Cir,1500,TRUE,[Record],M1W 2G8
+8080,Bay Mills Blvd / Birchmount Ave,VAULT,43.78342986,-79.2995589,0,Bay Mills Blvd / Birchmount Ave,15,FALSE,[List],[List],2360 Birchmount Rd,2360 Birchmount Rd,1000,TRUE,[Record],M1T 2M4
+8081,Bridlewood Park,VAULT,43.78402991,-79.31629774,,Bridlewood Park,11,FALSE,[List],[List],445 Huntingwood Dr,445 Huntingwood Dr,1500,TRUE,[Record],M1W 1G3
+8082,Village Green Square,VAULT,43.77826307,-79.28174956,0,Village Green Square,15,FALSE,[List],[List],160 Village Green Square,160 Village Green Square,1000,TRUE,[Record],M1S 0L1
+8083,Eastview Park,VAULT,43.75907141,-79.18945282,,Eastview Park,11,FALSE,[List],[List],43 Waldock St,43 Waldock St,1000,TRUE,[Record],M1E 2E7
+8084,Grenville St / Yonge St ,REGULAR,43.66202935,-79.38360958,0,Grenville St / Yonge St ,15,FALSE,[List],[List],470 Yonge St ,470 Yonge St ,1000,TRUE,[Record],M4Y 1X5
+8085,Lawrence Ave W / Bathurst St,VAULT,43.71901032,-79.43009089,0,Lawrence Ave W / Bathurst St,11,FALSE,[List],[List],507 Lawrence Ave W,507 Lawrence Ave W,996,TRUE,[Record],M6B 4K2
+8086,Lawrence Ave W / Dufferin St,VAULT,43.71431785,-79.45414486,,Lawrence Ave W / Dufferin St,15,FALSE,[List],[List],812 Lawrence Ave W,812 Lawrence Ave W,500,TRUE,[Record],M6A 0B5
+8087,Front St E / Cooperage St,REGULAR,43.65296378,-79.35711048,0,Front St E / Cooperage St,19,FALSE,[List],[List],416 Front St E ,416 Front St E ,500,TRUE,[Record],M5A 0H8
+8088,Lawrence Ave W / Renfield St,VAULT,43.70402999,-79.49883351,0,Lawrence Ave W / Renfield St,11,FALSE,[List],[List],1750 Lawrence Ave W,1750 Lawrence Ave W,1000,TRUE,[Record],M6L 3C4
+8089,Lawrence Ave W / Pine St,VAULT,43.70177453,-79.50850451,,Lawrence Ave W / Pine St,15,FALSE,[List],[List],1965 Lawrence Ave W,1965 Lawrence Ave W,1000,TRUE,[Record],M9N 2Y8
+8090,Church St / Cypress St,VAULT,43.70638575,-79.51671698,0,Church St / Cypress St,15,FALSE,[List],[List],54 Elm St,54 Elm St,1000,TRUE,[Record],M9N 1L3
+8091,Rockcliffe Blvd / Alliance Ave,VAULT,43.6765194,-79.48942027,0,Rockcliffe Blvd / Alliance Ave,11,FALSE,[List],[List],501 Alliance Ave,501 Alliance Ave,1000,TRUE,[Record],M6N 2J1
+8092,Jane St / Woolner Ave (Woolner Park),VAULT,43.67119618,-79.49337218,0,Jane St / Woolner Ave (Woolner Park),15,FALSE,[List],[List],735 Jane St,735 Jane St,1000,TRUE,[Record],M6N 1V1
+8093,Jane St / Spenvalley Dr,VAULT,43.74093707,-79.51338883,0,Jane St / Spenvalley Dr,15,FALSE,[List],[List],2725 Jane St,2725 Jane St,1000,TRUE,[Record],M3L 1S3
+8094,Baycrest Ave / Bathurst St,VAULT,43.72966526,-79.43247278,,Baycrest Ave / Bathurst St,19,FALSE,[List],[List],3560 Bathurst St,3560 Bathurst St,1000,TRUE,[Record],M6A 2E1
+8095,Weston Rd / Gaydon Ave,VAULT,43.72058185,-79.53729089,,Weston Rd / Gaydon Ave,11,FALSE,[List],[List],2831 Weston Rd,2831 Weston Rd,1001,TRUE,[Record],M9M 2S1
+8096,Commissioners St / Bouchette St,VAULT,43.65026891,-79.3407258,,Commissioners St / Bouchette St,20,FALSE,[List],[List],225 Commissioner St,225 Commissioner St,1000,TRUE,[Record],M4M 1A2
+8099,Jane St / Milo Park Gt,VAULT,43.76610506,-79.51987577,0,Jane St / Milo Park Gt,11,FALSE,[List],[List],4444 Jane St,4444 Jane St,1000,TRUE,[Record],M3N 2K3
+8101,Pape Ave / Hopedale Ave,VAULT,43.69651435,-79.35001867,0,Pape Ave / Hopedale Ave,15,FALSE,[List],[List],1404 Pape Ave,1404 Pape Ave,500,TRUE,[Record],M4K 3N1
+8102,Sheppard Ave W / Magellan Dr,VAULT,43.73973761,-79.50986836,0,Sheppard Ave W / Magellan Dr,15,FALSE,[List],[List],1906 Sheppard Ave W,1906 Sheppard Ave W,1000,TRUE,[Record],M3L 1Y7
+8104,Toronto Public Library - Agincourt,VAULT,43.78552118,-79.29353421,0,Toronto Public Library - Agincourt,15,FALSE,[List],[List],155 Bonis Ave,155 Bonis Ave,1000,TRUE,[Record],M1T 3W6
+8105,Kennedy Rd / Finch Recreational Trail,VAULT,43.81048188,-79.30130779,,Kennedy Rd / Finch Recreational Trail,15,FALSE,[List],[List],3088 Kennedy Rd,3088 Kennedy Rd,1000,TRUE,[Record],M1V 5M4
+8106,Memorial Park Ave / Kimbourne Ave ,VAULT,43.69089524,-79.33452043,0,Memorial Park Ave / Kimbourne Ave ,11,FALSE,[List],[List],455 Cosburn Ave,455 Cosburn Ave,500,TRUE,[Record],M4J 2N2
+8107,Pitfield Rd / McCowan Rd,VAULT,43.78745244,-79.25768393,0,Pitfield Rd / McCowan Rd,15,FALSE,[List],[List],360 Pitfield Rd,360 Pitfield Rd,1000,TRUE,[Record],M1S 3E6
+8108,Agincourt Recreation Centre,VAULT,43.78809358,-79.2763071,0,Agincourt Recreation Centre,15,FALSE,[List],[List],31 Glen Watford Dr,31 Glen Watford Dr,1000,TRUE,[Record],M1S 2B7
+8109,Brimley Rd / E Highland Creek Trail,VAULT,43.79692798,-79.27287065,0,Brimley Rd / E Highland Creek Trail,11,FALSE,[List],[List],2284 Brimley Rd,2284 Brimley Rd,1000,TRUE,[Record],M1S 2B6
+8110,Midland Ave / Finch Recreational Trail,VAULT,43.81264248,-79.29119588,0,Midland Ave / Finch Recreational Trail,15,FALSE,[List],[List],3691 Midland Ave ,3691 Midland Ave ,1000,TRUE,[Record],M1V 2G8
+8111,Brimwood Blvd / North Scarborough Green Loop,VAULT,43.81173536,-79.27828763,,Brimwood Blvd / North Scarborough Green Loop,11,FALSE,[List],[List],20 Brimwood Blvd ,20 Brimwood Blvd ,2000,TRUE,[Record],M1V 1B7
+8112,Bernadine St / Brimley Rd,VAULT,43.76852699,-79.26050105,0,Bernadine St / Brimley Rd,11,FALSE,[List],[List],20 Bernadine St,20 Bernadine St,1500,TRUE,[Record],M1P 4M2
+8113,Leslie Lookout Park,VAULT,43.65392406,-79.32435875,,Leslie Lookout Park,23,FALSE,[List],[List],12 Leslie St,12 Leslie St,1000,TRUE,[Record],M4M 3H7
+8114,Dulverton Rd / Birchmount Rd,VAULT,43.74850699,-79.28465704,0,Dulverton Rd / Birchmount Rd,11,FALSE,[List],[List],5 Dulverton Rd,5 Dulverton Rd,1000,TRUE,[Record],M1P 1G4
+8115,Lawrence Ave E / Burnview Cres,VAULT,43.756495,-79.24043611,,Lawrence Ave E / Burnview Cres,11,FALSE,[List],[List],3225 Lawrence Ave E,3225 Lawrence Ave E,1000,TRUE,[Record],M1H 3C2
+8117,Valparaiso Ave / Lawrence Ave E,VAULT,43.75496829,-79.24674142,0,Valparaiso Ave / Lawrence Ave E,15,FALSE,[List],[List],3015 Lawrence Ave E,3015 Lawrence Ave E,1000,TRUE,[Record],M1P 2V7
+8118,Clover Hill Park - SMART,SMARTMAPFRAME,43.66568005,-79.38802999,0,Clover Hill Park,20,FALSE,[List],[List],50 St Joseph St,50 St Joseph St,500,TRUE,[Record],M5S 1J4
+8119,Thistletown Community Centre,VAULT,43.73532955,-79.56176489,0,Thistletown Community Centre,11,FALSE,[List],[List],925 Albion Rd,925 Albion Rd,1000,TRUE,[Record],M9V 1A6
+8120,Albion Rd / Kipling Ave (Albion Arena),VAULT,43.73988874,-79.5826402,0,Albion Rd / Kipling Ave (Albion Arena),11,FALSE,[List],[List],1501 Albion Rd,1501 Albion Rd,1000,TRUE,[Record],M9V 1B2
+8122, Silverstone Dr / Stevenson Rd ,VAULT,43.74471689,-79.5881661,0, Silverstone Dr / Stevenson Rd ,15,FALSE,[List],[List],68 Stevenson Rd,68 Stevenson Rd,1000,TRUE,[Record],M9C 2Y2
+8123,Martin Grove Rd / Lexington Ave,VAULT,43.74448185,-79.59565569,0,Martin Grove Rd / Lexington Ave,11,FALSE,[List],[List],2068 Martin Grove Rd,2068 Martin Grove Rd,500,TRUE,[Record],M9V 3T1
+8125,John Garland Blvd / Jamestown Cres,VAULT,43.73236109,-79.58661112,,John Garland Blvd / Jamestown Cres,15,FALSE,[List],[List],1675 Martin Grove Rd,1675 Martin Grove Rd,1000,TRUE,[Record],M9V 3S3
+8128,Queen’s Plate Dr / Rexdale Blvd,VAULT,43.71956203,-79.60346425,0,Queen’s Plate Dr / Rexdale Blvd,11,FALSE,[List],[List],920 Queen's Plate Dr,920 Queen's Plate Dr,1000,TRUE,[Record],M9W 7J9
+8129,Don Mills Rd / Barber Greene Rd,VAULT,43.72728197,-79.34098463,0,Don Mills Rd / Barber Greene Rd,11,FALSE,[List],[List],900 Don Mills Rd,900 Don Mills Rd,1000,TRUE,[Record],M3C 1V6
+8130,Gateway Blvd (South) / Don Mills Rd,VAULT,43.70998509,-79.33389899,0,Gateway Blvd (South) / Don Mills Rd,11,FALSE,[List],[List],707 Don Mills Rd,707 Don Mills Rd,1000,TRUE,[Record],M3C 1T1
+8131,Rochefort Dr / Don Mills Rd,VAULT,43.71800535,-79.33740368,0,Rochefort Dr / Don Mills Rd,11,FALSE,[List],[List],7 Rochefort Dr,7 Rochefort Dr,1000,TRUE,[Record],M3C 1H4
+8133,Aga Khan Museum and Park (Wynford Dr),VAULT,43.72571669,-79.33296484,0,Aga Khan Museum and Park (Wynford Dr),15,FALSE,[List],[List],77 Wynford Dr,77 Wynford Dr,1000,TRUE,[Record],M3C 1K1
+8134,Eglinton Ave E / Sloane Ave,VAULT,43.72617148,-79.31308996,0,Eglinton Ave E / Sloane Ave,11,FALSE,[List],[List],1700 Eglinton Ave E,1700 Eglinton Ave E,1000,TRUE,[Record],M4A 2X4
+8137,95 Beecroft Rd,VAULT,43.76384867,-79.41393612,,95 Beecroft Rd,31,FALSE,[List],[List],95 Beecroft Rd - CP404,95 Beecroft Rd - CP404,1000,TRUE,[Record],M2N 6N6
+8138,Scarborough Town Centre,VAULT,43.77374597,-79.25521612,0,Scarborough Town Centre,23,FALSE,[List],[List],70 Town Centre Court,70 Town Centre Court,1000,TRUE,[Record],M1P 0B2
+8139,Knob Hill Park,VAULT,43.74390552,-79.25119822,0,Knob Hill Park,11,FALSE,[List],[List],66 Gully Dr,66 Gully Dr,1000,TRUE,[Record],M1K 4W4
+8141,Brimley Rd / Brimorton Dr,VAULT,43.76552301,-79.25948527,0,Brimley Rd / Brimorton Dr,11,FALSE,[List],[List],1171 Brimley Rd,1171 Brimley Rd,1000,TRUE,[Record],M1P 3G5
+8142,Kitchener Rd / Kingston Rd,VAULT,43.7667533,-79.18970075,0,Kitchener Rd / Kingston Rd,11,FALSE,[List],[List],4411 Kingston Rd,4411 Kingston Rd,1000,TRUE,[Record],M1E 2N3
+8144,James Gardens,VAULT,43.67088425,-79.51381165,,James Gardens,11,FALSE,[List],[List],99 Edenbridge Dr,99 Edenbridge Dr,1000,TRUE,[Record],M9A 3G4
+8146, George St S / The Esplanade,REGULAR,43.64834697,-79.3697974,0, George St S / The Esplanade,11,FALSE,[List],[List],131 The Esplanade,131 The Esplanade,500,TRUE,[Record],M5A 4P5
+8147,Widmer St / Adelaide St W (South),,43.64729988,-79.3913131,0,Widmer St / Adelaide St W (South),8,FALSE,,[List],Widmer St / Adelaide St W,Widmer St / Adelaide St W,20,TRUE,[Record],M5V 2E8
+8148,Simcoe St / Wellington St W (North) 2,,43.64624614,-79.38548852,,Simcoe St / Wellington St W ,4,FALSE,,[List],Simcoe St / Wellington St W,Simcoe St / Wellington St W,10,TRUE,[Record],M5J 0C2
+8149,Danforth Rd / St Clair Ave E,REGULAR,43.71716239,-79.25956719,0,Danforth Ave / St Clair Ave E,11,FALSE,[List],[List],3566 St Clair Ave E,3566 St Clair Ave E,1000,TRUE,[Record],M1K 1M2
+8150,Birchmount Rd / Eglinton Ave E,VAULT,43.7293226,-79.27798753,,Birchmount Rd / Eglinton Ave E,11,FALSE,[List],[List],2201 Eglinton Ave E,2201 Eglinton Ave E,1000,TRUE,[Record],M1L 4S2
+8151,Corvette Ave / Kennedy Rd,VAULT,43.72544624,-79.26476852,0,Corvette Ave / Kennedy Rd,11,FALSE,[List],[List],661 Kennedy Rd,661 Kennedy Rd,1000,TRUE,[Record],M1K 2B8
+8152,Surrey Pl / Dr. Emily Stowe Way - SMART,SMARTMAPFRAME,43.66104284,-79.3879663,0,Surrey Pl / Dr. Emily Stowe Way,16,FALSE,[List],[List],647-535-8461,647-535-8461,500,TRUE,[Record],
+8153,Neilson Rd / Ellesmere Rd,VAULT,43.78234921,-79.2047337,,25 Neilson Rd,19,FALSE,[List],[List],25 Neilson Rd,25 Neilson Rd,0,TRUE,[Record],
+8154,Mornelle Ct / Ellesmere Rd,VAULT,43.78528,-79.195423,0,3070 Ellesmere Rd,11,FALSE,[List],[List],3070 Ellesmere Rd,3070 Ellesmere Rd,0,TRUE,[Record],
+8155,Ellesmere Rd / Scarborough Golf Club Rd ,VAULT,43.77881462,-79.22174099,0,Ellesmere Rd / Scarborough Golf Club Rd ,15,FALSE,[List],[List],29 Portico Dr,29 Portico Dr,1000,TRUE,[Record],M1G 3R5
+8156,Scarborough Golf Club Rd / Lawrence Ave E ,VAULT,43.76118061,-79.21603819,,Scarborough Golf Club Rd / Lawrence Ave E ,11,FALSE,[List],[List],550 Scarborough Golf Club Rd,550 Scarborough Golf Club Rd,1000,TRUE,[Record],M1G 1H6
+8157,Confederation Dr / Greencrest Cr,VAULT,43.75779585,-79.22294338,0,Confederation Dr / Greencrest Cr,15,FALSE,[List],[List],545 Markham Rd,545 Markham Rd,1000,TRUE,[Record],M1H 2A1
+8158,Livonia Pl / Neilson Rd,VAULT,43.78555012,-79.20591708,0,Livonia Pl / Neilson Rd,11,FALSE,[List],[List],11 Livonia Pl,11 Livonia Pl,1000,TRUE,[Record],M1E
+8159,Lawrence Ave E / Orton Park Rd,VAULT,43.76383905,-79.20559913,0,Lawrence Ave E / Orton Park Rd,15,FALSE,[List],[List],3939 Lawrence Ave E,3939 Lawrence Ave E,1000,TRUE,[Record],M1G 1R9
+8160,Lawrence Ave E / Mossbank Dr,VAULT,43.76270616,-79.21099746,0,Lawrence Ave E / Mossbank Dr,15,FALSE,[List],[List],3847 Lawrence Ave E,3847 Lawrence Ave E,1000,TRUE,[Record],M1G 1R6
+8161,Victoria Park Ave / The Meadoway,VAULT,43.72902198,-79.30424285,0,Victoria Park Ave / The Meadoway,15,FALSE,[List],[List],1589 Victoria Park Ave,1589 Victoria Park Ave,1000,TRUE,[Record],M1R 1P1
+8162,Dan Leckie Way / Fort York Blvd,REGULAR,43.63920234,-79.39776922,0,Dan Leckie Way / Fort York Blvd,27,FALSE,[List],[List],95 Fort York Blvd,95 Fort York Blvd,200,TRUE,[Record],M5V 3Y2
+8163,Strachan Ave / Ordnance St,REGULAR,43.6391731,-79.41056825,0,Strachan Ave / Ordnance St,23,FALSE,[List],[List],37 Strachan Ave,37 Strachan Ave,150,TRUE,[Record],M6K 0E9
+8164,Keelegate Dr / Keele St,VAULT,43.73310385,-79.48330472,0,Keelegate Dr / Keele St,19,FALSE,[List],[List],2875 Keele St,2875 Keele St,1000,TRUE,[Record],M3M 2G7
+8165,Ranee Ave / Flemington Rd (North),VAULT,43.72349197,-79.44824247,0,Ranee Ave / Flemington Rd (North),11,FALSE,[List],[List],256 Ranee Ave ,256 Ranee Ave ,1000,TRUE,[Record],M6A 1N6
+8166,Lawrence East Station,VAULT,43.74966205,-79.27192194,,Lawrence East Station,11,FALSE,[List],[List],134 Mike Myers Dr,134 Mike Myers Dr,1000,TRUE,[Record],M1P 5G5
+8167,Woburn Ave / Avenue Rd,VAULT,43.72545281,-79.41648818,,Woburn Ave / Avenue Rd,15,FALSE,[List],[List],1623 Avenue Rd,1623 Avenue Rd,1000,TRUE,[Record],M5M 3X8
+8168,Portland St / Front St W,VAULT,43.64163409,-79.39878943,0,Portland St / Front St W,11,FALSE,[List],[List],530 Front St W,530 Front St W,500,TRUE,[Record],M5V 1B8
+8169,William Cragg Dr / Jane St,VAULT,43.72254631,-79.50861414,,William Cragg Dr / Jane St,15,FALSE,[List],[List],2205 Jane St ,2205 Jane St ,500,TRUE,[Record],M3M 1A5
+8170,Munition St / Commissioners St,VAULT,43.64652927,-79.35032977,,Munition St / Commissioners St,15,FALSE,[List],[List],30 Munition St ,30 Munition St ,1000,TRUE,[Record],M5A 3S1
+8171, Grafton Ave / Roncesvalles Ave,VAULT,43.63959867,-79.44621279,0, Grafton Ave / Roncesvalles,23,FALSE,[List],[List],27 Roncesvalles Ave,27 Roncesvalles Ave,1000,TRUE,[Record],M6R 3B2
+8172,Silverthorn Ave / Pryor Ave,VAULT,43.674857,-79.46019152,0,Silverthorn Ave / Pryor Ave,23,FALSE,[List],[List],27 Silverthorn Ave,27 Silverthorn Ave,1000,TRUE,[Record],M6N 3J6
+8173,St. Clair Ave W / Poplar Plains Rd,VAULT,43.68600192,-79.40395328,0,St. Clair Ave W / Poplar Plains Rd,15,FALSE,[List],[List],223 St Clair Ave W,223 St Clair Ave W,1000,TRUE,[Record],M4V 0A5
+8174,Wellington St E / Church St,VAULT,43.64864455,-79.37419422,0,Wellington St E / Church St,23,FALSE,[List],[List],44 Wellington St E,44 Wellington St E,500,TRUE,[Record],M5E 1C7
+8175,Simcoe St / Wellington St W (North) 3,VAULT,43.64622668,-79.38553478,,Simcoe St / Wellington St W (North / 3),23,FALSE,[List],[List],56 Simcoe St,56 Simcoe St,5,TRUE,[Record],M5J 0C2
+8176,9 Willingdon Blvd,ELECTRICBIKESTATION,43.6483472,-79.51003769,0,9 Willingdon Blvd,39,TRUE,[List],[List],9 Willingdon Blvd,9 Willingdon Blvd,1000,TRUE,[Record],M8X 2H1
+8177,Linkwood Ln / Spanbridge Rd,VAULT,43.71257311,-79.32449549,0,Linkwood Ln / Spanbridge Rd,11,FALSE,[List],[List],981 Linkwood Ln,981 Linkwood Ln,1000,TRUE,[Record],M3C
+8178,Agincourt GO Station,VAULT,43.78605669,-79.28503073,0,Agincourt GO Station,23,FALSE,[List],[List],29 Reidmount Ave,29 Reidmount Ave,1000,TRUE,[Record],M1S 1B5
+8179,McCowan Rd / Brimorton Dr,VAULT,43.76573754,-79.24922927,0,McCowan Rd / Brimorton Dr,11,FALSE,[List],[List],151 Brimorton Dr,151 Brimorton Dr,1000,TRUE,[Record],M1H 2C2
+8180,Osler Playground (Argyle St),VAULT,43.64641961,-79.42182843,0,Osler Playground (Argyle St),15,FALSE,[List],[List],123 Argyle St,123 Argyle St,1000,TRUE,[Record],M6J 1N7
+8181,Cherry St / Commissioners St,VAULT,43.64483932,-79.35330372,0,Cherry St / Commissioners St,31,FALSE,[List],[List],Commissioners St - Ward 14,Commissioners St - Ward 14,400,TRUE,[Record],M5A 3L3
+8182,Biidaasige Park (11 Munition St),VAULT,43.64621864,-79.35004852,0,Biidaasige Park (11 Munition St),23,FALSE,[List],[List],11 Munition St,11 Munition St,400,TRUE,[Record],M5A 1A8
+8183,Dufferin St / King St W ,VAULT,43.6391706,-79.4272676,0,Dufferin St / King St W ,23,FALSE,[List],[List],283 Dufferin St ,283 Dufferin St ,1000,TRUE,[Record],M6K 1Z7
+8184,Antibes Dr / Bathurst St,VAULT,43.78133436,-79.44592471,0,Antibes Dr / Bathurst St,15,FALSE,[List],[List],145 Antibes Dr,145 Antibes Dr,1000,TRUE,[Record],M2R
+8185,Laird Crosstown Station,VAULT,43.71362626,-79.36373329,0,Laird Crosstown Station,11,FALSE,[List],[List],827 Eglinton Ave E,827 Eglinton Ave E,1000,TRUE,[Record],M4P 1A6
+8188,16 John St,VAULT,43.70133601,-79.51748388,0,16 John St,23,FALSE,[List],[List],16 John St,16 John St,1000,TRUE,[Record],M9N 0B2
+8189,25 St. Mary St ,VAULT,43.66756932,-79.3874941,0,25 St. Mary St ,15,FALSE,[List],[List],25 St. Mary St ,25 St. Mary St ,500,TRUE,[Record],M4Y 1R2
+8190,1651 Queen St E,VAULT,43.66669199,-79.31437377,0,1651 Queen St E,27,FALSE,[List],[List],1651 Queen St E,1651 Queen St E,500,TRUE,[Record],M4L 1G5
+8193,7 Norton Ave,ELECTRICBIKESTATION,43.67844703,-79.4435206,0,7 Norton Ave,27,TRUE,[List],[List],416-618-3195,416-618-3195,1000,TRUE,[Record],M6E 1E1
+8200,14 Fuller Ave,ELECTRICBIKESTATION,43.64065159,-79.43948578,0,14 Fuller Ave,6,TRUE,[List],[List],416-703-3216,416-703-3216,1000,TRUE,[Record],M6R 1B9
+8201,Falmouth Ave / Eglinton Ave E,VAULT,43.735217,-79.252903,0,Falmouth Ave / Eglinton Ave E,11,FALSE,[List],[List],,,1000,TRUE,[Record], M1K 2S2
+8202,Corporate Dr / Lee Centre Dr,VAULT,43.781009,-79.245315,0,Corporate Dr / Lee Centre Dr,19,FALSE,[List],[List],416-303-1184,416-303-1184,1000,TRUE,[Record],M1H 3J5
+8203,Greenbrae Parkette,VAULT,43.760466,-79.22981,0,Greenbrae Parkette,11,FALSE,[List],[List],416-301-1473,416-301-1473,1000,TRUE,[Record], M1H 1R2
+8204,Cedarbrae Mall,VAULT,43.756854,-79.229425,,Cedabrae Mall,11,FALSE,[List],[List],,,1000,TRUE,[Record],M1H 1E4
+8205,Markham Rd / Blakemanor Blvd,VAULT,43.750777,-79.221929,0,Markham Rd / Blakemanor Blvd,15,FALSE,[List],[List],416-301-3614,416-301-3614,1000,TRUE,[Record],M1J 3E2
+8207,45 Trudelle St,VAULT,43.739541,-79.242943,0,45 Trudelle St,8,FALSE,[List],[List],,,1000,TRUE,[Record],M1J 1Z4
+8210,Brimorton Dr / Orton Park Rd,VAULT,43.771483,-79.209087,0,Brimorton Dr / Orton Park Rd,11,FALSE,[List],[List],416-301-3180,416-301-3180,1000,TRUE,[Record],M1G 2V0
+8215,Dundas St W / McCaul St,VAULT,43.654501,-79.390868,0,Dundas St W / McCaul St,17,FALSE,[List],[List],,,1000,TRUE,[Record],M5T 1G2
+8216,Davenport Rd / Dovercourt Rd,VAULT,43.674139,-79.435611,0,Davenport Rd / Dovercourt Rd,14,FALSE,[List],[List],,,1000,TRUE,[Record],M6H 2H1
+8218,Bessarion Rd / Sheppard Ave E,VAULT,43.76871888,-79.376777,0,Bessarion Rd / Sheppard Ave E,11,FALSE,[List],[List],,,500,TRUE,[Record],M2K 2T5
