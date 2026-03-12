@@ -1,7 +1,7 @@
 ---
 title: "Beaches_Bikes_Cluster"
 author: "Derek Kusmenko"
-format: pdf
+format: html
 editor: visual
 ---
 
@@ -341,12 +341,11 @@ leaflet(mapped_communities) |>
             title = "Network Communities<br>(Based on Top 100 Routes)",
             opacity = 1)
 
-
 ```
 
 ```{r}
 #  Prepare oubound Data
-outflow_graph <- df |>
+outflow_graph <- trips_data |>
   filter((Start.Station.Id %in% beaches_stations) & !(End.Station.Id %in% beaches_stations)) |>
   count(Start.Station.Name, End.Station.Name, sort = TRUE) |>
   rename(from = Start.Station.Name, to = End.Station.Name, weight = n) |>
@@ -356,7 +355,7 @@ outflow_graph <- df |>
   as_tbl_graph()
 
 # Prepare inbound data
-inflow_graph <- df |>
+inflow_graph <- trips_data |>
   filter(!(Start.Station.Id %in% beaches_stations) & (End.Station.Id %in% beaches_stations)) |>
   count(Start.Station.Name, End.Station.Name, sort = TRUE) |>
   rename(from = Start.Station.Name, to = End.Station.Name, weight = n) |>
@@ -386,8 +385,6 @@ p2 <- plot_flow(inflow_graph, "Inflow: Where do they come from?", "steelblue")
 
 print(p1)
 print(p2)
-
-
 ```
 
 ## Misc: User Type Check
@@ -397,8 +394,8 @@ Look at difference in distribution between annual vs casual members.
 ```{r}
 # first remove outliers via 1.5*IQR method
 # Calculate the quartiles
-Q1 <- quantile(df$Trip..Duration, 0.25, na.rm = TRUE)
-Q3 <- quantile(df$Trip..Duration, 0.75, na.rm = TRUE)
+Q1 <- quantile(trips_data$Trip..Duration, 0.25, na.rm = TRUE)
+Q3 <- quantile(trips_data$Trip..Duration, 0.75, na.rm = TRUE)
 IQR_value <- Q3 - Q1
 
 # Define the bounds 
@@ -406,11 +403,11 @@ lower_bound <- Q1 - 1.5 * IQR_value
 upper_bound <- Q3 + 1.5 * IQR_value
 
 # Create a new filtered dataset
-beaches_trips_no_outliers <- df |>
+beaches_trips_no_outliers <- trips_data |>
   filter(Trip..Duration >= lower_bound & Trip..Duration <= upper_bound) 
 
 # Print how many rows were removed
-rows_removed <- nrow(df) - nrow(beaches_trips_no_outliers)
+rows_removed <- nrow(trips_data) - nrow(beaches_trips_no_outliers)
 print(paste("Removed", rows_removed, "outlier trips."))
 
 # visualize distributions
