@@ -1,7 +1,7 @@
 ---
 title: "Beaches_Bikes_Heatmap"
 author: "Derek Kusmenko"
-format: pdf
+format: html
 editor: visual
 ---
 
@@ -29,6 +29,20 @@ set.seed(2453)
 # read csv files
 trips_data <- read_csv("../01_Data/beaches_bikes.csv")
 stations_data <- read_csv("../01_Data/Bike_Station_Info.csv")
+
+beaches_stations <- c(
+  "7692",
+  "7317",
+  "7318",
+  "7365",
+  "7427",
+  "7315",
+  "7695",
+  "7364",
+  "7314",
+  "7316",
+  "7428"
+)
 
 # Ensure IDs are characters so they merge properly
 stations_data <- stations_data %>% mutate(station_id = as.character(station_id))
@@ -89,7 +103,6 @@ map_years <- map_years %>%
 
 map_years
 ```
-
 
 ```{r}
 
@@ -268,7 +281,6 @@ map_years <- map_years %>%
 
 map_years
 ```
-
 
 ```{r}
 
