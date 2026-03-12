@@ -21,6 +21,20 @@ set.seed(2453)
 
 ```{r}
 df <- read.csv("../01_Data/beaches_bikes.csv")
+
+beaches_stations <- c(
+  "7692",
+  "7317",
+  "7318",
+  "7365",
+  "7427",
+  "7315",
+  "7695",
+  "7364",
+  "7314",
+  "7316",
+  "7428"
+)
 ```
 
 ## Dwell Time Analysis (Weekends)
@@ -152,7 +166,7 @@ print(paste("One-Way Trip Percentage:", round(dropoff_rate * 100, 1), "% of ride
 
 ### Only Using Leisure Cluster data
 
-Now repeating the analysis but using the data calculated from the leisure dataset generated in the _cluster file
+Now repeating the analysis but using the data calculated from the leisure dataset generated in the \_cluster file
 
 ```{r}
 
