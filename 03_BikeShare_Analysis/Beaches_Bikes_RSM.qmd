@@ -130,6 +130,15 @@ ggplot(daily_counts_clean, aes(x = date, y = total_rides)) +
 
 ```
 
+```{r}
+# Exporting the general analysis data
+write.csv(daily_counts_clean, "daily_ride_distribution.csv", row.names = FALSE)
+write.csv(weekly_data_clean, "weekly_ride_averages.csv", row.names = FALSE)
+write.csv(monthly_trend_clean, "monthly_seasonality_trends.csv", row.names = FALSE)
+
+```
+
+
 ### Repeat Analysis for Inbound Trips Only
 
 ```{r}
@@ -243,4 +252,13 @@ ggplot(daily_counts_clean, aes(x = date, y = total_rides)) +
        x = "Date",
        y = "Total Inbound Rides") +
   theme_minimal()
+```
+
+
+```{r}
+# Exporting the general analysis data
+write.csv(daily_counts_clean, "daily_ride_distribution_inbound.csv", row.names = FALSE)
+write.csv(weekly_data_clean, "weekly_ride_averages_inbound.csv", row.names = FALSE)
+write.csv(monthly_trend_clean, "monthly_seasonality_trends_inbound.csv", row.names = FALSE)
+
 ```
