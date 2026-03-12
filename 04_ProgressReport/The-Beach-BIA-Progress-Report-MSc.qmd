@@ -1,0 +1,904 @@
+---
+title: Progress Report - The Beach BIA MSc Team
+author: Arusan Surendiran
+thanks: "Code and data are available at: [https://github.com/derekkusmenko/TheBeachBIAProject.git](https://github.com/derekkusmenko/TheBeachBIAProject.git)."
+date: today
+date-format: long
+format: pdf
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+\begin{center}
+  \includegraphics[width=5cm]{images/logo-beach.jpg}
+\end{center}
+
+### Summary {.unnumbered}
+
+Our analysis of 2022–2025 Toronto data establishes
+
+-   "While the summer Peak Season thrives, mobility and nature observations plummeted during freezing periods, confirming Dr. Jo’s observation that the BIA’s primary challenge lies in bridging the significant off-peak activity gap.
+
+-   Quantifying Environmental "Shocks": By applying a Generalized Least Squares (GLS) model to remove noise, we quantified the immediate impact of weather fluctuations: a 1 $C^{\circ}$ warmth triggers nearly 10 additional bike trips daily, while a single rain event imposes a "penalty" of roughly 77 trips. This reveals a neighborhood economy that is highly reactive to daily environmental shifts rather than just calendar dates.
+
+Further Analysis On:
+
+-   Peak Areas of Activities explored in further detail
+
+-   Comparison of other Toronto Neighbourhoods (Roncesvalles, Danforth Mosaic)
+
+-   Simulation of Data for Analytics Research Proposal
+
+## Introduction
+
+### Goals: Modeling Human Activity and Community Usage of Toronto's Beach BIA
+
+The primary goal of this research is to define and quantify human activity and movement patterns within the Beach BIA using open source data to establish clear neighborhood trends. By applying data science approaches and statistical modeling, the project examines how the community is being engaged with and by whom. A central component of this analysis will incorporate a comparative study, benchmarking the BIA against other Toronto neighborhoods to understand its unique role in the city's urban landscape and its relative performance as a destination.
+
+This technical analysis is framed by the concept of the neighborhood as a "Third Space," a vital hub independent of home and work that prioritizes usage utility over traditional retail growth. Measuring public space usage directly is typically complex, so the study relies on proxies to understand the underlying factors driving utility in the community’s parks and small business corridors. Additionally, the research seeks to validate the shifts between "Peak" and "Struggle" seasons, modeling how business activity and movement patterns fluctuate with Toronto’s seasons. An aim includes how to provide actionable insights into how the BIA can be promoted and developed during non busy seasons, identifying weather based opportunities to promote engagement year round.
+
+### Collaborator Alignment
+
+We are working with Dr. Johanna Carlo, a community leader within the The Beaches Business Improvement Area organization. Her priorities focus on promoting the neighborhood as a community hub where people can gather and exist outside of home or work. This research moves beyond typical business metrics to prioritize the social utility of public spaces, treating the parks and the boardwalk as essential areas for leisure and connection. By quantifying these patterns, the analysis provides the evidence needed to show how the environment supports a healthy public realm regardless of retail activity. This ensures the results are practical for developing new ways to keep the area active and welcoming during both peak seasons and quieter periods of the year. While these initial findings use specific local proxies, the approach can be expanded to help other urban centers prioritize community well-being in their own planning.
+
+The project also directly supports the ongoing work between the BIA and several other student-based groups at the University of Toronto. By creating effective data visualizations and analytical models, this research provides the foundation for business materials and marketing strategies that promote the BIA as more than just a retail space. Providing a rigorous look at how people move and linger allows these collaborative efforts to move forward with a clear, shared understanding of the neighborhood's seasonal and environmental dynamics.
+
+## Datasets
+
+```{r setup}
+library(opendatatoronto)
+library(tidyverse)
+library(sf)
+library(ggspatial)
+library(patchwork)
+library(lubridate)
+library(here)
+library(dplyr)
+library(ggplot2)
+library(janitor)
+library(knitr)
+library(skimr)
+library(zoo)
+library(mgcv)
+library(jsonlite)
+library(kableExtra)
+library(broom)
+library(broom.mixed)
+```
+
+Data that potentially Drives Human Activity:
+
+-   Climate Data
+
+-   Beaches Water Quality
+
+Data that Approximates Human Activity
+
+-   Bike Share Toronto Data
+
+-   iNaturalist Observations
+
+Our progress thus far highlights the availability and insights from free, openly sourced data for Toronto.
+
+## Climate Data
+
+Pulling daily weather data from the Government of Canada, we analyze the trends in weather, and are curious to understand how it may impact business activity in the BIA.
+
+This analysis models the seasonal temperature cycles of the Beach BIA from 2022 to 2025. By using a Generalized Additive Model (GAM) with a cubic spline, we can filter out daily weather "noise" to identify the consistent transition points between the summer and winter seasons. This smoothed trend acts as the primary environmental filter for understanding when the community’s public spaces reach their maximum utility.
+
+Source: https://api.weather.gc.ca/collections/climate-stations/items/6158355?lang=en,
+
+Station ID: 31688 Station Name: TORONTO CITY
+
+```{r}
+#| warning: false
+#| message: false
+#| include: false
+
+stn_id <- 31688
+years  <- 2022:2026
+
+tasks <- expand_grid(year = years, month = 1:12) |>
+  filter(year < year(today()) | (year == year(today()) & month < month(today())))
+
+df_weather <- map2_dfr(tasks$year, tasks$month, function(y, m) {
+  
+  url <- paste0("https://climate.weather.gc.ca/climate_data/bulk_data_e.html?",
+                "format=csv&stationID=", stn_id, "&Year=", y, "&Month=", m, 
+                "&Day=1&timeframe=1&submit=Download+Data")
+  
+  read_csv(url, col_types = cols(.default = "c"), show_col_types = FALSE)
+})
+
+
+climate_data <- df_weather |>
+  type_convert(guess_integer = TRUE) |>
+  clean_names() |>
+  mutate(date_time = as_datetime(date_time_lst)) |>
+  select(date_time, temp_c, precip_amount_mm, 
+         dew_point_temp_c, rel_hum_percent, stn_press_k_pa)
+
+skim(climate_data)
+```
+
+```{r}
+#| warning: false
+#| include: false
+
+# Address Missing Values (Less than 0.1% of Data)
+
+climate_clean <- climate_data |>
+  mutate(
+    # Fill Precipitation NAs with 0 (No rain assumed during station down-time)
+    precip_amount_mm = replace_na(precip_amount_mm, 0),
+    
+    # Linear Interpolation for time-series variables (Temp, Humidity, Dew Point)
+    # Fills the ~40 missing hours by connecting the dots
+    temp_c = na.approx(temp_c, na.rm = FALSE),
+    rel_hum_percent = na.approx(rel_hum_percent, na.rm = FALSE),
+    dew_point_temp_c = na.approx(dew_point_temp_c, na.rm = FALSE),
+    
+    # Median Imputation for Station Pressure 
+    stn_press_k_pa = ifelse(is.na(stn_press_k_pa), 
+                             median(stn_press_k_pa, na.rm = TRUE), 
+                             stn_press_k_pa)
+  )
+
+skim(climate_clean)
+```
+
+```{r}
+#| fig-cap: The daily mean temperature (gray) is overlaid with a smoothed GAM seasonal trend (blue) to highlight annual climate cycles.
+climate_daily <- climate_clean |>
+  group_by(date = as.Date(date_time)) |>
+  summarise(daily_mean_temp = mean(temp_c),
+            daily_total_precip = sum(precip_amount_mm))
+
+ggplot(climate_daily, aes(x = date, y = daily_mean_temp)) +
+  # Raw daily data
+  geom_line(color = "grey70", size = 0.3) +
+  
+  # Seasonal trend using GAM spline
+  geom_smooth(
+    method = "gam", 
+    formula = y ~ s(x, bs = "cs", k = 20),
+    color = "steelblue", 
+    size = 1.2
+  ) +
+  
+  # Zero-degree seasonal threshold
+  geom_hline(yintercept = 0, linetype = "dashed", color = "firebrick", alpha = 0.6) +
+  
+  # Report styling
+  labs(
+    title = "Climate Cycles in the Beach BIA (2022-2025)",
+    subtitle = "Daily mean temperatures with smoothed seasonal trend",
+    x = "Year",
+    y = "Temperature (°C)",
+    caption = "Dashed line represents 0°C 'Struggle' season threshold."
+  ) +
+  theme_minimal()
+```
+
+```{r}
+#| fig-cap: This visualization displays total daily precipitation in millimeters from January 2022 to February 2026 based on Environment Canada data. The high frequency of zero-value days is punctuated by extreme rainfall events.
+
+# 2. Create the daily time series plot with month/year labels
+ggplot(climate_daily, aes(x = date, y = daily_total_precip)) +
+  # Use a thin line to keep the 4-year span readable
+  geom_line(color = "dodgerblue4", linewidth = 0.4) +
+  
+  # Add points to highlight the actual rain events
+  geom_point(alpha = 0.3, size = 0.5, color = "dodgerblue4") +
+  
+  # X-axis configuration for months and years
+  scale_x_date(
+    date_breaks = "3 months", 
+    date_labels = "%b %Y",
+    expand = expansion(mult = c(0.01, 0.02))
+  ) +
+  
+  labs(
+    title = "Daily Precipitation Time Series (Beach BIA)",
+    subtitle = "Total daily Precipitation (mm) from Jan 2022 to Feb 2026",
+    x = "Month and Year",
+    y = "Daily Precipitation (mm)",
+    caption = "Data source: Environment Canada"
+  ) +
+  
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1, size = 8),
+    panel.grid.minor = element_blank()
+  ) +
+  expand_limits(y = 0)
+```
+
+The temperature plot reveals a highly predictable seasonal baseline in the Beach BIA, whereas the precipitation data highlights sporadic heavy precipitation events. These significant precipitation spikes could represent days where outdoor activity likely plummeted regardless of how warm it was. By isolating these days, we can explore how weather-resilient the neighbourhood actually is.
+
+## The Beaches Water Quality
+
+We evaluate the impact of beach water safety closures on the wider Beach BIA. Our analysis aims to find quantify what a decrease in waterfront activity during E. coli spikes translates into for the neighbourhood.
+
+```{r ecoli-data}
+#| echo: false
+#| message: false
+#| warning: false
+
+# LOAD TORONTO BEACHES E-COLI DATA
+
+package <- show_package("92b0de8f-1ada-44a7-84cf-adc04868e990")
+resources <- list_package_resources("92b0de8f-1ada-44a7-84cf-adc04868e990")
+beach_ecoli_data <- get_resource("fa96223e-ccf8-4c0a-817b-6f5039311287")
+kewbeach_ecoli_data <- beach_ecoli_data |> filter(beachName == "Kew Balmy Beach")
+woodbine_ecoli_data <- beach_ecoli_data |> filter(beachName == "Woodbine Beaches")
+
+kew_ecoli_cleaned <- kewbeach_ecoli_data |>
+  mutate(
+    Date = as.Date(collectionDate),
+    Year = year(Date),
+    Month = month(Date, label = TRUE)
+  ) |>
+  filter(Year >= 2022) |>
+  # Handle missing values and group by day to average the different test sites
+  group_by(Date, Year, Month) |>
+  summarise(Daily_Avg_Ecoli = mean(eColi, na.rm = TRUE), .groups = "drop")
+
+woodbine_ecoli_cleaned <- woodbine_ecoli_data |>
+  mutate(
+    Date = as.Date(collectionDate),
+    Year = year(Date),
+    Month = month(Date, label = TRUE)
+  ) |>
+  filter(Year >= 2022) |>
+  # Handle missing values and group by day to average the different test sites
+  group_by(Date, Year, Month) |>
+  summarise(Daily_Avg_Ecoli = mean(eColi, na.rm = TRUE), .groups = "drop")
+```
+
+```{r}
+#| fig-height: 8
+#| fig-cap: This heatmap tracks the daily status of Woodbine, Kew and Balmy beaches across the May–September testing window. Red tiles (Both Closed) and orange/yellow tiles (Single Beach Advisory) represent the primary closures based on day.
+
+beach_status_full <- full_join(
+  kew_ecoli_cleaned |> select(Date, ecoli_kew = Daily_Avg_Ecoli),
+  woodbine_ecoli_cleaned |> select(Date, ecoli_woodbine = Daily_Avg_Ecoli),
+  by = "Date"
+) |>
+  mutate(
+    closed_kew = !is.na(ecoli_kew) & ecoli_kew > 100,
+    closed_woodbine = !is.na(ecoli_woodbine) & ecoli_woodbine > 100,
+    closure_status = case_when(
+      closed_kew & closed_woodbine ~ "Both Closed (Red)",
+      closed_kew ~ "Kew Only (Orange)",
+      closed_woodbine ~ "Woodbine Only (Yellow)",
+      (!is.na(ecoli_kew) | !is.na(ecoli_woodbine)) ~ "All Beaches Open",
+      TRUE ~ "No Testing"
+    )
+  )
+
+heatmap_grid <- expand_grid(
+  Year = 2022:2025, # Data through 2025
+  Month = factor(c("May", "Jun", "Jul", "Aug", "Sep"), 
+                 levels = rev(c("May", "Jun", "Jul", "Aug", "Sep"))),
+  Day = 1:31
+) |>
+  # Create a date object to join with the status data
+  mutate(
+    Month_Num = match(Month, month.abb),
+    Date = as.Date(paste(Year, Month_Num, Day, sep = "-"))
+  ) |>
+  # Remove invalid dates (e.g., June 31)
+  filter(!is.na(Date)) |>
+  left_join(beach_status_full |> select(Date, closure_status), by = "Date") |>
+  mutate(closure_status = replace_na(closure_status, "No Testing"))
+
+# 3. Create the plot
+ggplot(heatmap_grid, aes(x = Day, y = Month, fill = closure_status)) +
+  geom_tile(color = "white", linewidth = 0.2) +
+  facet_wrap(~Year, ncol = 1) +
+  scale_fill_manual(values = c(
+    "Both Closed (Red)" = "#e74c3c",      # Red
+    "Kew Only (Orange)" = "#e67e22",      # Orange
+    "Woodbine Only (Yellow)" = "#f1c40f", # Yellow
+    "All Beaches Open" = "#2ecc71",       # Green
+    "No Testing" = "#ecf0f1"              # Light Grey
+  )) +
+  scale_x_continuous(breaks = c(1, 5, 10, 15, 20, 25, 31)) +
+  labs(
+    title = "Beach BIA Water Safety Matrix (2022-2025)",
+    subtitle = "Daily closure status across the May-September testing season",
+    x = "Day of the Month",
+    y = "",
+    fill = "Water Condition"
+  ) +
+  theme_minimal() +
+  theme(
+    legend.position = "bottom",
+    strip.text = element_text(face = "bold", size = 12),
+    panel.grid = element_blank()
+  )
+```
+
+The plots above give us a sense of the number of days the beaches were open throughout the summer season. We are interested in the days closed, to determine how business activity looked elsewhere in the Beach BIA during these days.
+
+## Bike Share Toronto
+
+To measure volumes of activity within the neighborhood, we rely on openly sourced data from the City of Toronto.
+
+We faced challenges regarding how to directly track visitors and measure "dwell" times, as such data is largely proprietary or privatized. Consequently, we utilize **Bike Share Toronto** and **iNaturalist** data as our primary proxies for engagement to estimate when and how the neighborhood is accessed.
+
+We recognize the inherent biases in this approach. Not everyone visiting the neighborhood utilizes bike shares, and only a subset of visitors record nature observations. Despite these limitations, by applying specific assumptions and connecting these proxies to BIA activity levels, we can derive meaningful observations regarding engagement throughout the year.
+
+Our collaborator, Dr. Jo, highlighted the distinct seasonal shifts in neighborhood activity. While this seasonality is typical across Toronto, she noted that business and human activity are exceptionally high during the summer months due to the beach, local amenities, and extensive park systems. Interestingly, she advised that the **Peak Season** is not the BIA's primary concern. Instead, the **Off-Peak** periods (September–December and January–April) present the greatest challenge in maintaining visitor engagement. While cold weather is a natural deterrent, we aim to explore how the community is accessed and utilized during these quieter months despite the climate.
+
+Our data validates Dr. Jo’s observations, as Bike Share usage and iNaturalist records peak in the summer and plummet during the Off-Peak season. While weather is a primary driver, we explore in detail how specific fluctuations and "shocks" in weather within a season correlate to localized activity
+
+```{r}
+beaches_trips_clean <- readRDS(here("data/beaches_trips_clean.rds"))
+bike_clean_2025 <- readRDS(here("data/bike_clean_2025.rds"))
+bike_clean <- readRDS(here("data/bike_clean.rds"))
+
+bike_clean_2025 <- bike_clean_2025 |> clean_names()
+bike_clean <- bike_clean |> clean_names()
+
+bike_clean_harmonized <- bike_clean |>
+  mutate(across(contains("station_id"), as.character), 
+         start_month_name = as.character(start_month_name),
+         end_month_name = as.character(end_month_name))
+
+bike_2025_harmonized <- bike_clean_2025 |>
+  mutate(across(contains("station_id"), as.character),
+         start_month_name = as.character(start_month_name),
+         end_month_name = as.character(end_month_name))
+
+bike_data <- bind_rows(bike_clean_harmonized, bike_2025_harmonized)
+
+# define keywords for Beaches bike share locations
+beaches_stations <- c("7692", "7317","7318","7365", "7427", "7315", "7695", "7364", "7314", "7316", "7428")
+
+# filter for trips either starting or ending in the Beaches
+beaches_bike_data <- bike_data |>
+  # first remove NULL as not useful
+  filter(start_station_name != "NULL", end_station_name != "NULL") |> 
+  filter(
+    # filter for starting station
+    start_station_id %in% beaches_stations | 
+    # filter for end station
+    end_station_id %in% beaches_stations
+  ) |>
+  filter(trip_duration >= 60)
+
+```
+
+```{r}
+#| fig-cap: The bike utilization data demonstrates a somewhat synchronization with the climate cycles shown in Figure 1, with ridership peaking in high-temperature summer months and plummeting during 'Struggle' season periods. The consistent seasonal pattern confirms the neighborhood’s status as a summer destination while highlighting the significant off-peak engagement gap identified by Dr. Jo.
+
+
+# 1. Aggregate and then FILL the missing dates
+bikes_daily <- beaches_bike_data |>
+  group_by(date = as.Date(datetime_start)) |>
+  summarise(total_trips = n(), .groups = "drop") |> 
+  mutate(period = ifelse(date < as.Date("2024-10-31"), "Period 1", "Period 2"))
+
+# 2. Plot with the 'group' aesthetic
+ggplot(bikes_daily, aes(x = date, y = total_trips, group = period)) +
+  geom_line(color = "grey70", alpha = 0.4) +
+  geom_smooth(method = "gam", formula = y ~ s(x, bs = "cs", k = 25), 
+              color = "darkblue", linewidth = 1.2) +
+  scale_x_date(date_breaks = "4 months", date_labels = "%b %y") +
+  labs(title = "Daily Bike Share Trips: The Beaches (2022-2025)",
+    subtitle = "Note: Line breaks indicate missing data periods in 2024") +
+  theme_minimal()
+
+```
+
+```{r}
+daily_bikesweather <- bikes_daily |>
+  filter(year(date) == 2025) |>
+  inner_join(
+    climate_daily |> filter(year(date) == 2025), 
+    by = "date"
+  ) |>
+  # Adding the weekend binary for the model we discussed
+  mutate(is_weekend = factor(ifelse(wday(date) %in% c(1, 7), "Weekend", "Weekday")))
+
+
+# 1. Fit standalone models to generate the trend lines
+m_trips <- gam(total_trips ~ s(as.numeric(date), k = 25),
+               data = daily_bikesweather)
+
+# Temp model remains a smooth seasonal arc
+m_temp <- gam(daily_mean_temp ~ s(as.numeric(date), k = 25), 
+              data = daily_bikesweather)
+
+# 2. Add predictions and residuals to the dataframe
+daily_bikesweather <- daily_bikesweather |>
+  mutate(
+    trips_trend = predict(m_trips),
+    temp_trend = predict(m_temp),
+
+    # Residual Calculation
+    trips_res = total_trips - trips_trend,
+    temp_res = daily_mean_temp - temp_trend
+  )
+```
+
+```{r}
+#| fig-cap: This dual-axis plot visualizes the smoothed seasonal trends for both mean temperature (red) and total daily bike trips (blue). The rise and fall of both curves confirms that climate can be a primary driver of neighborhood activity, establishing the "regular trend" against which non-weather patterns are measured.
+
+# 1. Calculate Scaling Parameters
+# This ensures the Temp range matches the Trip range visually
+t_min <- min(daily_bikesweather$daily_mean_temp, na.rm = TRUE)
+t_max <- max(daily_bikesweather$daily_mean_temp, na.rm = TRUE)
+y_min <- min(daily_bikesweather$total_trips, na.rm = TRUE)
+y_max <- max(daily_bikesweather$total_trips, na.rm = TRUE)
+
+scale_factor <- (y_max - y_min) / (t_max - t_min)
+shift <- y_min - (t_min * scale_factor)
+
+# 3. Final Plotting Code
+ggplot(daily_bikesweather, aes(x = date)) +
+
+    geom_line(aes(y = total_trips), color = "steelblue", alpha = 0.2) +
+  geom_line(aes(y = trips_trend, color = "Trips Trend"), linewidth = 1) +
+  
+  # Note: temp_trend is transformed using your scale_factor and shift
+  geom_line(aes(y = daily_mean_temp * scale_factor + shift), 
+            color = "darkred", alpha = 0.1, linewidth = 0.5) +
+  geom_line(aes(y = temp_trend * scale_factor + shift, color = "Temp Trend"), 
+            linewidth = 1) +
+  
+  scale_y_continuous(
+    name = "Daily Total Trips",
+    sec.axis = sec_axis(~ (. - shift) / scale_factor, name = "Mean Temperature (°C)")
+  ) +
+  scale_color_manual(name = "Trend", 
+                     values = c("Trips Trend" = "steelblue", "Temp Trend" = "darkred")) +
+  scale_x_date(date_breaks = "2 months", date_labels = "%b %Y") +
+  theme_minimal() +
+  theme(legend.position = "bottom") +
+  labs(title = "Beach BIA: Cycle Ridership vs. Temperature (2025)",
+       subtitle = "Ridership trend accounts for seasonal shifts")
+```
+
+Using Generalized Additive Models (GAM), we observe a relationship between Bike Share utilization and temperature throughout 2025. The trends align with expectations, showing significantly higher engagement during warmer months. This confirmation supports Dr. Jo’s observations that the Beach BIA struggles to attract visitors during the winter, a challenge prevalent across Toronto.
+
+Beyond these seasonal cycles, we are particularly interested in the specific 'peaks and dips' that occur regardless of the time of year. To isolate these anomalies, we will calculate the **residuals**. This approach allows us to strip away the predictable seasonal trend and focus exclusively on localized changes, such as the impact of water safety advisories or extreme weather events, on neighborhood activity.
+
+```{r}
+# Find the 10 biggest 'positive' ridership shocks (Peaks)
+peaks_trips <- daily_bikesweather |>
+  slice_max(trips_res, n = 10)
+
+# Find the 10 biggest 'negative' ridership shocks (Dips)
+dips_trips <- daily_bikesweather |>
+  slice_min(trips_res, n = 10)
+```
+
+```{r}
+#| fig-cap: This scatterplot plots local fluctuations by plotting bike trip residuals against temperature residuals. The slight positive slope indicates that even when accounting for seasonal trends, unexpected warm shocks correlate with surges in bike activity, while "cold shocks" result in predictable dips.
+
+ggplot(daily_bikesweather, aes(x = temp_res, y = trips_res)) +
+  geom_point(alpha = 0.4) +
+  geom_smooth(method = "gam", formula = y ~ s(x, bs = "cs"), color = "darkgreen") +
+  labs(title = "Residual Analysis: Relationship of Temperature Shocks and Bike Trip Surges",
+       subtitle = "Is there a relationship of biking trends at peaks and dips temperatures?",
+       x = "Temperature Residual (°C)", y = "Trip Residual (Trips)") +
+  theme_minimal()
+```
+
+While a positive relationship between temperature 'shocks' and ridership surges exists, the correlation appears relatively weak when isolated from the general seasonal trend. The model is currently influenced by significant outliers, days with several hundred unexpected trips, which, on initial observation days like July 1, correspond to busy holiday weekends or major local events that skew the results.
+
+In time-series data like BikeShare trips, autocorrelation can become problematic, so for our modelling approach, we go with GLS, using an AR(1) correlation structure.
+
+-   **Temperature (`temp_res`):** For every **1°C** that the temperature rises above the seasonal expected average, we see a corresponding increase in trips. This confirms that "unseasonably warm" days provide a significant boost to neighborhood activity.
+
+-   **Precipitation (`is_precip`):** On days with recorded precipitation, ridership drops significantly, regardless of how warm it is. This allows us to isolate an effect for rain as well.
+
+-   **Weekend (`is_weekend`):** After removing the seasonal trend, Saturdays and Sundays show a resilient baseline of higher activity, likely representing leisure visitors on everyone's day off.
+
+```{r}
+#| include: false
+library(nlme)
+daily_bikesweather$is_precip <- factor(ifelse(daily_bikesweather$daily_total_precip > 0, "Precip.", "No Precip."))
+                                      
+# We use the residuals from your GAM to ensure we've already 
+# pulled out the 'Seasonality' and 'Weekend' effects.
+model_gls <- gls(trips_res ~ temp_res + is_weekend + is_precip, 
+                 data = daily_bikesweather,
+                 # We add an AR(1) or ARMA correlation structure 
+                 # to fix the remaining autocorrelation
+                 correlation = corAR1(form = ~ date),
+                 na.action = na.omit)
+```
+
+
+```{r}
+
+# 1. Prepare the data (Same as before)
+tidy_gls <- tidy(model_gls) %>%
+  mutate(across(where(is.numeric), ~round(., 3))) %>%
+  mutate(term = case_when(
+    term == "(Intercept)" ~ "Baseline (Average Conditions)",
+    term == "temp_res" ~ "Temperature Shock (per 1°C)",
+    term == "is_weekendWeekend" ~ "Weekend Activity Boost",
+    term == "is_precipPrecip." ~ "Rain Penalty",
+    TRUE ~ term
+  ))
+
+# We remove 'kable_styling' entirely to test if it's the culprit
+kable(tidy_gls, 
+      format = "latex", 
+      booktabs = TRUE, 
+      col.names = c("Variable", "Estimate", "Std. Error", "t-stat", "p-value"))
+```
+
+
+By using `trips_res` (residuals from the earlier GAM), we are looking at the unexpected changes in bike trips using Water Quality days. The model tests if a "Red Day" (Both Beaches Closed) or "Yellow/Orange Day" (Partial Advisory) causes a measurable dip in activity compared to "Green Days".
+
+-   **Rain vs. Closure:** Including `is_precip` to determine how it impacts the other variables.
+
+-   **Water Safety:** If the coefficient for `closure_status` s negative and significant, it confirms that water quality alerts act as a deterrent for visitors, potentially shifting their activity away from the waterfront.
+
+```{r}
+#| fig-cap: The noticeable downward shift in the median residual during "Both Closed (Red)" days suggests that water quality alerts may suppress expected neighborhood ridership during peak summer months.
+
+daily_bikesweather_ecoli <- daily_bikesweather |>
+  left_join(beach_status_full |> select(Date, closure_status), by = c("date" = "Date"))
+
+ggplot(daily_bikesweather_ecoli |> filter(!is.na(closure_status)), 
+       aes(x = closure_status, y = trips_res, fill = closure_status)) +
+  geom_boxplot(alpha = 0.7, outlier.shape = NA) +
+  # Adding jitter shows the individual days (the 'shocks')
+  geom_jitter(width = 0.1, alpha = 0.3) +
+  scale_fill_manual(values = c(
+    "Both Closed (Red)" = "#d9534f",
+    "Kew Only (Orange)" = "#f0ad4e",
+    "Woodbine Only (Yellow)" = "#f0de4e",
+    "All Beaches Open" = "#5cb85c"
+  )) +
+  labs(title = "Beach BIA: Impact of Water Safety on Bike Usage",
+       subtitle = "Trip residuals (Actual - Expected) during beach closures",
+       x = "Water Safety Status", y = "Trip Residual (Shocks)") +
+  theme_minimal() +
+  theme(legend.position = "none")
+
+
+
+```
+
+```{r}
+#| eval: true
+# 1. Filter for Summer peak
+summer_data <- daily_bikesweather_ecoli |> 
+  filter(month(date) %in% c(6, 7, 8))
+
+# 2. Impact Model
+# the 'closure' effect isn't just 'rain' in disguise.
+summer_impact_lm <- lm(trips_res ~ is_precip + as.factor(closure_status), 
+                       data = summer_data)
+
+# 1. Tidy the model and clean up the terms for a general audience
+tidy_summer <- tidy(summer_impact_lm) %>%
+  mutate(across(where(is.numeric), ~round(., 3))) %>%
+  mutate(term = case_when(
+    term == "(Intercept)" ~ "Baseline (Open Beaches/No Rain)",
+    term == "is_precipPrecip." ~ "Rain Penalty",
+    term == "as.factor(closure_status)Both Closed (Red)" ~ "Impact: Both Beaches Closed",
+    term == "as.factor(closure_status)Kew Only (Orange)" ~ "Impact: Kew-Balmy Advisory",
+    term == "as.factor(closure_status)Woodbine Only (Yellow)" ~ "Impact: Woodbine Advisory",
+    TRUE ~ term
+  ))
+
+# 2. Render the "pretty" table
+tidy_summer %>%
+  kable(caption = "Summer Impact: Evaluating Beach Closures as a Mobility Deterrent",
+        col.names = c("Variable", "Estimate (Trips)", "Std. Error", "t-stat", "p-value"),
+        align = "lcccc") %>%
+  kable_styling(bootstrap_options = c("striped"), 
+                full_width = F, 
+                position = "center") %>%
+  footnote(general = "Model data restricted to June-August (2022-2025). Dependent variable is GAM Residuals.")
+```
+
+This regression model quantifies the shift in neighborhood engagement during water safety advisories. After controlling for precipitation, a significant negative estimate for "Both Beaches Closed" indicates a measurable suppression of expected ridership, validating the hypothesis that water quality shocks influence the Beach BIA's activity.
+
+### Bike Share Toronto Network
+
+The below maps are a visual representation of the existing Bike Share docking stations in The Beaches. We actually observe the most populous stations in the winter monthsi n the BIA, mostly alongside Queen Street.
+
+```{r}
+# Live station data from GBFS
+raw_stations <- fromJSON("https://tor.publicbikesystem.net/ube/gbfs/v1/en/station_information")
+all_stations_sf <- raw_stations$data$stations |>
+  select(station_id, name, lat, lon) |>
+  st_as_sf(coords = c("lon", "lat"), crs = 4326)
+```
+
+```{r}
+#| include: false
+library(tidyverse)
+library(sf)
+library(opendatatoronto)
+library(ggspatial)
+library(jsonlite)
+
+# --- 1. FETCH GEOMETRIES & STATIONS ---
+# Neighborhood and BIA boundaries from Open Data Toronto
+beaches_neighborhood <- get_resource("0719053b-28b7-48ea-b863-068823a93aaa") |>
+  filter(AREA_NAME == "The Beaches") |>
+  st_transform(4326)
+
+beach_bia_border <- get_resource("4d9216bd-71e7-4416-8d17-c2699c6354f0") |>
+  filter(AREA_NAME == "The Beach") |>
+  st_transform(4326)
+
+# Live station data from GBFS
+raw_stations <- fromJSON("https://tor.publicbikesystem.net/ube/gbfs/v1/en/station_information")
+all_stations_sf <- raw_stations$data$stations |>
+  select(station_id, name, lat, lon) |>
+  st_as_sf(coords = c("lon", "lat"), crs = 4326)
+
+# --- 2. CATEGORIZE STATIONS ---
+# Create a 500m buffer around the neighborhood boundary
+beaches_buffer <- st_buffer(beaches_neighborhood, dist = 500)
+
+stations_categorized <- all_stations_sf |>
+  mutate(
+    location_type = case_when(
+      # Wrap in as.logical() to convert the matrix to a vector
+      as.logical(st_intersects(geometry, beach_bia_border, sparse = FALSE)) ~ "BIA Commercial Strip",
+      as.logical(st_intersects(geometry, beaches_neighborhood, sparse = FALSE)) ~ "The Beaches Stations",
+      as.logical(st_intersects(geometry, beaches_buffer, sparse = FALSE)) ~ "Nearby Stations",
+      TRUE ~ "Outside"
+    )
+  ) |>
+  filter(location_type != "Outside")
+
+# --- 3. THE CLEANED MAP ---
+ggplot() +
+  annotation_map_tile(type = "osm", zoom = 14, alpha = 0.5) +
+  
+  # Boundaries
+  geom_sf(data = beaches_neighborhood, fill = NA, color = "blue", linetype = "dashed") +
+  geom_sf(data = beach_bia_border, fill = "orange", alpha = 0.2, color = "darkorange") +
+  
+  # Points
+  geom_sf(data = stations_categorized, aes(color = location_type), size = 3) +
+  
+  scale_color_manual(values = c(
+    "BIA Commercial Strip" = "#f39c12", 
+    "The Beaches Stations" = "#2980b9", 
+    "Nearby Stations" = "#e74c3c"
+  )) +
+  labs(
+    title = "Beach BIA Biking Station Network",
+    color = "Business Zone"
+  ) +
+  theme_minimal()
+```
+
+
+From the month of January to March, we see an increase in trip volumes, particularly at stations serving the Boardwalk and in the centre of the BIA. These locations proves to be important hubs of activity in the community and a good indicator of human activity in the BIA
+
+```{r}
+#| fig-width: 8
+#| fig-height: 10
+
+# 1. Filter and Aggregate with corrected Month logic
+winter_summary <- beaches_bike_data %>%
+  # Use month() to convert dates to numbers 1, 2, 3
+  filter(month(start_date_actual) %in% c(1, 2, 3, 4)) %>%
+  group_by(month_num = month(start_date_actual), start_station_id) %>%
+  summarise(avg_daily_trips = n() / 31, .groups = "drop") %>%
+  inner_join(all_stations_sf, by = c("start_station_id" = "station_id")) %>%
+  # Ensure the data is in the correct projection for the basemap
+  st_as_sf() %>% 
+  st_transform(3857)
+
+global_max <- max(winter_summary$avg_daily_trips, na.rm = TRUE)
+
+create_winter_map <- function(m_num) {
+  
+  month_labels <- c("1" = "January", "2" = "February", "3" = "March", "4" = "April")
+  
+  month_data <- winter_summary |> 
+    filter(month_num == m_num) |>
+    st_transform(3857)
+  
+  border_3857 <- st_transform(beaches_neighborhood, 3857)
+  limits <- st_bbox(st_buffer(border_3857, 200))
+
+  ggplot() +
+    annotation_map_tile(type = "osm", zoom = 15, alpha = 0.5) +
+    geom_sf(data = border_3857, fill = "orange", alpha = 0.1, color = "darkorange", linewidth = 1) +
+    geom_sf(data = month_data, aes(size = avg_daily_trips, color = avg_daily_trips), alpha = 0.9) +
+    
+    # FIX: Set 'limits' so the scale is constant across all months
+    scale_color_viridis_c(option = "viridis", 
+                          name = "Avg Daily Trips", 
+                          limits = c(0, global_max)) +
+    scale_size_continuous(range = c(3, 12), 
+                          name = "Avg Daily Trips", 
+                          limits = c(0, global_max)) +
+    
+    coord_sf(xlim = c(limits["xmin"], limits["xmax"]), 
+             ylim = c(limits["ymin"], limits["ymax"]), 
+             expand = FALSE) +
+    
+    labs(title = paste("Winter Usage:", month_labels[as.character(m_num)]),
+         subtitle = "Normalized Scale for Comparison",
+         x = NULL, y = NULL) +
+    theme_minimal() +
+    theme(panel.grid = element_blank())
+}
+
+jan_map <- create_winter_map(1)
+feb_map <- create_winter_map(2)
+mar_map <- create_winter_map(3)
+(jan_map / feb_map / mar_map ) + 
+  plot_layout(guides = "collect") & 
+  theme(legend.position = "right")
+```
+
+## iNaturalist Data
+
+Pulling from the openly available data on iNaturalist, we visualize insights on observations found particularly in the Beach BIA region, analyzing the quantities and timings of these records.
+
+```{r nature-data}
+#| warning: false
+#| message: false
+#| echo: false
+
+inaturalist <- read.csv(here("data/inaturalist.csv"))
+```
+
+```{r boundaries-data}
+#| warning: false
+#| message: false
+#| echo: false
+#| include: false
+
+# 1. Search for BIA boundaries on Toronto Open Data
+bia_packages <- search_packages("Business Improvement Areas")
+bia_resources <- list_package_resources("business-improvement-areas")
+
+# 2. Download the GeoJSON version
+bia_data <- get_resource("4d9216bd-71e7-4416-8d17-c2699c6354f0")
+
+the_beach_bia <- bia_data |> 
+  filter(AREA_NAME == "The Beach") # Note: Toronto Open Data uses "The Beach" not "The Beaches"
+
+the_beach_bia
+```
+
+```{r nature-plots-1}
+#| warning: false
+#| message: false
+#| echo: false
+#| fig-height: 6
+#| fig-width: 7
+#| fig-cap: These bar charts use iNaturalist observations as a proxy for engagement with nature, showing that human activity in these spaces peaks significantly during the summer months, over the years from 2022-2025.
+
+# 1. Clean and Filter
+inaturalist_clean <- inaturalist |>
+  mutate(
+    Date = as.Date(observed_on),
+    Month = month(Date, label = TRUE),
+    Year = year(Date)
+  ) |>
+  # Filter for recent years but exclude the current incomplete year
+  filter(Year >= 2022 & Year < 2026)
+
+# 2. Plot with Aesthetic Improvements
+ggplot(inaturalist_clean, aes(x = Month, fill = ..count..)) +
+  geom_bar(show.legend = FALSE) +
+  facet_wrap(~Year, ncol = 1) + # Stacked vertically for easier year-over-year comparison
+  scale_fill_gradient(low = "#d1e5f0", high = "#2166ac") + # Subtle blue gradient
+  labs(
+    title = "Seasonal Pulse of Nature Observations: The Beaches",
+    subtitle = "Observations serve as a proxy for 'Third Space' engagement (2022-2025)",
+    x = "Month",
+    y = "Number of Observations"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1),
+    strip.text = element_text(face = "bold", size = 10),
+    panel.grid.minor = element_blank(),
+    plot.title = element_text(size = 15, face = "bold"),
+    plot.subtitle = element_text(size = 11)
+  )
+```
+
+```{r nature-plots-3}
+#| message: false
+#| warning: false
+#| echo: false
+#| out-width: "100%"
+#| fig-cap: This spatial visualization tracks the concentrations of nature observations withing the BIA boundary between, colouring based on the season. We see a high concentration of winter and spring observations alongside the Beaches boardwalk, which may be of note if the BIA aims to mobilize this population.
+
+library(ggspatial) 
+library(prettymapr)
+
+# 1. Define the four standard seasons
+inat_sf_map <- inaturalist_clean |>
+  mutate(
+    Season = case_when(
+      Month %in% c("Dec", "Jan", "Feb") ~ "Winter",
+      Month %in% c("Mar", "Apr", "May") ~ "Spring",
+      Month %in% c("Jun", "Jul", "Aug") ~ "Summer",
+      Month %in% c("Sep", "Oct", "Nov") ~ "Fall"
+    ),
+    Season = factor(Season, levels = c("Winter", "Spring", "Summer", "Fall"))
+  ) |>
+  drop_na(latitude, longitude) |>
+  st_as_sf(coords = c("longitude", "latitude"), crs = 4326)
+
+ggplot() +
+  # Layer 1: The Actual Map Background (Basemap)
+  annotation_map_tile(type = "cartolight", zoom = 15) + 
+  
+  # Layer 2: The BIA Boundary (Red lines)
+  geom_sf(data = the_beach_bia, color = "red", linewidth = 1, alpha = 0.8) +
+  
+  # Layer 3: Seasonal Points
+  geom_sf(data = inat_sf_map, aes(color = Season), alpha = 0.6, size = 1.2) +
+  
+  # Layer 4: Map elements (Scale bar and North arrow)
+  annotation_scale(location = "bl", width_hint = 0.4) +
+  annotation_north_arrow(location = "tr", which_north = "true") +
+  
+  # Styling and Zoom
+  coord_sf(xlim = c(-79.31, -79.28), ylim = c(43.66, 43.68), crs = 4326) +
+  scale_color_manual(values = c(
+    "Winter" = "#2c7bb6", # Blue
+    "Spring" = "#abd9e9", # Light Blue
+    "Summer" = "#d7191c", # Red/Orange
+    "Fall"   = "#fdae61"  # Yellow/Orange
+  )) +
+  theme_minimal() +
+  theme(
+    axis.text = element_blank(), # Removes latitude/longitude numbers
+    axis.title = element_blank(),
+    panel.grid.major = element_line(color = "grey80", linetype = "dashed"),
+    legend.position = "right",
+    plot.title = element_text(face = "bold", size = 14)
+  ) +
+  labs(
+    title = "Nature Engagement by Season: The Beaches",
+    subtitle = "Observations on OpenStreetMap relative to the Beach BIA boundary",
+    color = "Season"
+  )
+```
+
+By examining the iNaturalist Data, we observe the natural engagement by season in the Beaches. We notice the parks being an active spot of natural observers, as expected. We do observe an interesting phenomenon in the colder months, where there are much natural observations being recorded near the water, on The Beach's boardwalk. This can suggest that there may be a population to capture from the boardwalk up into the BIA.
+
+```{r}
+#| include: false
+#| eval: false
+# Apply your specific bounding box
+beach_bia_data <- tmc_raw_data |>
+  filter(
+    longitude >= -79.31663 & longitude <= -79.28164,
+    latitude  >= 43.6658   & latitude  <= 43.67417
+  )
+
+library(jsonlite)
+library(dplyr)
+
+# Pull status
+status_url <- "https://tor.publicbikesystem.net/ube/gbfs/v1/en/station_status"
+status_data <- fromJSON(status_url)$data$stations
+
+# Filter for stations with 0 bikes
+empty_stations <- status_data |>
+  filter(num_bikes_available == 0) |>
+  select(station_id, num_bikes_available, num_docks_available)
+
+# Join this with the 'clean_stations' (lat/lon) we made earlier
+# map_data <- left_join(empty_stations, clean_stations, by = "station_id")
+```
