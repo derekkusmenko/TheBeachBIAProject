@@ -1,1 +1,5 @@
 ~/Home/My GitHub/TheBeachBIAProject/04_ProgressReport/data
+.Rproj.user/
+.DS_Store
+*.Rhistory
+*.RData
