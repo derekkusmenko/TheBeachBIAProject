@@ -1,5 +1,12 @@
 ~/Home/My GitHub/TheBeachBIAProject/04_ProgressReport/data
-.Rproj.user/
-.DS_Store
+
+# Ignore R session history and data
 *.Rhistory
 *.RData
+.Ruserdata
+
+# Ignore RStudio project settings
+.Rproj.user/
+
+# Ignore system junk
+.DS_Store
