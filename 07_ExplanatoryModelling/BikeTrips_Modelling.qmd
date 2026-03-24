@@ -2,7 +2,7 @@
 title: Modelling Bike Activity within The Beach BIA
 date: today
 date-format: long
-format: html
+format: pdf
 execute:
   echo: false
   warning: false
@@ -133,7 +133,7 @@ tidy(fit_annual, exponentiate = TRUE, conf.int = TRUE) %>%
     ),
     `P-Value` = cell_spec(round(`P-Value`, 4), bold = `P-Value` < 0.05, color = ifelse(`P-Value` < 0.05, "green", "red"))
   ) %>%
-  kable(format = "html", escape = FALSE, caption = "Annual Baseline Predictors of Bike Demand") %>%
+  kable(format = "latex", escape = FALSE, caption = "Annual Baseline Predictors of Bike Demand") %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed"), full_width = F)
 ```
 
@@ -314,7 +314,7 @@ tidy(fit_summer_final, exponentiate = TRUE) %>%
     ),
     `P-Value` = cell_spec(round(`P-Value`, 4), bold = `P-Value` < 0.05, color = ifelse(`P-Value` < 0.05, "green", "red"))
   ) %>%
-  kable(format = "html", escape = FALSE, caption = "Impact of Water Quality on Summer Cycling Demand") %>%
+  kable(format = "latex", escape = FALSE, caption = "Impact of Water Quality on Summer Cycling Demand") %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed"), full_width = F)
 
 ```
@@ -379,10 +379,28 @@ ggplot(sim_data_temp, aes(x = daily_mean_temp, y = predicted_trips)) +
 
 
 
+### Bayesian Approach 
 
 
 
 
+
+
+```{r}
+#| eval: false
+
+## to try later
+library(brms)
+
+fit_bayes <- brm(
+  bf(total_trips ~ s(daily_mean_temp) + s(daylight_hours) + daily_total_precip + is_weekend,
+     autocor = ~ arma(time = time_index, p = 1, q = 0)), # This is your AR(1)
+  data = model_data_2025,
+  family = negbinomial(),
+  cores = 4, # Run chains in parallel
+  iter = 2000
+)
+```
 
 
 
