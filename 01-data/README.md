@@ -21,3 +21,9 @@ _toronto_bike_stations_: A list of all Toronto bike stations, including their un
 _toronto_weather_daily_: Daily summaries of Toronto weather (high/low temps and total rain) from 2022 to the present.
 
 _toronto_weather_hourly_2022_2026_: Detailed hourly weather data
+
+### How to Read Files
+
+To read these files in R, use the readRDS()/read_parquet() function from the arrow package:
+
+data <- readRDS("01-data/clean/beaches_bike_trips.rds")
