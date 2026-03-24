@@ -10,3 +10,6 @@
 
 # Ignore system junk
 .DS_Store
+
+# Large Data Files
+**toronto_bike_share.parquet
