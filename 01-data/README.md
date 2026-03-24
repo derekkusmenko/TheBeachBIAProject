@@ -1,4 +1,4 @@
-## 01-Data Directory
+# 01-Data Directory
 
 This directory contains the data used for The Beach BIA Project. We have organized it so that original downloads are kept separate from the clean files used for analysis.
 
