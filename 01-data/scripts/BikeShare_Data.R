@@ -1,5 +1,5 @@
 # ==========================================================================
-# Purpose: Saves datasets as Parquest and RDS files for easy access
+# Purpose: Saves datasets as Parquet files for easy access
 # Authors: Derek Kusmenko and Arusan Surendiran
 # ==========================================================================
 
