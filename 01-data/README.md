@@ -10,6 +10,10 @@ raw/: Stores original data files (CSV) as they were downloaded from the source (
 
 clean/: Contains the final processed datasets saved in Parquet and RDS formats for analysis.
 
+* **`scripts/`** 📜: Contains **R scripts** used to fetch data from online sources (**Open Data Toronto**, **Toronto Bike Share**, and **Toronto Climate**) and perform initial cleaning.
+* **`raw/`** 📥: Stores **original data files** (`CSV`) as they were downloaded from the source (**iNaturalist**).
+* **`clean/`** ✨: Contains the **final processed datasets** saved in **Parquet** and **RDS** formats for analysis.
+
 ### Cleaned Data Files
 
 _beach_inaturalist_: A record of natural organism observations in the Beaches area. Includes locations (lat/lon) and dates of observation.
