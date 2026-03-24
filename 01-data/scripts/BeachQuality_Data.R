@@ -62,5 +62,11 @@ beach_status_full <- full_join(
     )
   )
 
-output_file <- "01-data/beach_water_quality.parquet"
-write_parquet(beach_status_full, output_file)
+# Save as Parquet
+
+clean_path <- here("01-data", "clean")
+write_parquet(beach_status_full, file.path(clean_path, "beach_water_quality.parquet"))
+
+
+
+

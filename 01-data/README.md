@@ -22,6 +22,8 @@ _toronto_weather_daily_: Daily summaries of Toronto weather (high/low temps and 
 
 _toronto_weather_hourly_2022_2026_: Detailed hourly weather data
 
+_toronto_solar_data.parquet_: Daily data of Toronto's sunrise and sunset times
+
 ### How to Read Files
 
 To read these files in R, use the readRDS()/read_parquet() function from the arrow package:

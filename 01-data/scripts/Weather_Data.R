@@ -64,9 +64,9 @@ climate_daily <- climate_clean |>
 
 # Save hourly data and daily summary as Parquet files
 
-write_parquet(climate_clean, here("01-data", "clean", "toronto_weather_hourly_2022_2026.parquet"))
+clean_path <- here("01-data", "clean")
 
-saveRDS(climate_daily, here("01-data", "clean", "toronto_weather_daily.rds"))
-
+write_parquet(climate_clean, file.path(clean_path, "toronto_weather_hourly_2022_2026.parquet"))
+saveRDS(climate_daily, file.path(clean_path, "toronto_weather_daily.rds"))
 
 

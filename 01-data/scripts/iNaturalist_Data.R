@@ -51,8 +51,8 @@ df_cleaned <- df_raw %>%
 
 # Save as Parquet
 
-output_path <- "01-data/beach_inaturalist.parquet"
-write_parquet(df_cleaned, output_path)
+clean_path <- here("01-data", "clean")
+write_parquet(df_cleaned, file.path(clean_path, "beach_inaturalist.parquet"))
 
 
 

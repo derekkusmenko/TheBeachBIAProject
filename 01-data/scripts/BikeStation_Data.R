@@ -38,6 +38,7 @@ stations_clean <- stations_df %>%
   )
 
 # Save as Parquet in your project folder
-output_file <- "01-data/toronto_bike_stations.parquet"
-write_parquet(stations_clean, output_file)
+
+clean_path <- here("01-data", "clean")
+write_parquet(stations_clean, file.path(clean_path, "toronto_bike_stations.parquet"))
 
