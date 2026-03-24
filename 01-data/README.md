@@ -4,15 +4,9 @@ This directory contains the data used for The Beach BIA Project. We have organiz
 
 ### Directory Structure
 
-scripts/: Contains R scripts used to fetch data from online sources (Open Data Toronto, Toronto Bike Share, and Toronto Climate) and perform initial cleaning.
-
-raw/: Stores original data files (CSV) as they were downloaded from the source (iNaturalist).
-
-clean/: Contains the final processed datasets saved in Parquet and RDS formats for analysis.
-
-* **`scripts/`** 📜: Contains **R scripts** used to fetch data from online sources (**Open Data Toronto**, **Toronto Bike Share**, and **Toronto Climate**) and perform initial cleaning.
-* **`raw/`** 📥: Stores **original data files** (`CSV`) as they were downloaded from the source (**iNaturalist**).
-* **`clean/`** ✨: Contains the **final processed datasets** saved in **Parquet** and **RDS** formats for analysis.
+* **`scripts/`**: Contains R scripts used to fetch data from online sources (Open Data Toronto, Toronto Bike Share, and Toronto Climate) and perform initial cleaning.
+* **`raw/`**: Stores original data files (CSV) as they were downloaded from the source (iNaturalist).
+* **`clean/`**: Contains the final processed datasets saved in Parquet and RDS formats for analysis.
 
 ### Cleaned Data Files
 
