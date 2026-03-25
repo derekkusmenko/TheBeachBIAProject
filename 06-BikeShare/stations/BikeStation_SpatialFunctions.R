@@ -10,6 +10,7 @@ library(jsonlite)
 library(ggspatial)
 library(mapview)
 library(leaflet)
+library(leafem)
 library(htmltools)
 library(shiny)
 library(miniUI)
@@ -93,49 +94,6 @@ plot_static_network <- function(categorized_data, bia_sf, nbhd_sf, curated_ids, 
     geom_sf(data = bia_sf, fill = "#f39c12", alpha = 0.15, color = "#d35400", size = 0.7) +
     
     # 4. Add Stations
-    geom_sf(data = map_data, aes(color = selection_status), size = 2.5, alpha = 0.8) +
-    
-    # 5. Styling & Colors
-    scale_color_manual(values = c("Selected" = "#27ae60", "Other Nearby" = "#bdc3c7")) +
-    theme_minimal() +
-    
-    # 6. Remove lat/lon axes and gridlines for a clean look
-    theme(
-      axis.text = element_blank(),
-      axis.title = element_blank(),
-      panel.grid = element_blank(),
-      legend.position = "bottom",
-      plot.title = element_text(face = "bold", size = 14)
-    ) +
-    
-    labs(
-      title = paste("Infrastructure Analysis:", area_label),
-      subtitle = paste(length(curated_ids), "Curated Stations | BIA & 500m Buffer"),
-      color = "Station Status",
-      caption = "Map tiles by CartoDB | Data: Bike Share Toronto"
-    )
-}
-
-# --- STATIC MAPPING FUNCTION ---
-
-plot_static_network <- function(categorized_data, bia_sf, nbhd_sf, curated_ids, area_label = "The Beach") {
-  
-  # Prepare the selection status
-  map_data <- categorized_data %>%
-    mutate(selection_status = if_else(station_id %in% curated_ids, "Selected", "Other Nearby"))
-  
-  # Build the plot
-  ggplot() +
-    # 1. Add the actual Toronto street map (CartoDB Light style)
-    annotation_map_tile(type = "cartolight", zoomin = 0) +
-    
-    # 2. Add Neighbourhood Boundary
-    geom_sf(data = nbhd_sf, fill = "#3498db", alpha = 0.05, color = "#2980b9", linetype = "dashed") +
-    
-    # 3. Add BIA Boundary
-    geom_sf(data = bia_sf, fill = "#f39c12", alpha = 0.15, color = "#d35400", size = 0.7) +
-    
-    # 4. Add Stations
     geom_sf(data = map_data, aes(color = selection_status), size = 3, alpha = 0.8) +
     
     # 5. Styling & Colors
@@ -178,14 +136,26 @@ generate_labeled_bike_map <- function(bia_name, nbhd_name = NULL, buffer_dist = 
   
   m <- m + mapview(categorized_data, zcol = "location_type", layer.name = "Station Category", cex = 7)
   
-  map_title <- tags$div(
-    style = "position: fixed; top: 10px; left: 50px; background: rgba(255,255,255,0.8); 
-             padding: 10px; border-radius: 5px; border: 2px solid #ccc; z-index:9999; 
-             font-size: 16px; font-weight: bold; font-family: sans-serif;",
-    paste("Bike Share Network:", bia_name)
-  )
-  
-  m@map <- m@map %>% addControl(html = map_title, position = "topleft")
+  # --- ADDING THE LABELS HERE ---
+  m@map <- m@map %>% 
+    addLabelOnlyMarkers(
+      data = categorized_data,
+      label = ~as.character(station_id), # Ensure this matches your ID column name
+      labelOptions = labelOptions(
+        noHide = TRUE,          # Makes labels permanently visible
+        direction = "top",      # Positions the label above the point
+        offset = c(0, -10),     # Nudges it up (x=0, y=-10 pixels)
+        textOnly = FALSE,       # FALSE creates the "box" (speech bubble) effect
+        style = list(
+          "color" = "black",            # Text color
+          "font-weight" = "bold",
+          "background-color" = "white", # Box background color
+          "border-color" = "rgba(0,0,0,0.5)",
+          "padding" = "2px 5px"         # Internal spacing of the box
+        )
+      )
+    )
+
   return(m)
 }
 

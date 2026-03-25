@@ -119,6 +119,12 @@ if (length(beach_final_ids) > 0) {
 Station IDs: "8190", "7314", "7695", "7313", "7427", "7428", "7309", "7365", "7692", "7315", "7318", "7317", "7316", "7364" 
 Total Count: 14
 
+The generate_labeled_bike_map() function will create an interactive map labelling the stations in the BIA and neighbourhood, alongside it's Station ID number.
+
+```{r}
+#| eval: true
+generate_labeled_bike_map(bia_name = "The Beach", nbhd_name = "The Beaches", buffer_dist = 500)
+```
 
 
 
