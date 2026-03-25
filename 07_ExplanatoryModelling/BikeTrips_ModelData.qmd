@@ -1,0 +1,574 @@
+---
+title: Modelling Bike Activity within The Beach BIA
+subtitle: Data Cleaning and Merging
+date: today
+date-format: long
+format: pdf
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+
+# Data
+
+Source Data Inventory (Bike, Weather, Water, Sun)
+
+```{r}
+#| label: setup-and-prep
+#| include: false
+
+# Load Libraries
+library(opendatatoronto)
+library(dplyr)
+library(tidyverse)
+library(lubridate)
+library(here)
+library(janitor)
+library(zoo)
+library(suncalc)
+library(segmented)
+library(MASS)
+library(broom)
+library(kableExtra)
+library(arrow)
+```
+
+
+```{r}
+# Read Files
+clean_path <- here("01-data", "clean")
+
+beaches_bike_data    <- read_parquet(file.path(clean_path, "beaches_bike_trips.parquet"))
+beaches_water_status <- read_parquet(file.path(clean_path, "beach_water_quality.parquet"))
+climate_daily        <- read_parquet(file.path(clean_path, "toronto_weather_daily.parquet"))
+sun_data             <- read_parquet(file.path(clean_path, "toronto_solar_data.parquet"))
+```
+
+# Data Cleaning & Pre-processing
+
+Bike Trip Filtering (Outlier Removal)
+
+Outliers representing 0.55 % of the total dataset (trips > 3 hours or trips < 60s) were removed. These observations likely represent docking malfunctions or lost bikes, as they are either too short to count as a real bike ride, or exceed the standard 90-minute threshold for Toronto Bike Share user tiers and would disproportionately bias the daily average duration.
+
+
+```{r}
+beaches_bike_daily <- beaches_bike_data %>%
+  filter(year == 2025,
+         trip_duration >= 60,       
+         trip_duration <= 10800,
+         !is.na(dt_start_time)) %>%
+  mutate(date = as.Date(dt_start_time)) %>%
+  group_by(date) %>%
+  summarise(
+    total_trips = n(),
+    avg_duration_min = mean(trip_duration / 60, na.rm = TRUE),
+
+    # Grouping both "Casual Member" and "Casual"
+    trips_casual = sum(user_type %in% c("Casual Member", "Casual")),
+    avg_dur_casual_min = if (trips_casual > 0) {
+      mean(trip_duration[user_type %in% c("Casual Member", "Casual")] / 60, na.rm = TRUE)
+    } else { 0 },
+
+    # Grouping both "Annual Member" and "Member"
+    trips_member = sum(user_type %in% c("Annual Member", "Member")),
+    avg_dur_member_min = if (trips_member > 0) {
+      mean(trip_duration[user_type %in% c("Annual Member", "Member")] / 60, na.rm = TRUE)
+    } else { 0 },
+
+    .groups = "drop"
+  )
+```
+
+
+Handling Missing Values in Water Quality
+
+The 2025 water data is filtered to active testing days only (summer) and categorized into a three-level factor: All Open, Partial Closure, and Full Closure. This setup treats "All Open" as the statistical baseline, enabling the model to distinguish between the substitution effects of a single beach closure versus the total ridership impact of a full area shutdown.
+
+```{r}
+beaches_water_daily <- beaches_water_status %>%
+  filter(year(Date) == 2025, closure_status != "No Testing") %>%
+  mutate(beach_status = case_when(
+    closed_kew & closed_woodbine ~ "Full Closure",
+    closed_kew | closed_woodbine ~ "Partial Closure",
+    TRUE                         ~ "All Open"),
+    
+    # Set as factor with 'All Open' as the reference level
+    beach_status = factor(beach_status, 
+                          levels = c("All Open", "Partial Closure", "Full Closure"))
+  ) %>%
+  dplyr::select(date = Date, beach_status)
+```
+
+Major Holidays of 2025
+
+```{r}
+holidays_2025 <- as.Date(c(
+  "2025-01-01", "2025-02-17", "2025-04-18", "2025-05-19", 
+  "2025-07-01", "2025-08-04", "2025-09-01", "2025-10-13",
+  "2025-12-25", "2025-12-26"
+))
+```
+
+
+## The Outcomes (Response Variables, Y)
+
+The analysis creates three distinct outcomes to differentiate between types of neighborhood traffic and their varying sensitivities to external factors.
+
+total_trips: The overall volume of bike share activity within the Beach BIA.
+
+trips_casual: Highly elastic trips from recreational users and visitors. We expect this variable is the most sensitive to weather conditions and calendar effects, representing the primary economic driver for local businesses.
+
+trips_member: Inelastic trips from commuters and local residents. This variable remains relatively stable across different conditions and represents the consistent baseline of foot traffic.
+
+## Environmental Predictors (Explanatory Variables, X)
+
+These variables represent the physical and atmospheric conditions analyzed to determine their relationship with bike share activity.
+
+temp_max: The daily maximum temperature. Used to analyze the relationship between peak daily heat and trip frequency.
+
+usable_light_hours: A continuous variable including civil twilight. Acts as a seasonal proxy to account for changes in safe riding windows throughout the year.
+
+is_precip (Binary): A simplified indicator of whether any precipitation occurred, used to identify its presence as a potential deterrent.
+
+precip_hour_count (Duration): The total number of hours with recorded precipitation, used to distinguish between brief weather events and persistent conditions.
+
+total_precip_mm (Volume): The cumulative depth of precipitation. Used to assess how the physical intensity of weather events impacts ridership volume.
+
+## Calendar Predictors (Control Variables, X)
+
+These variables account for temporal structures to evaluate their relationship with ridership volume.
+
+day_type (Categorical: Weekend, Holiday, Weekday): Indicators used to distinguish between typical workdays and non-work days. These allow the model to account for shifts between commuting and leisure travel patterns.
+
+time_index (Continuous): A sequential day counter (1 to 303). This is a technical inclusion for the corAR1() function, intended to address potential temporal autocorrelation in the model residuals.
+
+### Beach-Specific Predictors (Summer, X)
+
+These variables are unique to the Beach BIA but require careful interpretation, especially since they primarily impact summer-only analysis.
+
+- beach_status (Categorical: All Open, Partial Closure, and Full Closure): This variable is derived from e-coli levels at Kew and Woodbine beaches. It is used to evaluate how the availability of beach swimming affects ridership, with "Partial Closure" indicating one beach is closed and "Full Closure" indicating both are closed.
+
+
+
+```{r}
+model_data_2025 <- beaches_bike_daily %>%
+  left_join(climate_daily, by = "date") %>%
+  left_join(sun_data %>% dplyr::select(date, daylight_hours, usable_light_hours), by = "date") %>%
+  left_join(beaches_water_daily, by = "date") %>%
+  mutate(
+    # Day of the week
+    dow = wday(date, label = TRUE, abbr = TRUE),
+    
+    is_holiday = date %in% holidays_2025,
+    is_weekend = dow %in% c("Sat", "Sun"),
+    
+    day_type = case_when(is_holiday ~ "Holiday",
+                         is_weekend ~ "Weekend",
+                         TRUE       ~ "Weekday"),
+    day_type = factor(day_type, levels = c("Weekday", "Weekend", "Holiday")),
+    time_index = as.numeric(date - min(date)))
+
+saveRDS(model_data_2025, here("07_ExplanatoryModelling", "model_data_2025.rds"))
+```
+
+
+```{r}
+print(skim(model_data_2025))
+```
+
+
+---------------
+
+
+# Feature Engineering
+
+Solar Metrics: Twilight, Golden Hour, & Daylight Ratios
+
+Weather Categorization (Precipitation Types & Temp Ranges)
+
+User Segmentation (Casual vs. Annual Member Behavior)
+
+# The "Master" Data Join
+
+Consolidating Daily Records (Left Join on Date)
+
+Integrity Checks: Ensuring Zero Data Loss Post-Merge
+
+# Exploratory Data Analysis (EDA)
+
+Time-Series Trends: Seasonal Cycling Volume
+
+Correlation Heatmaps: Weather vs. Ridership
+
+The "Sunlight Effect": Visualizing Twilight Usage
+
+# Explanatory Modelling
+
+The Impact of Daylight Duration on Commuter Habits
+
+Weather Resilience: Comparing Casual vs. Member Responses to Rain
+
+
+
+
+
+
+
+
+
+
+```{r}
+
+holidays_2025 <- as.Date(c(
+  "2025-01-01", "2025-02-17", "2025-04-18", "2025-05-19", 
+  "2025-07-01", "2025-08-04", "2025-09-01", "2025-10-13",
+  "2025-12-25", "2025-12-26"
+))
+
+# Merge model data
+
+model_data_2025 <- daily_trips_2025 %>%
+  left_join(climate_daily, by = "date") %>%
+  left_join(sun_data %>% dplyr::select(date, daylight_hours, usable_light_hours), by = "date") %>%
+  left_join(beaches_water_status %>% rename(date = Date) %>% mutate(date = as.Date(date)), by = "date") %>%
+  mutate(
+    is_weekend = ifelse(wday(date) %in% c(1, 7), 1, 0),
+    is_holiday = ifelse(date %in% holidays_2025, 1, 0),
+    beach_closed = case_when(
+      is.na(closed_kew) & is.na(closed_woodbine) ~ 0,
+      closed_kew & closed_woodbine ~ 1,
+      TRUE ~ 0
+    ),
+    time_index = as.numeric(date - min(date))
+  )
+```
+
+
+
+```{r}
+#| fig.width: 8
+#| fig.height: 5
+
+# Fit the models
+fit_lin_temp <- lm(total_trips ~ daily_mean_temp, data = model_data_2025)
+fit_seg_temp <- segmented(fit_lin_temp, seg.Z = ~daily_mean_temp, npsi = 1)
+hinge_temp <- fit_seg_temp$psi[2]
+
+model_data_2025$predicted_trips <- predict(fit_seg_temp)
+
+ggplot(model_data_2025, aes(x = daily_mean_temp, y = total_trips)) +
+  geom_point(alpha = 0.4, color = "gray50") +
+  geom_line(aes(y = predicted_trips), color = "#e74c3c", linewidth = 1.2) +
+  geom_vline(xintercept = hinge_temp, linetype = "dashed", color = "black") +
+  annotate("text", x = hinge_temp + 2, y = max(model_data_2025$total_trips) * 0.9, 
+           label = paste0("Activation: ", round(hinge_temp, 1), "°C"), fontface = "bold") +
+  labs(
+    title = "The Temperature 'Hinge' for Beach Ridership",
+    subtitle = "Identifying the threshold where ridership shifts from baseline to rapid growth",
+    x = "Daily Mean Temperature (°C)",
+    y = "Total Daily Trips"
+  ) +
+  theme_minimal(base_size = 14)
+```
+
+
+
+```{r}
+fit_annual <- glm.nb(
+  total_trips ~ daily_mean_temp + daily_total_precip + daylight_hours + is_weekend + daily_mean_temp*is_weekend, 
+  data = model_data_2025
+)
+
+# Format the output into a clean presentation table
+tidy(fit_annual, exponentiate = TRUE, conf.int = TRUE) %>%
+  dplyr::select(Term = term, `Rate Multiplier (Exp)` = estimate, `P-Value` = p.value) %>%
+  mutate(
+    Term = case_when(
+      Term == "(Intercept)" ~ "Baseline (Intercept)",
+      Term == "daily_mean_temp" ~ "Mean Temperature (°C)",
+      Term == "daily_total_precip" ~ "Total Precipitation (mm)",
+      Term == "daylight_hours" ~ "Daylight Hours",
+      Term == "is_weekend" ~ "Weekend Indicator",
+      Term == "daily_mean_temp:is_weekend" ~ "Temp x Weekend Interaction",
+      TRUE ~ Term
+    ),
+    `P-Value` = cell_spec(round(`P-Value`, 4), bold = `P-Value` < 0.05, color = ifelse(`P-Value` < 0.05, "green", "red"))
+  ) %>%
+  kable(format = "latex", escape = FALSE, caption = "Annual Baseline Predictors of Bike Demand") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"), full_width = F)
+```
+
+
+
+```{r}
+library(mgcv)
+# s() creates a spline. bs="cc" is a cyclic cubic spline (makes Dec 31 connect smoothly to Jan 1)
+fit_gam <- gam(total_trips ~ s(daily_mean_temp) + 
+                             s(time_index, bs="cc") + # captures seasonal wave
+                             is_weekend + 
+                             daily_total_precip, 
+               family = nb(), 
+               data = model_data_2025)
+```
+
+
+
+```{r}
+fit_gamm <- gamm(total_trips ~ s(daily_mean_temp) + is_weekend, 
+                 family = nb(), 
+                 correlation = corAR1(form = ~ time_index), 
+                 data = model_data_2025)
+
+model <- gam(total_trips ~ s(daily_mean_temp) + is_weekend, 
+             family = nb(), 
+             data = model_data_2025, 
+             method = "REML")
+```
+
+
+
+```{r}
+nb_resid <- residuals(fit_annual, type = "pearson")
+
+# 2. Plot the Autocorrelation Function
+# We set lag.max to 30 to see up to a month of lagged effects
+acf(nb_resid, lag.max = 30, 
+    main = "ACF of NB Model Residuals (fit_annual)", 
+    lwd = 2)
+```
+
+
+
+
+```{r}
+library(mgcv)
+
+# Assuming you have combined 2022-2026 into 'model_data_all'
+# and created a 'year' factor and a continuous 'time_index' 
+
+fit_gamm <- gamm(
+  total_trips ~ s(daily_mean_temp) +      # Spline for non-linear temp effects
+                s(daylight_hours) + 
+                daily_total_precip + 
+                is_weekend,         # Step-functions for YoY network growth
+  family = nb(),                          # Negative Binomial distribution
+  correlation = corAR1(form = ~ time_index), # Handles the Lag 1 spike
+  data = model_data_2025
+)
+
+# To view the summary of the fixed effects:
+summary(fit_gamm$gam)
+
+# To check if the AR1 term successfully flattened the residuals:
+acf(residuals(fit_gamm$lme, type = "normalized"), main = "ACF of GAMM Residuals")
+
+fit_gamm_2025 <- fit_gamm
+```
+
+
+```{r}
+# pages = 1 puts all the splines on a single plot
+# shade = TRUE adds the standard error confidence bands
+# all.terms = TRUE includes the linear parametric terms too
+plot(fit_gamm_2025$gam, pages = 1, shade = TRUE, shade.col = "lightblue", all.terms = TRUE)
+# install.packages("gratia")
+library(gratia)
+
+# Automatically plots all smooths with partial residuals and confidence intervals
+draw(fit_gamm_2025$gam, residuals = TRUE)
+```
+
+
+
+```{r}
+library(ggplot2)
+library(dplyr)
+
+fit_gamm_2025 <- fit_gamm
+# 1. Setup synthetic data for an "Average" 2025 Day
+avg_temp <- mean(model_data_2025$daily_mean_temp, na.rm = TRUE)
+avg_daylight <- mean(model_data_2025$daylight_hours, na.rm = TRUE)
+median_time <- median(model_data_2025$time_index, na.rm = TRUE) # Needed for model structure
+
+sim_weekend <- data.frame(
+  is_weekend = c(0, 1), # Compare Weekday (0) vs Weekend (1)
+  daily_mean_temp = avg_temp,
+  daylight_hours = avg_daylight,
+  daily_total_precip = 0, # Dry day
+  time_index = median_time
+)
+
+# 2. Predict Trips (type = "response" gives actual expected counts)
+sim_weekend$predicted_trips <- predict(fit_gamm_2025$gam, newdata = sim_weekend, type = "response")
+
+# 3. Format data for plotting
+sim_weekend <- sim_weekend %>%
+  mutate(DayType = ifelse(is_weekend == 1, "Weekend", "Weekday"))
+
+# 4. Generate the Plot
+ggplot(sim_weekend, aes(x = DayType, y = predicted_trips, fill = DayType)) +
+  geom_bar(stat = "identity", width = 0.6, show.legend = FALSE) +
+  geom_text(aes(label = round(predicted_trips)), vjust = -0.5, size = 6, fontface = "bold") +
+  scale_fill_manual(values = c("#95a5a6", "#e67e22")) + 
+  scale_y_continuous(expand = expansion(mult = c(0, 0.15))) + # Gives text breathing room
+  labs(
+    title = "The Weekend Surge in The Beach",
+    subtitle = paste0("Expected bike trips on an average (", round(avg_temp, 1), "°C) dry day"),
+    x = NULL,
+    y = "Expected Bike Trips"
+  ) +
+  theme_minimal(base_size = 15) +
+  theme(panel.grid.major.x = element_blank())
+```
+
+
+
+```{r}
+# 1. Setup synthetic data: Vary daylight over the 2025 range
+sim_daylight <- data.frame(
+  daylight_hours = seq(min(model_data_2025$daylight_hours, na.rm = TRUE), 
+                       max(model_data_2025$daylight_hours, na.rm = TRUE), 
+                       length.out = 100),
+  daily_mean_temp = 15,    # Holding temp at a pleasant 15C
+  daily_total_precip = 0,  # Dry
+  is_weekend = 1,          # Weekend
+  time_index = median_time
+)
+
+# 2. Predict Trips
+sim_daylight$predicted_trips <- predict(fit_gamm_2025$gam, newdata = sim_daylight, type = "response")
+
+# 3. Generate the Plot
+ggplot(sim_daylight, aes(x = daylight_hours, y = predicted_trips)) +
+  # Highlight the low-light penalty zone
+  annotate("rect", xmin = -Inf, xmax = 11, ymin = -Inf, ymax = Inf, alpha = 0.1, fill = "black") +
+  annotate("text", x = 10.5, y = max(sim_daylight$predicted_trips) * 0.5, 
+           label = "Short Day\nPenalty Zone", fontface = "bold", color = "gray40", angle = 90) +
+  geom_line(color = "#2c3e50", linewidth = 1.5) +
+  labs(
+    title = "Daylight Acts as a Ceiling on Traffic",
+    subtitle = "Predicted trips on a 15°C dry weekend",
+    x = "Hours of Usable Daylight",
+    y = "Expected Bike Trips"
+  ) +
+  theme_minimal(base_size = 15) +
+  scale_x_continuous(breaks = seq(9, 16, by = 1))
+```
+
+
+
+```{r}
+summer_clean <- model_data_2025 %>%
+  filter(!is.na(ecoli_woodbine) & !is.na(ecoli_kew))
+
+fit_summer_final <- glm.nb(
+  total_trips ~ daily_mean_temp + daily_total_precip + is_weekend + beach_closed, 
+  data = summer_clean
+)
+
+tidy(fit_summer_final, exponentiate = TRUE) %>%
+  select(Term = term, `Rate Multiplier` = estimate, `P-Value` = p.value) %>%
+  mutate(
+    Term = case_when(
+      Term == "(Intercept)" ~ "Baseline",
+      Term == "daily_mean_temp" ~ "Mean Temperature (°C)",
+      Term == "daily_total_precip" ~ "Total Precipitation (mm)",
+      Term == "is_weekend" ~ "Weekend Indicator",
+      Term == "beach_closed" ~ "Beach Closed (Indicator)",
+      Term == "log_ecoli" ~ "Log(Max E. Coli)",
+      TRUE ~ Term
+    ),
+    `P-Value` = cell_spec(round(`P-Value`, 4), bold = `P-Value` < 0.05, color = ifelse(`P-Value` < 0.05, "green", "red"))
+  ) %>%
+  kable(format = "latex", escape = FALSE, caption = "Impact of Water Quality on Summer Cycling Demand") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"), full_width = F)
+
+```
+
+```{r}
+library(MASS) # Essential for glm.nb
+
+# Running the Negative Binomial Regression
+fit_annual <- glm.nb(total_trips ~ daily_mean_temp + daily_total_precip + daylight_hours + 
+                     is_weekend + daily_mean_temp * is_weekend, 
+                     data = model_data_2025) # Replace with your actual DF name
+
+summary(fit_annual)
+
+# Convert logs to readable percentages
+exp(coef(fit_annual))
+```
+
+
+
+
+
+
+
+
+```{r}
+library(ggplot2)
+library(dplyr)
+
+# 1. Create a "synthetic" average day for the BIA
+# We hold everything constant except temperature to isolate the effect
+sim_data_temp <- data.frame(
+  daily_mean_temp = seq(min(model_data_2025$daily_mean_temp, na.rm = TRUE), 
+                        max(model_data_2025$daily_mean_temp, na.rm = TRUE), 
+                        length.out = 100),
+  daylight_hours = mean(model_data_2025$daylight_hours, na.rm = TRUE),
+  daily_total_precip = 0, # Assuming a dry day
+  is_weekend = 1    # Looking at peak weekend traffic          # Setting to your most recent full year
+)
+
+# 2. Predict actual trips using your GAMM
+# type = "response" converts the log-link back into actual trip counts!
+sim_data_temp$predicted_trips <- predict(fit_gamm$gam, newdata = sim_data_temp, type = "response")
+
+# 3. Build the Business-Friendly Plot
+ggplot(sim_data_temp, aes(x = daily_mean_temp, y = predicted_trips)) +
+  geom_line(color = "#e74c3c", linewidth = 1.5) +
+  # Adding a shaded region for the "Prime Activation Zone" (e.g., 15C to 25C)
+  annotate("rect", xmin = 15, xmax = 25, ymin = -Inf, ymax = Inf, alpha = 0.1, fill = "orange") +
+  annotate("text", x = 20, y = max(sim_data_temp$predicted_trips) * 0.9, 
+           label = "Prime Retail Zone", fontface = "bold", color = "#d35400") +
+  labs(
+    title = "The Temperature Tipping Point for BIA Traffic",
+    subtitle = "Predicted daily bike trips on a dry weekend (2025 Baseline)",
+    x = "Daily Average Temperature (°C)",
+    y = "Expected Bike Trips"
+  ) +
+  theme_minimal(base_size = 14) +
+  scale_x_continuous(breaks = seq(-10, 30, by = 5))
+```
+
+
+
+
+### Bayesian Approach 
+
+
+```{r}
+#| eval: false
+## to try later
+library(brms)
+
+fit_bayes <- brm(
+  bf(total_trips ~ s(daily_mean_temp) + s(daylight_hours) + daily_total_precip + is_weekend,
+     autocor = ~ arma(time = time_index, p = 1, q = 0)), # This is your AR(1)
+  data = model_data_2025,
+  family = negbinomial(),
+  cores = 4, # Run chains in parallel
+  iter = 2000
+)
+```
+
+
+
+
+
+
+
+

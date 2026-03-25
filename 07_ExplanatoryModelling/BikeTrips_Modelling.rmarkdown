@@ -17,7 +17,6 @@ execute:
 # Load Libraries
 library(opendatatoronto)
 library(dplyr)
-library(conflicted)
 library(tidyverse)
 library(lubridate)
 library(here)
@@ -29,8 +28,6 @@ library(MASS)
 library(broom)
 library(kableExtra)
 library(arrow)
-conflicts_prefer(dplyr::select)
-conflicts_prefer(dplyr::filter)
 ```
 
 
@@ -82,6 +79,20 @@ model_data_2025 <- daily_trips_2025 %>%
     time_index = as.numeric(date - min(date))
   )
 ```
+
+
+```{r}
+library(skimr)
+
+skim(beaches_bike_data)
+```
+
+
+
+
+
+
+
 
 
 ```{r}
@@ -157,6 +168,11 @@ fit_gamm <- gamm(total_trips ~ s(daily_mean_temp) + is_weekend,
                  family = nb(), 
                  correlation = corAR1(form = ~ time_index), 
                  data = model_data_2025)
+
+model <- gam(total_trips ~ s(daily_mean_temp) + is_weekend, 
+             family = nb(), 
+             data = model_data_2025, 
+             method = "REML")
 ```
 
 
@@ -388,7 +404,6 @@ ggplot(sim_data_temp, aes(x = daily_mean_temp, y = predicted_trips)) +
 
 ```{r}
 #| eval: false
-
 ## to try later
 library(brms)
 
@@ -401,6 +416,7 @@ fit_bayes <- brm(
   iter = 2000
 )
 ```
+
 
 
 

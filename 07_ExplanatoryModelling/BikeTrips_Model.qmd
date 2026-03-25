@@ -1,0 +1,37 @@
+---
+title: Modelling Bike Activity within The Beach BIA
+date: today
+date-format: long
+format: pdf
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+
+```{r}
+model_data_2025 <- readRDS(here("07_ExplanatoryModelling", "model_data_2025.rds"))
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
