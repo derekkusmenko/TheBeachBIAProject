@@ -53,12 +53,17 @@ climate_clean <- df_weather |>
 # Daily Aggregation
 
 climate_daily <- climate_clean |>
-  group_by(date = as_date(date_time)) |>
+  mutate(date = as.Date(date_time)) |>
+  group_by(date) |>
   summarise(
-    daily_mean_temp    = mean(temp_c, na.rm = TRUE),
-    daily_total_precip = sum(precip_amount_mm, na.rm = TRUE),
-    .groups = "drop"
-  )
+    temp_max = max(temp_c, na.rm = TRUE),
+    temp_min = min(temp_c, na.rm = TRUE),
+    temp_mean = mean(temp_c, na.rm = TRUE),
+    total_precip_mm = sum(precip_amount_mm, na.rm = TRUE),
+    is_precip = ifelse(total_precip_mm > 0, 1, 0),
+    precip_hour_count = sum(precip_amount_mm > 0, na.rm = TRUE),
+    .groups = "drop")
+
 
 # File Export
 
@@ -67,6 +72,7 @@ climate_daily <- climate_clean |>
 clean_path <- here("01-data", "clean")
 
 write_parquet(climate_clean, file.path(clean_path, "toronto_weather_hourly_2022_2026.parquet"))
+write_parquet(climate_daily, file.path(clean_path, "toronto_weather_daily.parquet"))
 saveRDS(climate_daily, file.path(clean_path, "toronto_weather_daily.rds"))
 
 
