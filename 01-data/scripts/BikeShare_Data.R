@@ -70,8 +70,19 @@ beaches_ids <- c(
   "7695", "7364", "7314", "7316", "7428"
 )
 
+# Includes "7309", "7313", "8190" (left side of BIA)
+# beaches_ids <- c("7309", "7313", "8190", "7314", "7427", "7695", "7428", "7365", 
+#                  "7692", "7315", "7316", "7364", "7317", "7318")
+
 beaches_trips <- bike_clean %>%
-  filter(start_station_id %in% beaches_ids | end_station_id %in% beaches_ids)
+  filter(start_station_id %in% beaches_ids | end_station_id %in% beaches_ids) |>
+  mutate(
+    trip_direction = case_when(
+      start_station_id %in% beaches_ids & end_station_id %in% beaches_ids ~ "Internal",
+      start_station_id %in% beaches_ids ~ "Outbound",
+      end_station_id %in% beaches_ids ~ "Inbound",
+      TRUE ~ "Unknown"
+    ))
 
 output_file <- here("01-data", "clean", "beaches_bike_trips.parquet")
 write_parquet(beaches_trips, output_file)
