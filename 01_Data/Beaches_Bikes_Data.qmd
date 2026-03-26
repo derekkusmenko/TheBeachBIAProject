@@ -98,7 +98,49 @@ all_bike_2023 <- bind_rows(bike_2023)
 ```
 
 ```{r}
-all_bike <- bind_rows(all_bike_2021, all_bike_2022, all_bike_2023, all_bike_2024)
+res <- list_package_resources("7e876c24-177c-4605-9cef-e50dd74c617f")
+res <- res |> mutate(year = str_extract(name, "202.?"))
+bike_2025_ids <- res |> filter(year==2025) |> select(id) |> pull()
+
+bike_2025 <- get_resource(bike_2025_ids)
+
+# make the column names nicer to work with
+bike_2025 <- clean_names(bike_2025)
+
+# combine the list of dataframes into one
+all_bike_2025 <- bind_rows(bike_2025)
+
+all_bike_2025 <- all_bike_2025 |>
+  rename(
+    Trip.Id = Trip_Id,
+    Trip..Duration = Trip_Duration,
+    Start.Station.Id = Start_Station_Id,
+    Start.Time = Start_Time,
+    Start.Station.Name = Start_Station_Name,
+    End.Station.Id = End_Station_Id,
+    End.Time = End_Time,
+    End.Station.Name = End_Station_Name,
+    Bike.Id = Bike_Id,
+    User.Type = User_Type,
+    Model = Bike_Model
+  ) |>
+  mutate(End.Station.Id = as.character(End.Station.Id))
+
+all_bike_2025$Start.Time <- format(ymd_hms(all_bike_2025$Start.Time), "%m/%d/%Y %H:%M")
+
+all_bike_2025$End.Time <- format(ymd_hms(all_bike_2025$End.Time), "%m/%d/%Y %H:%M")
+
+
+all_bike_2025 <- all_bike_2025 %>%
+  mutate(User.Type = case_when(
+    User.Type %in% c("Member", "Annual Member") ~ "Annual Member",
+    User.Type %in% c("Casual", "Casual Member") ~ "Casual Member",
+    TRUE ~ User.Type
+  ))
+```
+
+```{r}
+all_bike <- bind_rows(all_bike_2021, all_bike_2022, all_bike_2023, all_bike_2024, all_bike_2025)
 ```
 
 ```{r}
