@@ -1,0 +1,400 @@
+---
+title: "Bayesian Model"
+author: "Derek Kusmenko"
+format: html
+editor: visual
+---
+
+```{r}
+# Load libraries
+library(tidyverse)
+library(lubridate)
+library(brms)
+library(janitor)
+
+# Beaches stations
+beaches_stations <- c(7692, 7317, 7318, 7365, 7427, 7315, 7695, 7364, 7314, 7316, 7428)
+
+# Ontario holidays
+toronto_holidays <- as.Date(c(
+  "2021-01-01", "2021-02-15", "2021-04-02", "2021-05-24", "2021-07-01", "2021-08-02", "2021-09-06", "2021-10-11", "2021-12-25", "2021-12-26",
+  "2022-01-01", "2022-02-21", "2022-04-15", "2022-05-23", "2022-07-01", "2022-08-01", "2022-09-05", "2022-10-10", "2022-12-25", "2022-12-26",
+  "2023-01-01", "2023-02-20", "2023-04-07", "2023-05-22", "2023-07-01", "2023-08-07", "2023-09-04", "2023-10-09", "2023-12-25", "2023-12-26",
+  "2024-01-01", "2024-02-19", "2024-03-29", "2024-05-20", "2024-07-01", "2024-08-05", "2024-09-02", "2024-10-14", "2024-12-25", "2024-12-26",
+  "2025-01-01", "2025-02-17", "2025-04-18", "2025-05-19", "2025-07-01", "2025-08-04", "2025-09-01", "2025-10-13", "2025-12-25", "2025-12-26"
+))
+
+# Data preprocessing
+bikes_raw <- read.csv("01_Data/beaches_bikes.csv")
+bikes_raw$Date <- as.Date(bikes_raw$start_date_actual)
+
+# Classify trips
+bikes_classified <- bikes_raw %>%
+  mutate(
+    Starts_In_Beach = Start.Station.Id %in% beaches_stations,
+    Ends_In_Beach   = End.Station.Id %in% beaches_stations,
+    Trip_Type = case_when(
+      !Starts_In_Beach & Ends_In_Beach ~ "Inbound",  # Visitors arriving
+      Starts_In_Beach & !Ends_In_Beach ~ "Outbound", # Locals leaving
+      Starts_In_Beach & Ends_In_Beach  ~ "Internal", # Moving within the BIA
+      TRUE                             ~ "External"
+    )
+  ) %>%
+  filter(Trip_Type != "External") # Drop data completely irrelevant to the Beaches
+
+# Aggregate daily trip counts
+daily_data <- bikes_classified %>%
+  group_by(Date, Trip_Type, User.Type) %>%
+  summarise(
+    Total_Trips = n(),
+    Year = first(year),
+    Month = first(start_month_name),
+    .groups = "drop"
+  ) %>%
+  mutate(
+    Day_of_Week = wday(Date, label = TRUE),
+    Is_Weekend  = ifelse(Day_of_Week %in% c("Sat", "Sun"), 1, 0),
+    Is_Holiday  = ifelse(Date %in% toronto_holidays, 1, 0),
+    
+    # Convert categorical variables to factors
+    Month        = as.factor(Month),
+    Year_Numeric = as.numeric(Year) - 2021, 
+    Year         = as.factor(Year),          
+    Is_Weekend   = as.factor(Is_Weekend),
+    Is_Holiday   = as.factor(Is_Holiday),
+    Trip_Type    = as.factor(Trip_Type),
+    User_Type    = as.factor(User.Type)
+  )
+
+
+Toronto_Daily_Temp <- read_csv("01_Data/Toronto_Daily_Temp.csv")
+Toronto_Daily_Temp <- clean_names(Toronto_Daily_Temp)
+Toronto_Daily_Temp <- Toronto_Daily_Temp |> filter(local_year > 2020)
+
+# parse date so it is compatible with the bike share data
+temp_clean <- Toronto_Daily_Temp |> 
+  mutate(
+    date = as_date(local_date),
+    month_name = month(date, label = TRUE)
+  ) |> 
+  select(date, mean_temperature, min_temperature, max_temperature, total_precipitation) |>
+  # sort by the new datetime column
+  arrange(date) |> 
+  filter(!is.na(date))
+
+# join temperature data to bike share
+daily_data <- daily_data |>
+  inner_join(temp_clean, by = c("Date" = "date"))
+
+# standardize continuous features
+daily_data$Temp_Scaled <- scale(daily_data$max_temperature)
+daily_data$Rain_Scaled <- scale(daily_data$total_precipitation)
+
+# define bayes model
+formula <- bf(
+  Total_Trips ~ Trip_Type * User_Type * (Temp_Scaled + I(Temp_Scaled^2) + Rain_Scaled + Is_Weekend + Is_Holiday) + Month + Year_Numeric
+)
+
+# define priors
+priors <- c(
+  prior(normal(0, 5), class = "b"),               # Prior for betas
+  prior(student_t(3, 0, 10), class = "Intercept"), # Prior for the intercept
+  prior(gamma(0.01, 0.01), class = "shape")        # Prior for Negative Binomial
+)
+
+# run mcmc
+bia_model <- brm(
+  formula = formula,
+  data = daily_data,
+  family = negbinomial(), 
+  prior = priors,
+  chains = 4,             
+  cores = 4,              
+  iter = 2000,            
+  warmup = 1000,          
+  seed = 123              
+)
+
+# model summary
+summary(bia_model)
+```
+
+```{r}
+# plots to ensure model convergence
+plot(bia_model)
+
+# compare simulated data to real data
+pp_check(bia_model, ndraws = 100)
+
+# conditional effects plots
+plot(conditional_effects(bia_model), ask = FALSE)
+
+```
+
+```{r}
+# setup to view specific plots to get expanatory results
+visitor_condition <- data.frame(
+  Trip_Type = "Inbound",
+  User_Type = "Casual Member"
+)
+
+# how temperature effects inbound casual riders
+plot(conditional_effects(bia_model, 
+                         effects = "Temp_Scaled", 
+                         conditions = visitor_condition), 
+     ask = FALSE,
+     main = "How Temperature Impacts Inbound Casual Riders")
+
+# how rain effects inbound casual riders
+plot(conditional_effects(bia_model, 
+                         effects = "Rain_Scaled", 
+                         conditions = visitor_condition), 
+     ask = FALSE,
+     main = "How Rain Impacts Inbound Casual Traffic")
+
+```
+
+```{r}
+# For forecasting/prediction, set up covariates as necessary
+future_conditions <- data.frame(
+  Temp_Scaled = c(1.5, -0.5), # Assuming 1.5 is ~25°C, -0.5 is ~10°C
+  Rain_Scaled = c(0, 5),
+  Is_Weekend = as.factor(c(1, 0)),
+  Month = as.factor(c("Oct", "Oct")),
+  Year_Numeric = c(3, 3), # 2024 is year 3
+  Is_Holiday = as.factor(c(0,0)),
+  Trip_Type = as.factor(c("Inbound", "Inbound")),
+  User_Type = as.factor(c("Casual Member", "Casual Member"))
+)
+
+# Predict the counts with 95% credible intervals
+predictions <- predict(bia_model, newdata = future_conditions)
+print(predictions)
+```
+
+```{r}
+# checking test statistics of real data to replicated sets
+plot_max <- pp_check(bia_model, type = "stat", stat = "max", ndraws = 500) +
+  labs(title = "Can the model predict the busiest days?",
+       subtitle = "Vertical line = Actual busiest day | Histogram = Model's guesses for the busiest day")
+print(plot_max)
+```
+
+```{r}
+# PPC Density overlay
+plot_density <- pp_check(bia_model, type = "dens_overlay", ndraws = 50) +
+  labs(title = "Posterior Predictive Check: Overall Distribution",
+       subtitle = "Dark line = Actual Data | Light lines = Model Simulations")
+print(plot_density)
+```
+
+```{r}
+# PPC Density overlay for different trip types
+plot_grouped <- pp_check(bia_model, type = "dens_overlay_grouped", 
+                         group = "Trip_Type", ndraws = 50) +
+  labs(title = "Model Accuracy: Inbound vs. Outbound vs. Internal")
+print(plot_grouped)
+```
+
+```{r}
+library(tidybayes)
+library(posterior)
+library(dplyr)
+
+# view proportion of sampled coefficients that are positive or negative
+posterior_samples <- as_draws_df(bia_model)
+
+# view what proportion of rain covariates are negative
+# if 100% then know rain always results in less riders
+head(select(posterior_samples, b_Intercept, b_Rain_Scaled))
+
+prob_rain_negative <- sum(posterior_samples$b_Rain_Scaled < 0) / nrow(posterior_samples)
+
+cat("There is a", prob_rain_negative * 100, "% probability that rain reduces traffic.\n")
+```
+
+## Time Series Model
+
+```{r}
+library(tidyr)
+
+# Create a combined grouping variable 
+daily_data <- daily_data %>%
+  mutate(TS_Group = paste(Trip_Type, User_Type, sep = "_")) %>%
+  mutate(TS_Group = as.factor(TS_Group))
+
+# Pad missing dates
+# If a day is missing, it gets filled with Total_Trips = 0
+daily_data_ts <- daily_data %>%
+  ungroup() %>%
+  complete(Date = seq.Date(min(Date), max(Date), by = "day"), 
+           TS_Group, 
+           fill = list(Total_Trips = 0)) %>%
+  mutate(
+    Day_of_Week = wday(Date, label = TRUE),
+    Is_Weekend  = ifelse(Day_of_Week %in% c("Sat", "Sun"), 1, 0),
+    Is_Holiday  = ifelse(Date %in% toronto_holidays, 1, 0),
+    Month       = as.factor(month(Date, label = TRUE)),
+    Year        = as.factor(year(Date)),
+    Year_Numeric = as.numeric(as.character(Year)) - 2021
+  )
+daily_data_ts <- daily_data_ts %>%
+  arrange(TS_Group, Date)
+```
+
+```{r}
+# Time series formula
+ts_formula <- bf(
+  Total_Trips ~ Trip_Type * User_Type * (Temp_Scaled + I(Temp_Scaled^2) + Rain_Scaled + Is_Weekend + Is_Holiday) + 
+                Month +  User_Type * Year_Numeric + ar(time = Date, gr = TS_Group, p = 1)
+)
+
+# Update Priors
+ts_priors <- c(
+  prior(normal(0, 5), class = "b"),
+  prior(student_t(3, 0, 10), class = "Intercept"),
+  prior(gamma(0.01, 0.01), class = "shape"),
+  prior(uniform(-1, 1), class = "ar")
+)
+
+# Split the data based on the Year
+train_data <- daily_data_ts %>% filter(Year %in% c("2021", "2022", "2023", "2024"))
+test_data  <- daily_data_ts %>% filter(Year == "2025")
+
+# Train the model ONLY on the 2021-2024 data
+train_model <- brm(
+  formula = ts_formula,
+  data = train_data,
+  family = negbinomial(),
+  prior = ts_priors,
+  chains = 4, cores = 4, iter = 2000, warmup = 1000, seed = 123
+)
+```
+
+```{r}
+# model summary
+summary(train_model)
+
+plot(train_model)
+
+# compare simulated data to real data
+pp_check(train_model, ndraws = 100)
+```
+
+```{r}
+library(tidybayes)
+library(tidyr)
+
+# Create a copy of the test data
+test_data_modified <- test_data
+
+# Duplicate the date column
+test_data_modified$Real_Date <- test_data_modified$Date
+
+# Overwrite Date to numeric
+test_data_modified$Date <- as.numeric(test_data_modified$Date)
+
+# Drop NAs
+test_data_modified <- test_data_modified %>% drop_na()
+
+# Generate predictions for 2025
+predictions_2025 <- test_data_modified %>%
+  add_predicted_draws(train_model, incl_autocor = FALSE) %>%
+  group_by(Real_Date, Total_Trips) %>% 
+  summarise(
+    Predicted_Mean = mean(.prediction),
+    Lower_95 = quantile(.prediction, 0.025),
+    Upper_95 = quantile(.prediction, 0.975),
+    .groups = "drop"
+  ) %>%
+  rename(Date = Real_Date)
+```
+
+
+
+```{r}
+library(dplyr)
+
+daily_collapsed_predictions <- predictions_2025 %>%
+  group_by(Date) %>%
+  summarise(
+    # Sum the actual reality
+    Total_Trips = sum(Total_Trips),
+    
+    # Sum the model's average expected guesses
+    Predicted_Mean = sum(Predicted_Mean),
+    
+    # Sum the confidence intervals 
+    Lower_95 = sum(Lower_95),
+    Upper_95 = sum(Upper_95),
+    
+    .groups = "drop"
+  )
+
+# View cleaned output
+head(daily_collapsed_predictions)
+
+ggplot(daily_collapsed_predictions, aes(x = Predicted_Mean, y = Total_Trips)) +
+  geom_point(alpha = 0.6, color = "darkblue") +
+  geom_abline(intercept = 0, slope = 1, color = "red", linetype = "dashed", size = 1) +
+  coord_fixed(ratio = 1, xlim = c(0, max(daily_collapsed_predictions$Total_Trips, na.rm=T)), 
+              ylim = c(0, max(daily_collapsed_predictions$Total_Trips, na.rm=T))) +
+  labs(
+    title = "Actual vs. Predicted Traffic (2025)",
+    subtitle = "Dots ABOVE the red line are days the model Underestimated",
+    x = "What the Model Predicted",
+    y = "What Actually Happened"
+  ) +
+  theme_minimal()
+
+```
+
+```{r}
+# Check if the ACTUAL traffic fell between the model's Lower and Upper bounds
+coverage_test <- daily_collapsed_predictions %>%
+  mutate(
+    Captured_Reality = ifelse(Total_Trips >= Lower_95 & Total_Trips <= Upper_95, 1, 0)
+  )
+
+# Calculate the percentage
+coverage_percentage <- sum(coverage_test$Captured_Reality) / nrow(coverage_test)
+
+cat("Our 95% confidence intervals successfully captured reality", 
+    round(coverage_percentage * 100, 1), "% of the time in 2025.\n")
+```
+
+```{r}
+# Calculate the residual for every single day
+daily_collapsed_predictions <- daily_collapsed_predictions %>%
+  mutate(
+    Residual = Total_Trips - Predicted_Mean,
+    # Create a label for plotting later
+    Error_Type = ifelse(Residual > 0, "Underestimated", "Overestimated")
+  )
+
+# Calculate the overall Mean Bias Error
+mbe_score <- mean(daily_collapsed_predictions$Residual, na.rm = TRUE)
+
+cat("Mean Bias Error:", round(mbe_score, 1), "trips per day.\n")
+
+library(ggplot2)
+
+ggplot(daily_collapsed_predictions, aes(x = Date, y = Residual, fill = Error_Type)) +
+  geom_col() +
+  geom_hline(yintercept = 0, color = "black", size = 1) +
+  scale_fill_manual(values = c("Underestimated" = "darkred", 
+                               "Overestimated" = "steelblue")) +
+  scale_x_date(date_breaks = "1 month", date_labels = "%b") +
+  labs(
+    title = "Model Bias Over Time (2025)",
+    y = "Actual minus Predicted Trips",
+    x = "Month",
+    fill = "Model Behavior"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+```
+
+
+
+
