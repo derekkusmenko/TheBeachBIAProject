@@ -84,6 +84,7 @@ g2 <- ggplot(sm_day, aes(x = day_of_year, y = .estimate)) +
   labs(
     title = "Seasonal Impact on Bike Ridership Volume",
     subtitle = "Partial effect of the day of year on total ridership volume",
+    caption = "Note: Y-axis represents the partial effect on the log-link scale",
     x = "Day of Year", 
     y = "Partial Effect (Log Scale)"
   ) +
