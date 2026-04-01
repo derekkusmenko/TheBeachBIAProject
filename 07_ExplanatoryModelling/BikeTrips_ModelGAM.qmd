@@ -1,0 +1,187 @@
+---
+title: Modelling Bike Activity within The Beach BIA
+date: today
+date-format: long
+format: pdf
+execute:
+  echo: false
+---
+
+
+```{r}
+model_data_2025 <- readRDS(here("07_ExplanatoryModelling", "model_data_2025.rds"))
+```
+
+# Generalized Additive Models (Frequentist)
+
+## The Baseline GLM
+
+We fit a baseline Negative Binomial Generalized Linear Model (GLM) using only weather and calendar variables, intentionally ignoring the passing of time.
+
+The Observation: The resulting ACF plot shows severe temporal autocorrelation. Lags 1 through 7 (an entire week) consistently spike well above the blue dashed significance thresholds.
+
+The Implication: This proves that yesterday's unmeasured traffic heavily influences today's traffic. Our daily observations are mathematically not independent.
+
+The Conclusion: We have definitive, visual justification for upgrading to a time-aware model. If we presented this GLM to the BIA, our standard errors would be artificially shrunken and our confidence intervals would be dangerously overconfident.
+
+
+```{r}
+library(mgcv)
+
+# 1. Fit the strict parametric GLM (straight lines only, no time awareness)
+fit_glm_nb <- gam(
+  total_trips ~ temp_max + 
+                usable_light_hours + 
+                is_precip + 
+                precip_hour_count + 
+                day_type,
+  family = nb(), 
+  data = model_data_2025
+)
+
+# 2. View the basic coefficients
+summary(fit_glm_nb)
+
+# 3. Save the AIC score (we want this number to go down in our next steps)
+cat("Baseline GLM AIC:", AIC(fit_glm_nb), "\n")
+```
+
+```{r}
+# Plot the residuals of the baseline GLM
+acf(residuals(fit_glm_nb, type = "pearson"), main = "ACF: Baseline GLM (No Time Correction)")
+```
+
+```{r}
+library(car)
+# We run VIF on your baseline GLM from earlier
+car::vif(fit_glm_nb)
+```
+
+```{r}
+library(tidyverse)
+cor(model_data_2025 %>% dplyr::select(temp_max, usable_light_hours, is_precip, total_precip_mm, precip_hour_count))
+```
+
+
+## Time Series GAM using s(time_index)
+
+```{r}
+library(mgcv)
+
+# 1. Strip the ordered factor
+model_data_2025 <- model_data_2025 %>%
+  mutate(dow = factor(dow, ordered = FALSE))
+
+# 2. Fit the Time-Sponge GAM
+fit_gam_time_sponge <- gam(
+  total_trips ~ s(temp_max) + 
+                usable_light_hours + 
+                is_precip + 
+                precip_hour_count + 
+                day_type + 
+                s(time_index, k = 50), # The Time Sponge!
+  family = nb(), 
+  data = model_data_2025,
+  method = "REML"
+)
+
+# 3. Check the beautiful, non-polynomial coefficients
+summary(fit_gam_time_sponge)
+
+# 4. Verify it killed the autocorrelation
+acf(residuals(fit_gam_time_sponge, type = "pearson"), main = "ACF: GAM with Time Sponge")
+```
+
+
+
+## GAM with explicti AR(1)
+
+We avoid using the Generalized Additiive Mixed Model approach (GAMM) because it gives us untrustworthy p-values, due to the approximation method used for Negative Binomial.
+
+However, using Day of the Week, improves its ACF by a lot.
+
+```{r}
+#| eval: false
+library(mgcv)
+
+model_data_2025 <- model_data_2025 %>%
+  mutate(dow = factor(dow, ordered = FALSE))
+
+# Fit the GAMM with an explicit AR(1) correlation structure
+fit_gamm_ar1 <- gamm(
+  total_trips ~ s(temp_max) + 
+                usable_light_hours + 
+                is_precip + 
+                precip_hour_count + 
+                dow,
+  family = nb(), 
+  data = model_data_2025,
+  correlation = corAR1(form = ~ time_index) # Explicitly handling the temporal overlap
+)
+
+# 1. View the summary of the fixed effects
+summary(fit_gamm_ar1$gam)
+
+acf(residuals(fit_gamm_ar1$lme, type = "normalized"), main = "ACF: GAMM with corAR1")
+```
+
+## Lagged Response Variable GAM
+
+By using Day of the Week, it improves its ACF by a lot, as it gets rid of the spikes at lags of 7.
+
+```{r}
+library(dplyr)
+library(mgcv)
+
+# 1. Engineer the Lagged Response Variable
+model_data_2025 <- model_data_2025 %>%
+  arrange(date) %>%
+  mutate(
+    # How many people biked yesterday?
+    lag_total_trips = lag(total_trips, n = 1),
+    dow_mon = fct_relevel(dow, "Mon")
+  )
+
+# 2. Fit the Dynamic GAM 
+fit_gam_dynamic <- gam(
+  total_trips ~ s(temp_max) + 
+                usable_light_hours + 
+                precip_hour_count + 
+                dow_mon + 
+                lag_total_trips, # This completely replaces corAR1
+  family = nb(), 
+  data = model_data_2025,
+  method = "REML"                
+)
+
+# 3. View the business coefficients
+summary(fit_gam_dynamic)
+
+# 4. Check the ACF 
+acf(residuals(fit_gam_dynamic, type = "pearson"), na.action = na.pass, main = "ACF: Dynamic GAM (Lagged Response)")
+```
+
+
+
+
+
+
+```{r}
+library(gratia)
+plot(fit_gam_dynamic$gam, pages = 1, shade = TRUE, shade.col = "lightblue", all.terms = TRUE)
+# install.packages("gratia")
+
+# Automatically plots all smooths with partial residuals and confidence intervals
+draw(fit_gam_dynamic$gam, residuals = TRUE)
+```
+
+
+
+
+
+
+
+
+
+
+

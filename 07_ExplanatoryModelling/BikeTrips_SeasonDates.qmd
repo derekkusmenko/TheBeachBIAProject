@@ -1,0 +1,391 @@
+---
+title: "BikeTrips_SeasonChange"
+format: pdf
+editor: visual
+---
+
+
+## GAMM to Figure out Peak Season Times
+```{r}
+model_data_2025 <- readRDS(here("07_ExplanatoryModelling", "model_data_2025.rds"))
+
+library(lubridate)
+
+model_data_2025 <- model_data_2025 %>%
+  mutate(day_of_year = yday(date)) |>
+  arrange(date) %>%
+  mutate(dow = factor(dow, ordered = FALSE)) |>
+  mutate(
+    # How many people biked yesterday?
+    lag_total_trips = lag(total_trips, n = 1),
+    dow_mon = fct_relevel(dow, "Mon")
+  ) |>
+  mutate(
+    day_category = case_when(
+      is_holiday == 1 ~ "Holiday",       # 1. Pulls out ALL holidays first
+      dow == "Sat" ~ "Saturday",    # 2. Labels remaining Saturdays
+      dow == "Sun" ~ "Sunday",        # 3. Labels remaining Sundays
+      TRUE ~ "Weekday"                   # 4. Everything else becomes the baseline
+    ),
+    # Set "Weekday" as the baseline (0)
+    day_category = factor(day_category, levels = c("Weekday", "Saturday", "Sunday", "Holiday"))
+  ) |>
+  mutate(
+    day_type1 = ifelse(is_holiday, "Holiday", as.character(dow)),
+    day_type1 = fct_relevel(day_type1, "Mon") # Keep Monday as baseline
+  ) |>
+  mutate(is_holiday = as.factor(is_holiday))
+```
+
+
+
+```{r}
+fit_gam <- gam(
+  total_trips ~ s(temp_max) + 
+                s(day_of_year, k = 5) + # The seasonal 'activation' engine
+                precip_hour_count +
+                dow_mon,
+  family = nb(), 
+  data = model_data_2025,
+  method = "REML"
+)
+```
+
+```{r}
+# 3. View the business coefficients
+summary(fit_gam)
+
+# 4. Check the ACF 
+acf(residuals(fit_gam, type = "pearson"), na.action = na.pass, main = "ACF: Dynamic GAM (Lagged Response)")
+```
+
+
+
+
+```{r}
+library(gratia)
+library(ggplot2)
+library(patchwork) # For combining plots
+
+# 1. Generate the standard nice plots
+# 'grouped = TRUE' puts them in a nice grid
+p_all <- draw(fit_gam, residuals = TRUE) 
+
+# 2. Customize with your BIA Branding
+# We can't edit draw() directly easily, so we build them for ultimate control:
+sm_temp <- smooth_estimates(fit_gam, smooth = "s(temp_max)")
+sm_day  <- smooth_estimates(fit_gam, smooth = "s(day_of_year)")
+
+
+# Plot B: Seasonality (The k=5 Engine)
+g2 <- ggplot(sm_day, aes(x = day_of_year, y = .estimate)) +
+  geom_ribbon(aes(ymin = .estimate - 2*.se, ymax = .estimate + 2*.se), fill = "#1A5276", alpha = 0.1) +
+  geom_line(color = "#D4AC0D", linewidth = 1.2) +
+  labs(
+    title = "Seasonal Impact on Bike Ridership Volume",
+    subtitle = "Partial effect of the day of year on total ridership volume",
+    x = "Day of Year", 
+    y = "Partial Effect (Log Scale)"
+  ) +
+  theme_minimal()
+
+g2 # Display side-by-side
+```
+
+
+
+### Activation Dates
+
+
+
+
+
+
+```{r}
+library(gratia)
+library(ggplot2)
+
+# 1. Plot the Seasonal Smooth (The "Hill")
+p1 <- draw(fit_gam, select = "s(day_of_year)") +
+  labs(title = "Seasonal Trend: Biker Volume")
+
+# 2. Plot the Derivative (The "Acceleration")
+# This shows where the neighborhood is speeding up or slowing down
+d <- derivatives(fit_gam, select = "s(day_of_year)", n = 300)
+p2 <- draw(d) +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "red") +
+  labs(title = "Rate of Change (The Pulse)")
+
+# Combine them (if you have patchwork) or plot separately
+p1
+p2
+```
+
+
+```{r}
+library(gratia)
+library(dplyr)
+library(lubridate)
+
+
+# 2. Calculate Velocity (f')
+d1 <- derivatives(fit_gam, select = "s(day_of_year)", order = 1, n = 303)
+
+
+# B. Max Momentum (Inflection Point): Peak of the 1st derivative
+day_inflection <- d1 %>% filter(day_of_year < 200) %>% slice_max(.derivative, n = 1) %>% pull(day_of_year)
+
+# C. Season Peak (The Summit): When velocity hits zero
+day_peak <- d1 %>% filter(day_of_year > day_inflection) %>% filter(abs(.derivative) == min(abs(.derivative))) %>% pull(day_of_year)
+
+# D. Deactivation (Max Decline): When velocity is most negative
+day_decline <- d1 %>% filter(day_of_year > day_peak) %>% slice_min(.derivative, n = 1) %>% pull(day_of_year)
+
+# 4. Create the Results Table
+key_dates <- data.frame(
+  Event = c("Season Start", "Peak Season", "Rapid Decline Starts"),
+  Day_of_Year = c(day_inflection, day_peak, day_decline)
+) %>%
+  mutate(Date = as.Date(Day_of_Year, origin = "2025-01-01"))
+
+print(key_dates)
+```
+
+
+```{r}
+# Function to get the typical temp range for a specific day
+get_temp_range <- function(target_day, data) {
+  data %>%
+    filter(day_of_year >= (target_day - 3) & day_of_year <= (target_day + 3)) %>%
+    summarise(
+      min_temp = round(quantile(temp_max, 0.25, na.rm=TRUE), 1),
+      max_temp = round(quantile(temp_max, 0.75, na.rm=TRUE), 1)
+    ) %>%
+    mutate(Range = paste0(min_temp, "°C to ", max_temp, "°C")) %>%
+    pull(Range)
+}
+
+# Apply to your dates
+key_dates$Typical_Temp_Max <- sapply(key_dates$Day_of_Year, get_temp_range, data = model_data_2025)
+
+print(key_dates[, c("Event", "Date", "Typical_Temp_Max")])
+```
+
+
+
+```{r}
+library(dplyr)
+library(lubridate)
+library(gratia)
+
+# 1. Generate a high-resolution version of the derivatives
+# Using more points (n = 1000) helps pinpoint the exact peak
+d1_high_res <- derivatives(fit_gam, select = "s(day_of_year)", n = 1000)
+
+# 2. Find the row where the derivative is at its absolute minimum
+steepest_row <- d1_high_res %>%
+  slice(which.min(.derivative))
+
+# 3. Extract the numeric day and convert to a date
+steepest_day <- steepest_row$day_of_year
+steepest_date <- as.Date(steepest_day - 1, origin = "2025-01-01")
+
+# 4. Print the result
+print(paste("The steepest decline occurs on Day:", round(steepest_day, 1)))
+print(paste("Calendar Date:", steepest_date))
+```
+
+
+
+
+
+##
+
+
+
+```{r}
+library(dplyr)
+library(lubridate)
+library(gratia)
+library(ggplot2)
+
+# 1. Calculate High-Res Velocity (f')
+# n=1000 provides sub-day precision for pinpointing peaks
+d1_hires <- derivatives(fit_gam, select = "s(day_of_year)", order = 1, n = 303)
+
+# 2. Extract Key Milestones
+# A. Max Momentum (Spring Surge): Steepest positive slope
+day_inflection <- d1_hires %>% 
+  filter(day_of_year < 200) %>% 
+  slice_max(.derivative, n = 1) %>% 
+  pull(day_of_year)
+
+# B. The Summit (Peak Volume): Where velocity crosses zero
+day_peak <- d1_hires %>% 
+  filter(day_of_year > day_inflection) %>% 
+  filter(abs(.derivative) == min(abs(.derivative))) %>% 
+  pull(day_of_year)
+
+# C. Steepest Decline (Shoulder Core): Most negative velocity
+day_decline <- d1_hires %>% 
+  filter(day_of_year > day_peak) %>% 
+  slice_min(.derivative, n = 1) %>% 
+  pull(day_of_year)
+
+# 3. Create the Professional Results Table
+# Using 2025 as the reference year for dates
+key_dates <- data.frame(
+  Event = c("Spring Momentum Peak", "Season Summit (Max Volume)", "Core Shoulder Decline"),
+  Day_of_Year = round(c(day_inflection, day_peak, day_decline), 1),
+  Calendar_Date = as.Date(c(day_inflection, day_peak, day_decline) - 1, origin = "2025-01-01")
+)
+
+print(key_dates)
+
+# 4. The "Momentum" Plot
+draw(d1_hires) +
+  geom_vline(xintercept = c(day_inflection, day_peak, day_decline), 
+             linetype = "dashed", color = c("#27ae60", "#2980b9", "#c0392b"), size = 1) +
+  annotate("text", x = day_inflection, y = 0.015, label = "Spring Surge", color = "#27ae60", angle = 90, vjust = -0.5) +
+  annotate("text", x = day_peak, y = 0.015, label = "The Summit", color = "#2980b9", angle = 90, vjust = -0.5) +
+  annotate("text", x = day_decline, y = -0.005, label = "Steepest Decline", color = "#c0392b", angle = 90, vjust = -0.5) +
+  labs(title = "Beach BIA Ridership Momentum (f')",
+       subtitle = "High-resolution derivative analysis of seasonal shifts",
+       y = "Velocity (Trips per Day/Day)",
+       x = "Day of Year") +
+  theme_minimal()
+```
+
+
+
+```{r}
+library(dplyr)
+library(lubridate)
+library(gratia)
+library(ggplot2)
+
+# 1. High-resolution derivatives (n=1000 for sub-day precision)
+d1_hires <- derivatives(fit_gam, select = "s(day_of_year)", n = 1000)
+
+# 2. Extract the Four Key Milestones
+day_awakening <- d1_hires %>% 
+  filter(day_of_year < 125) %>% 
+  slice(which.min(abs(.derivative))) %>% pull(day_of_year)
+
+day_inflection <- d1_hires %>% 
+  filter(day_of_year < 200) %>% 
+  slice_max(.derivative, n = 1) %>% pull(day_of_year)
+
+day_summit <- d1_hires %>% 
+  filter(day_of_year > 150) %>% 
+  slice(which.min(abs(.derivative))) %>% pull(day_of_year)
+
+day_decline <- d1_hires %>% 
+  filter(day_of_year > day_summit) %>% 
+  slice_min(.derivative, n = 1) %>% pull(day_of_year)
+
+# 3. Create the Combined Professional Results Table
+master_calendar <- data.frame(
+  Milestone = c("Spring Awakening", "Spring Surge", "Summer Summit", "Steepest Decline"),
+  Role = c("Rock Bottom", "Max Growth Rate", "Max Volume", "Shoulder Core"),
+  Day = round(c(day_awakening, day_inflection, day_summit, day_decline), 0),
+  Date = as.Date(round(c(day_awakening, day_inflection, day_summit, day_decline), 0) - 1, origin = "2025-01-01")
+)
+print(master_calendar)
+
+# 4. Master Plot with Edits
+draw(d1_hires) +
+  # --- EDIT: Force the iconic blue onto the derivative line ---
+  geom_line(aes(y = .derivative), color = "#1A5276", linewidth = 1.1) + 
+  geom_hline(yintercept = 0, linetype = "solid", color = "black", alpha = 0.3) +
+  # --- EDIT: Reduced linewidth from 1 to 0.5 for lighter dashes ---
+  geom_vline(xintercept = c(day_awakening, day_inflection, day_summit, day_decline), 
+             linetype = "dashed", color = c("#4477AA", "#27ae60", "#EE6677", "#E69F00"), linewidth = 0.5) + 
+  annotate("text", x = day_awakening, y = 0.005, label = "Awakening", 
+           color = "#4477AA", angle = 90, vjust = -0.5, fontface ="bold") +
+  annotate("text", x = day_inflection, y = 0.005, label = "Spring Surge", 
+           color = "#27ae60", angle = 90, vjust = -0.5, fontface ="bold") +
+  annotate("text", x = day_summit, y = 0.005, label = "The Summit", 
+           color = "#EE6677", angle = 90, vjust = -0.5, fontface ="bold") +
+  annotate("text", x = day_decline, y = -0.002, label = "Steepest Decline", 
+           color = "#E69F00", angle = 90, vjust = -0.5, fontface ="bold") +
+  labs(title = "The Full Seasonal Lifecycle of Beach BIA Ridership",
+       subtitle = "Calculated using First Derivative of k = 5 spline, shown below",
+       y = "Velocity (Growth/Decline Rate)",
+       x = "Day of Year") +
+  theme_minimal()
+```
+
+
+
+
+
+```{r}
+library(dplyr)
+
+# 1. Define the weather look-up function
+get_milestone_weather <- function(target_day, weather_data) {
+  weather_data %>%
+    # Look at the week surrounding the milestone (target day +/- 3 days)
+    filter(day_of_year >= (target_day - 3) & day_of_year <= (target_day + 3)) %>%
+    summarise(
+      avg_high = mean(temp_max, na.rm = TRUE),
+      lower_iqr = quantile(temp_max, 0.25, na.rm = TRUE),
+      upper_iqr = quantile(temp_max, 0.75, na.rm = TRUE)
+    )
+}
+
+# 2. Apply it to your master_calendar table
+# We use rowwise() to ensure the function runs for each specific day
+final_bia_report <- master_calendar %>%
+  rowwise() %>%
+  mutate(
+    # Pull the weather stats
+    weather_stats = list(get_milestone_weather(Day, model_data_2025)),
+    # Format the results into clean strings for your report
+    Typical_High = round(weather_stats$avg_high, 1),
+    Temp_Range   = paste0(round(weather_stats$lower_iqr, 1), "°C to ", 
+                          round(weather_stats$upper_iqr, 1), "°C")
+  ) %>%
+  select(-weather_stats) # Remove the list-column to keep the table clean
+
+print(final_bia_report)
+```
+
+
+```{r}
+# 1. The Function (Updated to be explicit about the column)
+get_milestone_weather <- function(target_day, weather_data) {
+  weather_data %>%
+    # Using .data$ helps R find the column inside the dataframe specifically
+    filter(.data$day_of_year >= (target_day - 3) & .data$day_of_year <= (target_day + 3)) %>%
+    summarise(
+      avg_high = mean(temp_max, na.rm = TRUE),
+      lower_iqr = quantile(temp_max, 0.25, na.rm = TRUE),
+      upper_iqr = quantile(temp_max, 0.75, na.rm = TRUE),
+      .groups = "drop" # Keeps the output clean
+    )
+}
+
+# 2. The Mutate Block
+final_bia_report <- master_calendar %>%
+  rowwise() %>%
+  mutate(
+    # Pull the weather stats
+    weather_stats = list(get_milestone_weather(Day, model_data_2025)),
+    # Extract from the list-column
+    Typical_High = round(weather_stats$avg_high, 1),
+    Temp_Range   = paste0(round(weather_stats$lower_iqr, 1), "°C to ", 
+                          round(weather_stats$upper_iqr, 1), "°C")
+  ) %>%
+  select(-weather_stats)
+
+print(final_bia_report)
+
+colnames(model_data_2025)
+```
+
+
+
+
+

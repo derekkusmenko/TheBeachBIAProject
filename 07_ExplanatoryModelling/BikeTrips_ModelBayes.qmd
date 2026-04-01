@@ -1,0 +1,346 @@
+---
+title: Modelling Bike Activity within The Beach BIA
+date: today
+date-format: long
+format: pdf
+execute:
+  echo: false
+---
+
+
+```{r}
+model_data_2025 <- readRDS(here("07_ExplanatoryModelling", "model_data_2025.rds"))
+```
+
+
+
+```{r}
+library(dplyr)
+
+model_data_2025 <- model_data_2025 %>%
+  mutate(
+    day_category = case_when(
+      is_holiday == 1 ~ "Holiday",       # 1. Pulls out ALL holidays first
+      dow == "Sat" ~ "Saturday",    # 2. Labels remaining Saturdays
+      dow == "Sun" ~ "Sunday",        # 3. Labels remaining Sundays
+      TRUE ~ "Weekday"                   # 4. Everything else becomes the baseline
+    ),
+    # Set "Weekday" as the baseline (0)
+    day_category = factor(day_category, levels = c("Weekday", "Saturday", "Sunday", "Holiday"))
+  )
+```
+
+```{r}
+cor(model_data_2025 %>% dplyr::select(temp_max, usable_light_hours, is_precip, total_precip_mm, precip_hour_count))
+```
+
+
+# Bayesian Model - Bayesian GAMM (Generalized Additive Mixed Model)
+
+The correlation for maximum temperature and usable light hours in a day seemed highly correlated (0.76), so we opted to stick to temperature, to capture the summer rush of activity.
+
+```{r}
+library(brms)
+
+fit_bayes_final <- brm(
+  total_trips ~ s(temp_max) + 
+                precip_hour_count + 
+                day_category +
+                ar(time = time_index, p = 1), # Natively handles the autocorrelation
+  data = model_data_2025,
+  family = poisson(), 
+  cores = 4,      # Use all your computer's power
+  iter = 4000,    # Plenty of draws for smooth, warning-free results
+  warmup = 1000,  
+  control = list(adapt_delta = 0.99, max_treedepth = 15) # Silences MCMC warnings
+)
+
+# See the finalized, publication-ready coefficients
+summary(fit_bayes_final)
+```
+
+
+```{r}
+summary(fit_bayes_final)
+```
+
+
+```{r}
+
+#saveRDS(fit_bayes_final, "fit_bayes_final.rds")
+# This extracts the marginal effects for your splines and linear terms
+bayesian_plots <- conditional_effects(fit_bayes_final)
+
+
+# Because it uses ggplot2 under the hood, you can plot it instantly
+plot(bayesian_plots, ask = FALSE)
+```
+
+
+```{r}
+library(ggplot2)
+library(viridis)
+
+# Extract data from the conditional_effects object
+# (Assuming the order: 1 = precip, 2 = day_category, 3 = temp_max)
+data_precip <- as.data.frame(bayesian_plots[[1]])
+data_day    <- as.data.frame(bayesian_plots[[2]])
+data_temp   <- as.data.frame(bayesian_plots[[3]])
+
+# Common theme setup
+beach_theme <- theme_minimal(base_size = 11) +
+  theme(
+    plot.title = element_text(face = "bold", size = 14, hjust = 0.5),
+    axis.title = element_text(face = "bold"),
+    panel.grid.minor = element_blank()
+  )
+
+# Plot 1: Precipitation
+p1 <- ggplot(data_precip, aes(x = precip_hour_count, y = estimate__)) +
+  geom_ribbon(aes(ymin = lower__, ymax = upper__), fill = "steelblue", alpha = 0.2) +
+  geom_line(color = "steelblue", size = 1.2) +
+  labs(title = "Impact of Precipitation on Biking Volume",
+       x = "Hours of Precipitation", y = "Estimated Daily Trips") +
+  beach_theme
+
+# Plot 2: Day Category
+p2 <- ggplot(data_day, aes(x = day_category, y = estimate__)) +
+  geom_errorbar(aes(ymin = lower__, ymax = upper__), width = 0.2, color = "grey30") +
+  geom_point(size = 4, color = "darkred") +
+  labs(title = "Ridership by Day Category",
+       x = "Day Type", y = "Estimated Daily Trips") +
+  beach_theme
+
+# Plot 3: Temperature
+p3 <- ggplot(data_temp, aes(x = temp_max, y = estimate__)) +
+  geom_ribbon(aes(ymin = lower__, ymax = upper__), fill = "orange", alpha = 0.2) +
+  geom_line(color = "orange3", size = 1.2) +
+  labs(title = "Temperature-Driven Activation",
+       x = "Maximum Temperature (°C)", y = "Estimated Daily Trips") +
+  beach_theme
+
+# Display them
+p1; p2; p3
+```
+
+
+
+## Interpretations and Insights
+
+
+Slide Title: Drivers of Bike Share Traffic at the Beach BIA
+Baseline Reference: A standard weekday (Monday–Friday) with zero precipitation.
+
+📅 The Calendar Surges (Human Behavior)
+Compared to a standard weekday, weekend and holiday leisure traffic dramatically reshapes trail usage. We have roughly 95% statistical certainty of the following ranges:
+
+Saturdays: Drive an estimated +33.6% surge in ridership (Expected range: +17% to +52%).
+
+Sundays: Drive an estimated +53.7% surge in ridership (Expected range: +35% to +75%).
+
+Statutory Holidays: Are the absolute peak, driving a massive +120.3% surge in ridership, literally more than doubling standard weekday traffic (Expected range: +69% to +182%).
+
+🌧️ The Weather Penalty (Precipitation)
+Rain duration is a highly credible deterrent to local traffic.
+
+The Hourly Cost: Every single hour of recorded precipitation decreases that day's total ridership by an estimated 6.8%.
+
+Business Certainty: We are virtually 100% certain that rain has a negative impact, with the true penalty falling strictly between -5.9% and -8.6% per hour.
+
+☀️ The Temperature Curve
+(Placeholder for the visual plot)
+
+Temperature does not operate on a straight line. The model confirms a highly credible non-linear "hinge" effect, where ridership accelerates rapidly as weather warms, before plateauing at peak summer temperatures.
+
+
+
+# User Type Segmentation
+
+```{r}
+library(tidyr)
+library(dplyr)
+
+model_data_long <- model_data_2025 %>%
+  pivot_longer(
+    cols = c(trips_casual, trips_member), # Or whatever your column names are
+    names_to = "user_type",
+    values_to = "trips"
+  ) %>%
+  mutate(user_type = factor(user_type, 
+                          levels = c("trips_casual", "trips_member")))#,
+                          #labels = c("Casual", "Annual")))
+```
+
+
+
+```{r}
+# The "Champion" Interaction Model
+fit_user_split <- brm(
+  trips ~ s(temp_max, by = user_type) +    # Unique curves for each group
+          user_type * precip_hour_count +  # Rain sensitivity by group
+          user_type * day_category +       # Weekend/Holiday behavior by group
+          ar(time = time_index, gr = user_type, p = 1), 
+  data = model_data_long,
+  family = poisson(),
+  cores = 4, 
+  iter = 4000,
+  control = list(adapt_delta = 0.99)
+)
+```
+
+
+```{r}
+
+saveRDS(fit_user_split, "fit_user_split.rds")
+summary(fit_user_split)
+```
+
+```{r}
+library(ggplot2)
+
+# Extract and plot the temperature effect
+eff_temp <- conditional_effects(fit_user_split, effects = "temp_max:user_type")
+
+plot(eff_temp, 
+     points = FALSE, 
+     theme = theme_minimal())[[1]] + 
+  labs(title = "Temperature Sensitivity: Annual vs. Casual",
+       subtitle = "Leisure ridership accelerates faster in high heat",
+       x = "Max Temperature (°C)", 
+       y = "Predicted Daily Trips")
+```
+
+Temperature Impact by User Type
+Cold Weather Resilience: Annual members maintain a consistent ridership baseline in sub-zero temperatures while casual activity remains near zero.
+
+Thermal Acceleration: Both groups exhibit exponential growth as weather warms, with members driving higher absolute volumes during peak summer heat.
+
+
+
+
+```{r}
+# Extract the interaction between rain and user type
+eff_rain <- conditional_effects(fit_user_split, effects = "precip_hour_count:user_type")
+
+plot(eff_rain, theme = theme_minimal())[[1]] +
+  labs(title = "Rain Resilience: Annual vs. Casual",
+       subtitle = "Annual members (commuters) are significantly more weather-proof",
+       x = "Hours of Precipitation",
+       y = "Predicted Daily Trips") +
+  scale_color_manual(values = c("annual" = "#2c3e50", "casual" = "#e74c3c")) +
+  scale_fill_manual(values = c("annual" = "#2c3e50", "casual" = "#e74c3c"))
+```
+
+Leisure vs. Utility: Casual riders cancel optional trips instantly while annual members maintain essential daily commutes.
+
+Volume Stability: Casual traffic faces a near-total collapse during rain, whereas members retain a 30% ridership floor.
+
+Operational Backbone: Annual members provide a weather-proof foundation for Beach BIA docks regardless of conditions.
+
+
+```{r}
+# Extract the interaction between the calendar and user type
+eff_calendar <- conditional_effects(fit_user_split, effects = "day_category:user_type")
+
+plot(eff_calendar, theme = theme_minimal())[[1]] +
+  labs(title = "Calendar Behavior by User Type",
+       subtitle = "Weekends and Holidays drive Casual growth, not Member growth",
+       x = "Day Category",
+       y = "Predicted Daily Trips") +
+  scale_color_manual(values = c("annual" = "#2c3e50", "casual" = "#e74c3c"))
+```
+
+
+
+Weekday Foundation: Annual members provide the system's baseline, taking over double the trips of casual riders during standard work weeks.
+
+Leisure Scaling: Casual ridership triples between weekdays and holidays, rapidly closing the volume gap during peak leisure periods.
+
+Holiday Parity: Statutory holidays represent peak system demand where casual and annual ridership reach nearly identical high-volume levels.
+
+
+
+
+```{r}
+library(ggplot2)
+library(dplyr)
+
+# 1. Define the Beach BIA Palette
+# Annual = Deep Water Blue, Casual = Sand/Sunset Gold
+beach_cols <- c("Annual" = "#1A5276", "Casual" = "#D4AC0D")
+
+# 2. Extract Data
+data_temp_int <- as.data.frame(eff_temp[[1]])
+data_rain_int <- as.data.frame(eff_rain[[1]])
+data_calendar_int <- as.data.frame(eff_calendar[[1]])
+
+# 3. Custom Theme
+beach_theme_fancy <- theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(face = "bold", size = 16, family = "sans"),
+    plot.subtitle = element_text(size = 12, color = "grey40"),
+    axis.title = element_text(face = "bold"),
+    legend.position = "bottom",
+    legend.title = element_blank(),
+    panel.grid.minor = element_blank()
+  )
+
+# Plot A: Temperature Sensitivity
+p_temp <- ggplot(data_temp_int, aes(x = temp_max, y = estimate__, color = user_type, fill = user_type)) +
+  geom_ribbon(aes(ymin = lower__, ymax = upper__), alpha = 0.15, color = NA) +
+  geom_line(size = 1.3) +
+  scale_color_manual(values = beach_cols) +
+  scale_fill_manual(values = beach_cols) +
+  labs(title = "Temperature Sensitivity by User Group",
+       #subtitle = "Casual ridership shows a delayed increased in trips compared to stable annual growth",
+       x = "Maximum Daily Temperature (°C)", y = "Predicted Daily Trips") +
+  beach_theme_fancy
+
+# Plot B: Rain Resilience
+p_rain <- ggplot(data_rain_int, aes(x = precip_hour_count, y = estimate__, color = user_type, fill = user_type)) +
+  geom_ribbon(aes(ymin = lower__, ymax = upper__), alpha = 0.15, color = NA) +
+  geom_line(size = 1.3) +
+  scale_color_manual(values = beach_cols) +
+  scale_fill_manual(values = beach_cols) +
+  labs(title = "Impact of Precipitation by User Type",
+       #subtitle = "Annual members maintain higher activity levels compared to casual",
+       x = "Hours of Precipitation", y = "Predicted Daily Trips") +
+  beach_theme_fancy
+
+
+# 3. Beautified Interaction Plot
+p_calendar <- ggplot(data_calendar_int, aes(x = day_category, y = estimate__, color = user_type)) +
+  # Use error bars for the 95% Credible Intervals
+  geom_errorbar(aes(ymin = lower__, ymax = upper__), width = 0.2, size = 1, alpha = 0.7, position = position_dodge(0.4)) +
+  # Large points for the estimates
+  geom_point(size = 4, position = position_dodge(0.4)) +
+  scale_color_manual(values = beach_cols) +
+  labs(title = "Day of Week and User Type Relationship on Bike Trips",
+       #subtitle = "Weekends and Holidays enables Casual riders, while Annual volume remains stable",
+       x = "Day Category", 
+       y = "Predicted Daily Trips") +
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(face = "bold", size = 16),
+    plot.subtitle = element_text(size = 11, color = "grey40"),
+    axis.title = element_text(face = "bold"),
+    legend.position = "bottom",
+    legend.title = element_blank(),
+    panel.grid.major.x = element_blank() # Clean up the vertical lines
+  )
+
+# Display
+p_calendar
+# Display
+p_temp
+p_rain
+```
+
+
+
+
+
+
+
+
+
