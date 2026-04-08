@@ -1,0 +1,533 @@
+\documentclass[10pt, aspectratio=169]{beamer}
+
+% --- Theme & Aesthetics ---
+\usetheme{Madrid} % Clean, professional look
+\usecolortheme{whale}
+\setbeamertemplate{footline}[frame number]
+\setbeamertemplate{blocks}[rounded][shadow=false]
+\titlegraphic{\includegraphics[width=0.3\textwidth]{derek-slides/beach-uoft.png}}
+
+% --- Packages ---
+\usepackage[utf8]{inputenc}
+\usepackage{booktabs} 
+\usepackage{graphicx} 
+\usepackage{amsmath, amssymb} 
+\usepackage{tikz} % For flowcharts
+\usepackage{booktabs}
+
+% --- Presentation Info ---
+\title[Beaches BIA]{The Beach BIA: Modeling Human Activity and Community Usage}
+\subtitle{Explanatory Modeling, Clustering, and Bayesian Inference}
+\author{Derek Kusmenko and Arusan Surendiran}
+\date{\today}
+
+\begin{document}
+
+% --- TITLE SLIDE ---
+\begin{frame}
+    \titlepage
+\end{frame}
+
+% --- SECTION 1: MOTIVATION & GOALS ---
+\begin{frame}{Project Objectives}
+
+    \begin{itemize}
+        \item \textbf{Economic Vitality:} Understand foot traffic in the Beaches to increase activity for local businesses.
+        \item \textbf{Data:} Leveraging Toronto Open Data to justify BIA budgetary decisions.
+    \end{itemize}
+    
+    \begin{block}{Specific Research Questions}
+        \begin{enumerate}
+            \item Can we segment the people coming to the Beaches based off their habits and where they come from?
+            \item How long do pedestrians stay at the Beaches for?
+            \item How do external variables (weather, holidays) probabilistically impact pedestrian flow?
+            \item How these patterns may affect commercial vitality along the strip
+        \end{enumerate}
+    \end{block}
+\end{frame}
+
+
+\begin{frame}{Data}
+    
+    \textbf{Case for Open-Source} \\
+    \small The Beach BIA deliberately avoided commercial mobile phone data, relying exclusively on municipal datasets for The Beach BIA.
+    \vspace{0.1cm}
+    \begin{itemize}
+        \item \textbf{Privacy \& Trust:} Eliminates re-identification risks, vulnerable demographics (youth/seniors) inherently under-represented by mobile tracking.
+        \item To avoid expensive purchasing of data, municipal datasets are purpose-built for urban planning and already tax-funded.
+    \end{itemize}
+    
+    \vspace{0.4cm} % Adds breathing room between the sections
+    
+    \textbf{Datasets} \\
+    \small We aggregated multiple open-source domains from \textbf{2021--2025} into a single analytical dataset.
+    \vspace{0.1cm}
+    \begin{itemize}
+        \item Extracted Open Data Toronto Bike Share records, strictly filtering for trips originating or terminating at Beach BIA docks.
+        \item Merged the core bike data with Historical Climate Data (Environment Canada), Toronto Beach Water Quality metrics.
+    \end{itemize}
+    
+\end{frame}
+
+% --- SECTION 3: CLUSTERING ---
+\section{Clustering Analysis}
+\begin{frame}{Identifying Patterns: Unsupervised Learning}
+    \begin{itemize}
+        \item \textbf{Method:} K-Means clustering was used to create "Trip Profiles" by clustering the data based on trip duration and the hour of the day the trip started. Used elbow method to determine optimal number of clusters at 3.
+    \end{itemize}
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.6\linewidth]{kmeans.png}
+    \caption{K-Means Clusters for Trip Profiles.}
+    \label{fig:your_label}
+\end{figure}
+\end{frame}
+
+
+\section{Cluster Attributes}
+\begin{frame}{Cluster Attributes}
+\begin{table}[htbp]
+\centering
+\caption{Cluster Profiles}
+\label{tab:cluster_profiles}
+\begin{tabular}{cccccc}
+\hline
+\textbf{Cluster} & \textbf{Total Trips} & \textbf{Avg Start Hour} & \textbf{Avg Duration (Mins)} & \textbf{Pct Annual} & \textbf{Pct Casual} \\ \hline
+1 & 40243  & 15.5 & 61.8 & 9.9  & 90.1 \\ 
+2 & 98882  & 10.7 & 20.9 & 34.0 & 66.0 \\ 
+3 & 150026 & 17.9 & 21.5 & 30.5 & 69.5 \\ \hline
+\end{tabular}
+\end{table}
+\end{frame}
+% --- SECTION 4: DWELL TIMES ---
+\section{Dwell Times}
+\begin{frame}{Dwell Times}
+    \begin{itemize}
+        \item Want to quantify dwell time in the Beaches.
+        \item \textbf{Issue:} There is no way to track individuals, only individual bike rides. 
+    \end{itemize}
+    \begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.6\linewidth]{dwell1.png}
+    \caption{Arrival and Departure Time Distributions.}
+    \label{fig:your_label}
+\end{figure}
+\end{frame}
+
+\begin{frame}{Dwell Time Analysis}
+\begin{table}[htbp]
+\centering
+\caption{Flow Distribution Statistics}
+\label{tab:direction_summary}
+\begin{tabular}{lccc}
+\hline
+\textbf{Direction} & \textbf{Average Hour of Day} & \textbf{Median Hour of Day} & \textbf{Total Trips} \\ \hline
+Inbound & 13.99420 & 14 & 58575 \\ 
+Outbound & 15.41696 & 16 & 45937 \\ \hline
+\end{tabular}
+\end{table}
+\begin{itemize}
+    \item Can approximate dwell time by taking difference in average arrival vs departure.
+    \item Average Dwell time is 1.42 hours, approximately 85 minutes.
+    \item Important to note that 21.6\% of riders do not bike back, likely leading to longer true dwell time.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Cluster Analysis via Dwell Times}
+    \begin{columns}
+        
+        % Left Column
+        \begin{column}{0.5\textwidth}
+           \begin{figure}[htbp]
+                \centering
+                \includegraphics[width=1.0\linewidth]{dwell2.png}
+                \caption{All Days.}
+                \label{fig:your_label}
+            \end{figure}
+        \end{column}
+        
+        % Right Column
+        \begin{column}{0.5\textwidth}
+            \begin{figure}[htbp]
+                \centering
+                \includegraphics[width=1.0\linewidth]{dwell3.png}
+                \caption{Leisure Cluster All Days.}
+                \label{fig:your_label}
+            \end{figure}
+        \end{column}
+
+ \end{columns}
+\end{frame}
+
+\begin{frame}{Heatmaps}
+    \begin{itemize}
+        \item Want to understand where people are coming from.
+        \item Most trips are coming in from the East (towards downtown).
+        \item Most common destination is Northern Dancer Blvd/Lake Shore,  by Woodbine Beach and Park.
+    \end{itemize}
+    \begin{figure}[htbp]
+        \centering
+        \includegraphics[width=0.6\linewidth]{heatmaps.png}
+        \caption{Top 20 Inbound Leisure Trips.}
+        \label{fig:your_label}
+    \end{figure}
+\end{frame}
+
+% --- SECTION 5: BAYESIAN MODELS ---
+\begin{frame}{Bayesian Model Prediction Accuracy}
+    \begin{columns}
+        
+        % Left Column
+        \begin{column}{0.5\textwidth}
+           \begin{figure}[htbp]
+                \centering
+                \includegraphics[width=0.9\linewidth]{preds.png}
+                \caption{Predictive Accuracy of Bayesian Model}
+                \label{fig:your_label}
+            \end{figure}
+        \end{column}
+        
+        % Right Column
+        \begin{column}{0.5\textwidth}
+            \begin{itemize}
+                \item Model trained on 2021-2024 data, predicting on 2025 data.
+                \item Able to generate accuracte predictions for most days. 
+                \item See more inaccuracy on higher counts, likely that these days are holidays and see much different traffic than usual.
+            \end{itemize}
+        \end{column}
+        
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Exploratory Data Analysis: Climate and Bike Share Trips}
+    
+    \begin{figure}
+        \centering
+        % Replace 'your_eda_plot.png' with your actual file name
+        \includegraphics[width=0.55\linewidth]{cycle_temp.png} 
+        
+        \vspace{0.3cm}
+            \end{figure}
+        
+        
+        \begin{itemize}
+        \item Using Generalized Additive Models (GAM), we observe a relationship between Bike Share utilization and temperature throughout 2025. 
+            \item This confirmation supports Dr. Jo’s observations that the Beach BIA struggles to attract visitors during the winter, a challenge prevalent across Toronto.
+        \end{itemize}
+        
+    
+\end{frame}
+
+\begin{frame}{GAMs: Addressing Autocorrelation}
+
+    \textbf{Lack of Independence}
+    \begin{itemize}
+        \item Traditional GLMs assume all observations are strictly independent. For daily ridership, treating sequential days as independent ignores inherent time-series momentum, leading to severe residual autocorrelation.
+        \item We correct this by embedding a 1-day lagged response ($\text{Trips}_{t-1}$) directly into the Negative Binomial structure, we explicitly model the temporal dependence:
+    \end{itemize}
+    
+    \vspace{-0.2cm}
+    \begin{equation*}
+        \log(\mu_t) = \text{Environmental \& Calendar Predictors}_t + \phi(\text{Trips}_{t-1})
+    \end{equation*}
+    \vspace{-0.2cm}
+
+\end{frame}
+
+\begin{frame}{GAMs}
+
+    \textbf{Model Diagnostics}
+    \begin{itemize}
+        \item As seen in the Autocorrelation Function (ACF) plots below, the GAM eliminates the severe serial correlation present in the traditional approach.
+    \end{itemize}
+    
+    % --- IMAGE PLACEHOLDERS FOR YOUR ACF PLOTS ---
+    % Uncomment the \includegraphics lines and replace with your exact file names
+    \vspace{0.2cm}
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.45\textwidth]{acf_good_plot.png} \hfill
+        \includegraphics[width=0.45\textwidth]{acf_bad_plot.png}
+        \caption*{\small Left: Traditional GLM (Severe Autocorrelation) \quad | \quad Right: GAM (Corrected)}
+    \end{figure}
+    
+\end{frame}
+
+
+\begin{frame}{GAM Results: Drivers of Ridership}
+    
+    % Model Equation
+    \begin{equation*}
+        \log(\mu_t) = \beta_0 + s(\text{Max Temp}_t) + \beta_1(\text{Light}_t) + \beta_2(\text{Precip}_t) + \boldsymbol{\gamma}(\text{Day}_t) + \phi(\text{Trips}_{t-1})
+    \end{equation*}
+    
+    \vspace{0.2cm}
+    
+    % Coefficients Table
+    \begin{table}
+        \centering
+        \small
+        \begin{tabular}{lrlc}
+            \toprule
+            \textbf{Parametric Predictor} & \textbf{Estimate} & \textbf{Std. Error} & \textbf{p-value} \\
+            \midrule
+            Intercept & $3.598$ & $0.255$ & $<0.001$ \\
+            Usable Light (Hours) & $0.094$ & $0.018$ & $<0.001$ \\
+            Precipitation (Hours) & $-0.070$ & $0.008$ & $<0.001$ \\
+            Saturday & $0.265$ & $0.091$ & $0.004$ \\
+            Sunday & $0.322$ & $0.088$ & $<0.001$ \\
+            Lagged Trips ($t-1$) & $0.0004$ & $0.0001$ & $0.012$ \\
+            \midrule
+            \textbf{Smooth Term} & \textbf{EDF} & \textbf{$\chi^2$} & \textbf{p-value} \\
+            \midrule
+            Max Temperature ($^\circ$C) & $3.89$ & $540.5$ & $<0.001$ \\
+            \bottomrule
+        \end{tabular}
+        \caption*{Deviance Explained: 87.4\% \quad Adj. $R^2 = 0.73$ \quad $n = 302$}
+    \end{table}
+    
+\end{frame}
+
+\begin{frame}{Seasonality of the Beach BIA}
+    
+    \vspace{-0.2cm}
+    \begin{columns}[T]
+        
+        % Left Column: The Original Smooth (Volume)
+        \begin{column}{0.48\textwidth}
+            \centering
+            \includegraphics[width=\linewidth]{bike_season1.png}
+            \vspace{0.1cm} 
+            
+            \scriptsize \textbf{Total Volume} \\
+        \end{column}
+        
+        \hfill
+        
+        % Right Column: The First Derivative (Momentum)
+        \begin{column}{0.48\textwidth}
+            \centering
+            \includegraphics[width=\linewidth]{bike_season.png}
+            \vspace{0.1cm}
+            
+            \scriptsize \textbf{Velocity} \\
+
+        \end{column}
+        
+    \end{columns}
+    
+    \vspace{0.4cm}
+    
+    % Bottom Description / Key Takeaway
+    \begin{itemize}
+        \small
+        \item \textbf While the total volume plot confirms that summer is the busiest season, the velocity plot mathematically isolates dates where phases transition
+    \end{itemize}
+    
+\end{frame}
+
+\begin{frame}{Seasonal Dates}
+    
+
+
+    \textbf{Isolating Seasonal Dates}
+\begin{itemize}
+    \item The Negative Binomial GAM strips away daily weather fluctuations to reveal the true underlying ridership trend, incorporating a `day of year` variable to examine its direct effect.
+    \item By using a restricted smooth spline ($k=5$), we force a clean curve to mathematically pinpoint the Summer Peak and the steep transitions of the Shoulder seasons.
+\end{itemize}
+
+       \vspace{0.2cm}
+    \begin{table}
+        \centering
+        \small
+        \renewcommand{\arraystretch}{1.5}
+        \begin{tabular}{@{}llcl@{}}
+            \toprule
+            \textbf{Phase} & \textbf{Date (2025)} & \textbf{Typical High} & \textbf{Temperature Range} \\
+            \midrule
+            Annual Minimum (Trough) & February 15 & $-3.6^\circ\text{C}$ & $-5.4^\circ\text{C}$ to $-2.0^\circ\text{C}$ \\
+            Peak Spring Growth & May 2 & $15.8^\circ\text{C}$ & $10.8^\circ\text{C}$ to $19.3^\circ\text{C}$ \\
+            Peak Summer Volume & July 15 & $29.6^\circ\text{C}$ & $28.7^\circ\text{C}$ to $32.0^\circ\text{C}$ \\
+            Autumn Deceleration & October 14 & $16.6^\circ\text{C}$ & $14.3^\circ\text{C}$ to $18.0^\circ\text{C}$ \\
+            \bottomrule
+        \end{tabular}
+\vspace{2}
+\\
+        (Roughly - On Season: May 2 to October 14, Shoulder Season: February 15 to May 2)
+    \end{table}
+    
+\end{frame}
+
+% --- SLIDE 1: THE BAYESIAN GAM MODEL ---
+\begin{frame}{Bayesian GAM: Model Structure \& Results}
+
+    \textbf{Model Formulation}
+    \vspace{-0.2cm}
+    \begin{equation*}
+        \log(\mu_t) = \beta_0 + s(\text{Max Temp}_t) + \beta_1(\text{Precip}_t) + \boldsymbol{\gamma}(\text{Day Category}_t) + \epsilon_t
+    \end{equation*}
+    \vspace{-0.4cm}
+    \begin{equation*}
+        \epsilon_t = \rho \epsilon_{t-1} + \nu_t \quad \text{(AR1 Residual Autocorrelation)}
+    \end{equation*}
+    
+    \vspace{0.2cm}
+    
+    \textbf{Posterior Estimates (Poisson Family)}
+    \begin{table}
+        \centering
+        \small
+        \begin{tabular}{lrlc}
+            \toprule
+            \textbf{Predictor} & \textbf{Estimate} & \textbf{Error} & \textbf{95\% Credible Interval} \\
+            \midrule
+            Intercept & $4.88$ & $0.04$ & $[4.81, 4.95]$ \\
+            Precipitation (Hours) & $-0.07$ & $0.01$ & $[-0.09, -0.06]$ \\
+            Saturday & $0.29$ & $0.07$ & $[0.16, 0.42]$ \\
+            Sunday & $0.43$ & $0.06$ & $[0.31, 0.56]$ \\
+            Statutory Holiday & $0.78$ & $0.13$ & $[0.53, 1.03]$ \\
+            \midrule
+            AR(1) Autocorrelation ($\rho$) & $0.46$ & $0.07$ & $[0.33, 0.59]$ \\
+            \bottomrule
+        \end{tabular}
+        \caption*{\footnotesize Model converged successfully across 4 chains ($\hat{R} = 1.00$).}
+    \end{table}
+
+\end{frame}
+
+
+% --- CONCLUSION ---
+
+\begin{frame}{Factors for Ridership: Weather \& Calendar}
+    
+    \vspace{-0.2cm} % Pulls content up slightly to maximize space
+    
+    % --- TOP ROW: WEATHER IMPACTS ---
+    \begin{columns}[T]
+        
+        % Top Left: Temperature
+        \begin{column}{0.48\textwidth}
+            \centering
+            \includegraphics[width=0.6\linewidth]{temp-bayes.png} \\
+            \vspace{0.05cm}
+            \scriptsize Exponential growth as weather warms.
+        \end{column}
+        
+        % Top Right: Rain
+        \begin{column}{0.48\textwidth}
+            \centering
+            \includegraphics[width=0.6\linewidth]{rain_bayes.png} \\
+            \vspace{0.05cm}
+            \scriptsize A 5-hour morning rain cuts volume by nearly half.
+        \end{column}
+        
+    \end{columns}
+    
+    \vspace{0.3cm} % Space between top and bottom rows
+    
+    % --- BOTTOM ROW: CALENDAR IMPACTS ---
+    \begin{columns}[c] % 'c' aligns the text vertically with the center of the image
+        
+        % Bottom Left: Day Plot
+        \begin{column}{0.45\textwidth}
+            \centering
+            \includegraphics[width=0.7\linewidth]{ride_day_bayes.png}
+        \end{column}
+        
+        % Bottom Right: Actionable Insights
+        \begin{column}{0.5\textwidth}
+            \scriptsize % Shrinks text slightly to fit beautifully next to the plot
+            \begin{itemize}
+                \item \textbf{Weekday Baseline:} Consistent, lower-volume baseline.
+                \item \textbf{Sunday Dominance:} Outperforms Saturdays, making it the highest-priority operational day.
+                \item \textbf{Holiday Spikes:} Highest absolute volume, but widest credible interval (high variation based on weather).
+            \end{itemize}
+        \end{column}
+        
+    \end{columns}
+    
+\end{frame}
+
+\begin{frame}{Insights for the Beach BIA}
+    
+    \vspace{0.2cm}
+    
+    \begin{table}
+        \centering
+        \renewcommand{\arraystretch}{1.8} % Adds beautiful breathing room between rows
+        \begin{tabular}{@{} p{3.5cm} c p{6cm} @{}}
+            \toprule
+            \textbf{Key Driver} & \textbf{Daily Impact} & \textbf{Business Application} \\
+            \midrule
+            
+            \textbf{Statutory Holiday} & 
+            \textcolor{blue!80!black}{\textbf{+118\%}} & 
+            \small Particularly relevant for them to capture populations who visit the BIA, such as July 1st, for fireworks near Woodbine Beach. \\
+            
+            \textbf{Sunday Traffic} & 
+            \textcolor{blue!80!black}{\textbf{+53\%}} & 
+            \small The highest performing day. Target Sunday afternoons for major BIA activations. \\
+            
+            \textbf{Saturday Traffic} & 
+            \textcolor{blue!80!black}{\textbf{+33\%}} & 
+            \small A strong baseline weekend increase, but distinctly secondary to Sunday volume. \\
+            
+            \textbf{Hourly Rainfall} & 
+            \textcolor{red!80!black}{\textbf{-6.8\%}} & 
+            \small BIA can tend to expect decreased traffic based on morning weather forecasts. \\
+            
+            \bottomrule
+        \end{tabular}
+    \end{table}
+    
+\end{frame}
+
+
+% --- SLIDE 1: WEATHER BY USER TYPE ---
+\begin{frame}{Bayesian GAM Model: Casual vs. Annual Riders}
+    
+    \vspace{0.2cm}
+    \begin{columns}[T]
+        
+        % Left Column: Temperature
+        \begin{column}{0.48\textwidth}
+            \centering
+            \includegraphics[width=\linewidth]{user_type_temp.png}
+            \vspace{0.1cm}
+            \small \textbf{Temperature} \\
+            \footnotesize Casual ridership shows a delayed increase in trips compared to stable annual growth.
+        \end{column}
+        
+        \hfill
+        
+        % Right Column: Rain
+        \begin{column}{0.48\textwidth}
+            \centering
+            \includegraphics[width=\linewidth]{user_type_rain.png}
+            \vspace{0.1cm}
+            \small \textbf{Precipitation} \\
+            \footnotesize Annual members maintain higher activity levels compared to casual riders.
+        \end{column}
+        
+    \end{columns}
+\end{frame}
+
+
+% --- SLIDE 2: CALENDAR BY USER TYPE ---
+\begin{frame}{Calendar Impact: Casual vs. Annual Riders}
+    
+    \begin{center}
+        \includegraphics[width=0.5\textwidth]{user_type_day.png}
+    \end{center}
+    
+    \vspace{-0.2cm}
+    
+    \begin{itemize}
+        \item \textbf{Day} Weekends and Holidays enable Casual riders, while Annual volume remains stable.
+    \end{itemize}
+    
+\end{frame}
+
+
+
+\end{document}

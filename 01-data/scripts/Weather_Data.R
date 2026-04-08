@@ -10,6 +10,7 @@ library(janitor)
 library(lubridate)
 library(zoo)
 library(arrow)
+library(dplyr)
 library(here)
 
 stn_id <- 31688
@@ -62,8 +63,10 @@ climate_daily <- climate_clean |>
     total_precip_mm = sum(precip_amount_mm, na.rm = TRUE),
     is_precip = ifelse(total_precip_mm > 0, 1, 0),
     precip_hour_count = sum(precip_amount_mm > 0, na.rm = TRUE),
-    .groups = "drop")
-
+    lag_total_precip_mm = dplyr::lag(total_precip_mm, n = 1, default = 0),
+    .groups = "drop") |>
+  arrange(date) |> 
+  mutate(lag_total_precip_mm = dplyr::lag(total_precip_mm, n = 1, default = 0))
 
 # File Export
 
@@ -75,4 +78,6 @@ write_parquet(climate_clean, file.path(clean_path, "toronto_weather_hourly_2022_
 write_parquet(climate_daily, file.path(clean_path, "toronto_weather_daily.parquet"))
 saveRDS(climate_daily, file.path(clean_path, "toronto_weather_daily.rds"))
 
+# Confirmation
+cat("Success! Files saved for 'toronto_weather_daily'.\n")
 
