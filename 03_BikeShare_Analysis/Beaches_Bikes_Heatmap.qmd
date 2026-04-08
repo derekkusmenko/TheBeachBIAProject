@@ -57,33 +57,38 @@ trips_data <- trips_data %>%
 
 
 
-toronto_holidays <- as.Date(c(
+ontario_holidays <- as.Date(c(
   # 2021
   "2021-01-01", "2021-02-15", "2021-04-02", "2021-05-24", "2021-07-01", 
   "2021-08-02", "2021-09-06", "2021-10-11", "2021-12-25", "2021-12-26",
+  
   # 2022
   "2022-01-01", "2022-02-21", "2022-04-15", "2022-05-23", "2022-07-01", 
   "2022-08-01", "2022-09-05", "2022-10-10", "2022-12-25", "2022-12-26",
+  
   # 2023
   "2023-01-01", "2023-02-20", "2023-04-07", "2023-05-22", "2023-07-01", 
   "2023-08-07", "2023-09-04", "2023-10-09", "2023-12-25", "2023-12-26",
+  
   # 2024
   "2024-01-01", "2024-02-19", "2024-03-29", "2024-05-20", "2024-07-01", 
-  "2024-08-05", "2024-09-02", "2024-10-14", "2024-12-25", "2024-12-26"
+  "2024-08-05", "2024-09-02", "2024-10-14", "2024-12-25", "2024-12-26",
+  
+  # 2025
+  "2025-01-01", "2025-02-17", "2025-04-18", "2025-05-19", "2025-07-01", 
+  "2025-08-04", "2025-09-01", "2025-10-13", "2025-12-25", "2025-12-26"
 ))
 
-# 2. Add the binary flag to your daily aggregated data
+# Add the binary flag to daily aggregated data
 trips_data <- trips_data %>%
   mutate(
     # Check if the date is in our holiday list (1 = Yes, 0 = No)
-    Is_Holiday = ifelse(date_parsed %in% toronto_holidays, 1, 0),
+    Is_Holiday = ifelse(date_parsed %in% ontario_holidays, 1, 0),
     
     # Convert it to a factor so the Bayesian model treats it as a category
     Is_Holiday = as.factor(Is_Holiday)
   )
 
-# 3. You can now update your model formula to include this new covariate:
-# Total_Trips ~ Temp_Scaled + I(Temp_Scaled^2) + Rain_mm + Is_Weekend + Is_Holiday + Month + Year
 # create interactive heatmap by year
 
 # Aggregate by Year and Station
@@ -246,6 +251,8 @@ path_map <- path_map %>%
 
 path_map
 ```
+
+
 
 ### Only Leisure Cluster Data
 
@@ -265,7 +272,7 @@ trips_data <- trips_data %>%
     day_type = ifelse(weekdays(date_parsed) %in% c("Saturday", "Sunday"), "Weekend", "Weekday")
   ) %>%
   # Filter out the holidays immediately using your existing toronto_holidays list
-  filter(!date_parsed %in% toronto_holidays)
+  filter(!date_parsed %in% ontario_holidays)
 
 # create interactive heatmap by year
 
@@ -373,6 +380,7 @@ trips_data <- trips_data %>%
 # find top 20 trips ending in Beaches
 top_trips <- trips_data %>%
   filter(End.Station.Id %in% beaches_stations) %>%
+  filter(!(Start.Station.Id %in% beaches_stations)) %>%
   group_by(Start.Station.Id, End.Station.Id) %>%
   summarise(trip_count = n(), .groups = 'drop') %>%
   filter(Start.Station.Id != End.Station.Id) %>%
@@ -426,3 +434,5 @@ path_map <- path_map %>%
 
 path_map
 ```
+
+
