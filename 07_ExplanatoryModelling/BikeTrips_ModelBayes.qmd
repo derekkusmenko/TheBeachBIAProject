@@ -8,30 +8,31 @@ execute:
 ---
 
 
+```{r setup}
+
+library(here)
+library(dplyr)
+library(forcats)
+library(brms)
+library(mgcv)
+library(bayesplot)
+library(ggplot2)
+library(posterior)
+select <- dplyr::select
+```
+
+
 ```{r}
 model_data_2025 <- readRDS(here("07_ExplanatoryModelling", "model_data_2025.rds"))
 ```
 
-
-
 ```{r}
-library(dplyr)
-
-model_data_2025 <- model_data_2025 %>%
-  mutate(
-    day_category = case_when(
-      is_holiday == 1 ~ "Holiday",       # 1. Pulls out ALL holidays first
-      dow == "Sat" ~ "Saturday",    # 2. Labels remaining Saturdays
-      dow == "Sun" ~ "Sunday",        # 3. Labels remaining Sundays
-      TRUE ~ "Weekday"                   # 4. Everything else becomes the baseline
-    ),
-    # Set "Weekday" as the baseline (0)
-    day_category = factor(day_category, levels = c("Weekday", "Saturday", "Sunday", "Holiday"))
-  )
+cor(model_data_2025 %>% dplyr::select(temp_max, usable_light_hours, is_precip, total_precip_mm, precip_hour_count))
 ```
 
 ```{r}
-cor(model_data_2025 %>% dplyr::select(temp_max, usable_light_hours, is_precip, total_precip_mm, precip_hour_count))
+fit_bayes_nb <- readRDS("beach_bayes_nb_model.rds")
+fit_bayes_poisson <- readRDS("beach_bayes_poisson_model.rds")
 ```
 
 
@@ -39,38 +40,224 @@ cor(model_data_2025 %>% dplyr::select(temp_max, usable_light_hours, is_precip, t
 
 The correlation for maximum temperature and usable light hours in a day seemed highly correlated (0.76), so we opted to stick to temperature, to capture the summer rush of activity.
 
-```{r}
-library(brms)
 
-fit_bayes_final <- brm(
-  total_trips ~ s(temp_max) + 
-                precip_hour_count + 
-                day_category +
-                ar(time = time_index, p = 1), # Natively handles the autocorrelation
+### Poisson Bayesian Model
+
+```{r}
+#| eval: false
+
+# The Final Bayesian Model
+fit_bayes_poisson <- brm(
+  total_trips ~ 
+    # Interaction: Fits two separate temp curves (one for workdays, one for leisure)
+    s(temp_max, by = is_leisure_day) + # Solves the missing peaks in PPC
+    
+    # Macro-Trend: Captures the slow rise and fall of the tourist season
+    s(time_index) +                    
+    
+    # Weekly Cycle: Gives every day its own baseline
+    dow_mon +                          # Solves the weekly ACF spikes
+    
+    # Event Spikes & Rain
+    is_summer_holiday + 
+    precip_hour_count + 
+    
+    # Accounts for the daily ACF spikes
+    ar(time = time_index, p = 1),      
+    
   data = model_data_2025,
   family = poisson(), 
-  cores = 4,      # Use all your computer's power
-  iter = 4000,    # Plenty of draws for smooth, warning-free results
+  cores = 4,      
+  iter = 4000,    
   warmup = 1000,  
-  control = list(adapt_delta = 0.99, max_treedepth = 15) # Silences MCMC warnings
+  control = list(adapt_delta = 0.99, max_treedepth = 15) 
 )
 
-# See the finalized, publication-ready coefficients
-summary(fit_bayes_final)
+# Rerun your Bayesian diagnostics to see the improvement
+pp_check(fit_bayes_poisson, ndraws = 50)
+acf(residuals(fit_bayes_poisson)[, "Estimate"], main = "New Bayesian ACF")
+```
+
+
+### Negative Binomial Bayesian Model
+
+```{r}
+#| eval: false
+fit_bayes_nb <- brm(
+  total_trips ~ 
+    s(temp_max, by = is_leisure_day) + 
+    s(time_index) + 
+    dow_mon + 
+    is_summer_holiday + 
+    precip_hour_count + 
+    ar(time = time_index, p = 1), 
+    
+  data = model_data_2025,
+  family = negbinomial(), # The crucial fix
+  cores = 4,      
+  iter = 4000,    
+  warmup = 1000,  
+  control = list(adapt_delta = 0.99, max_treedepth = 15) 
+)
+
+summary(fit_bayes_nb)
+```
+
+
+### Comparison Check 
+
+```{r}
+# Add LOO criteria to both models
+fit_bayes_nb <- add_criterion(fit_bayes_nb, "loo")
+fit_bayes_poisson <- add_criterion(fit_bayes_poisson, "loo")
+
+# Let them fight (A negative difference means the top model is better)
+loo_compare(fit_bayes_nb, fit_bayes_poisson)
+```
+
+
+## MODEL CHECKING
+
+
+```{r}
+fit_bayes_final <- fit_bayes_nb
 ```
 
 
 ```{r}
+# ==========================================
+# 1. MCMC HEALTH & CONVERGENCE ASSUMPTIONS
+# ==========================================
+# Assumption: The chains have mixed properly and explored the posterior space.
+
+# Overall summary (Check that all Rhat values are 1.00 and ESS > 1000)
 summary(fit_bayes_final)
+
+# Visual Trace Plots (Looking for "fuzzy caterpillars" with no wandering)
+mcmc_plot(fit_bayes_final, type = "trace")
+
+# Rhat Check (Should be a tight cluster exactly at 1.0)
+mcmc_plot(fit_bayes_final, type = "rhat")
+```
+
+
+
+```{r}
+color_scheme_set("viridis")
+# 1. Create a "dictionary" linking the raw names to your clean report names
+clean_titles <- c(
+  "b_is_summer_holidayTRUE" = "Impact of Summer Holidays",
+  "b_precip_hour_count"     = "Impact of Precipitation (Hours)"
+)
+
+# 2. Generate the plot and apply the clean names
+mcmcplot <- mcmc_plot(fit_bayes_final, 
+          type = "trace", 
+          variable = names(clean_titles)) +
+  
+  # Overwrite the facet panels with your clean titles
+  # (scales = "free_y" ensures the y-axes don't get squished together)
+  facet_wrap(~parameter, scales = "free_y", labeller = as_labeller(clean_titles)) +
+  
+  # Clean up the main titles and theme
+  labs(title = "MCMC Trace Plots for Select Predictors",
+       subtitle = "Confirming chain convergence") +
+  theme_minimal() + # Drops the heavy grey background
+  theme(strip.text = element_text(size = 12, face = "bold"))
+
+mcmcplot
+```
+
+
+```{r}
+# ==========================================
+# 2. POSTERIOR PREDICTIVE CHECKS (FIT ASSUMPTIONS)
+# ==========================================
+# Assumption: A Poisson distribution actually fits the data (no severe overdispersion).
+
+color_scheme_set("blue")
+
+# A. Density Overlay: Overall Fit
+pp_check(fit_bayes_final, ndraws = 100) + 
+  labs(
+    title = "Posterior Predictive Check: Overall Distribution",
+    subtitle = "Comparing actual daily trips (dark line) to 100 model simulations (light blue lines)",
+    x = "Total Trips",
+    y = "Density"
+  ) +
+  theme_minimal()
+
+# B. Maximum Value Check: Extreme Highs
+# Added binwidth = 50 to clear the stat_bin() warning. 
+# (Adjust to 100 if the bars still look too thin!)
+pp_check(fit_bayes_final, type = "stat", stat = "max", ndraws = 100, bins = 15) + 
+  labs(
+    title = "Model Validation: Extreme Peak Days",
+    subtitle = "Does the model's predicted maximum match the actual observed maximum?",
+    x = "Maximum Trips in a Single Day",
+    y = "Frequency in Simulations"
+  ) +
+  theme_minimal()
+
+# C. Zero or Low Value Check: Extreme Lows
+# Added binwidth = 1 because minimum trips are usually small discrete integers (0, 1, 2, etc.)
+pp_check(fit_bayes_final, type = "stat", stat = "min", ndraws = 100, binwidth = 1) +
+  labs(
+    title = "Model Validation: Low Activity Days",
+    subtitle = "Checking if the model accurately captures the quietest days of the year",
+    x = "Minimum Trips in a Single Day",
+    y = "Frequency in Simulations"
+  ) +
+  theme_minimal()
+```
+
+
+
+```{r}
+# ==========================================
+# 3. RESIDUALS & AUTOCORRELATION (INDEPENDENCE ASSUMPTION)
+# ==========================================
+# Assumption: The AR(1) and dow_mon terms removed the temporal patterns.
+
+# Extract Bayesian residuals (median estimates)
+bayes_resids <- residuals(fit_bayes_final)[, "Estimate"]
+
+# Plot ACF to ensure Lags 1, 7, 14, 21 are within the blue dashed lines
+acf(bayes_resids, main = "ACF of Bayesian Residuals", lag.max = 28)
+
 ```
 
 
 ```{r}
 
-#saveRDS(fit_bayes_final, "fit_bayes_final.rds")
+# view proportion of sampled coefficients that are positive or negative
+posterior_samples <- as_draws_df(fit_bayes_final)
+
+# view what proportion of rain covariates are negative
+# if 100% then know rain always results in less riders
+head(select(posterior_samples, b_Intercept, b_precip_hour_count))
+
+prob_rain_negative <- sum(posterior_samples$b_precip_hour_count < 0) / nrow(posterior_samples)
+
+cat("There is a", prob_rain_negative * 100, "% probability that rain reduces traffic.\n")
+
+
+prob_sun_busier <- sum(posterior_samples$b_dow_monSun > posterior_samples$b_dow_monSat) / nrow(posterior_samples)
+
+cat("There is a", prob_sun_busier * 100, "% probability that Sundays are busier than Saturdays.\n")
+```
+
+
+
+
+
+## Visualizations of Results
+
+
+
+```{r}
 # This extracts the marginal effects for your splines and linear terms
 bayesian_plots <- conditional_effects(fit_bayes_final)
-
 
 # Because it uses ggplot2 under the hood, you can plot it instantly
 plot(bayesian_plots, ask = FALSE)
@@ -83,9 +270,11 @@ library(viridis)
 
 # Extract data from the conditional_effects object
 # (Assuming the order: 1 = precip, 2 = day_category, 3 = temp_max)
-data_precip <- as.data.frame(bayesian_plots[[1]])
-data_day    <- as.data.frame(bayesian_plots[[2]])
-data_temp   <- as.data.frame(bayesian_plots[[3]])
+data_precip <- as.data.frame(bayesian_plots$precip_hour_count)
+data_day    <- as.data.frame(bayesian_plots$dow_mon)
+data_temp   <- as.data.frame(bayesian_plots$temp_max)
+data_interaction <- as.data.frame(bayesian_plots[["temp_max:is_leisure_day"]])
+data_time <- as.data.frame(bayesian_plots$time_index)
 
 # Common theme setup
 beach_theme <- theme_minimal(base_size = 11) +
@@ -104,7 +293,7 @@ p1 <- ggplot(data_precip, aes(x = precip_hour_count, y = estimate__)) +
   beach_theme
 
 # Plot 2: Day Category
-p2 <- ggplot(data_day, aes(x = day_category, y = estimate__)) +
+p2 <- ggplot(data_day, aes(x = dow_mon, y = estimate__)) +
   geom_errorbar(aes(ymin = lower__, ymax = upper__), width = 0.2, color = "grey30") +
   geom_point(size = 4, color = "darkred") +
   labs(title = "Ridership by Day Category",
@@ -119,9 +308,165 @@ p3 <- ggplot(data_temp, aes(x = temp_max, y = estimate__)) +
        x = "Maximum Temperature (°C)", y = "Estimated Daily Trips") +
   beach_theme
 
+p_interaction <- ggplot(data_interaction, aes(x = temp_max, y = estimate__, color = is_leisure_day, fill = is_leisure_day)) +
+  geom_ribbon(aes(ymin = lower__, ymax = upper__), alpha = 0.2, color = NA) +
+  geom_line(size = 1.2) +
+  scale_color_manual(values = c("Leisure" = "darkorange", "Workday" = "steelblue")) +
+  scale_fill_manual(values = c("Leisure" = "darkorange", "Workday" = "steelblue")) +
+  labs(title = "Weekend + Holiday Multiplier: Temperature Effect by Day Type",
+       x = "Maximum Temperature (°C)", 
+       y = "Estimated Daily Trips",
+       color = "Day Type", fill = "Day Type") +
+  beach_theme +
+  theme(legend.position = "bottom")
+
+
+p_time <- ggplot(data_time, aes(x = time_index, y = estimate__)) +
+  geom_ribbon(aes(ymin = lower__, ymax = upper__), fill = "seagreen", alpha = 0.2) +
+  geom_line(color = "seagreen4", size = 1.2) +
+  labs(title = "Underlying Seasonal Trend (Independent of Weather)",
+       x = "Day of the Year (Time Index)", 
+       y = "Baseline Daily Trips") +
+  beach_theme
+
+
 # Display them
-p1; p2; p3
+p1; p2; p3; p_interaction; p_time
 ```
+
+
+
+### Coefficients
+
+```{r}
+# Extract the summary table
+mcmc_summary <- fixef(fit_bayes_final)
+
+# Convert the log estimates to readable multipliers (IRRs)
+mcmc_multipliers <- exp(mcmc_summary)
+
+# View the clean multipliers for your report
+round(mcmc_multipliers, 2)
+```
+
+
+```{r}
+library(dplyr)
+library(gt)
+library(tibble)
+
+# 1. Extract and Exponentiate directly from the model
+# (Using fit_bayes_nb as it was the winner in your LOO test)
+mcmc_summary <- fixef(fit_bayes_nb) %>% 
+  as.data.frame() %>% 
+  exp() %>%                # Convert logs to multipliers (IRRs)
+  rownames_to_column("term_raw")
+
+# 2. Define a mapping for your labels
+# This tells R exactly which raw variable name corresponds to your report name
+label_map <- c(
+  "dow_monSat" = "Saturday",
+  "dow_monSun" = "Sunday",
+  "is_summer_holidayTRUE" = "Summer Holiday",
+  "precip_hour_count" = "Precipitation (per hour)"
+)
+
+# 3. Filter and Transform the data
+formatted_table_data <- mcmc_summary %>%
+  filter(term_raw %in% names(label_map)) %>%
+  mutate(
+    Predictor = label_map[term_raw],
+    # Calculate percentages
+    pct_change = (Estimate - 1) * 100,
+    lower_ci = (Q2.5 - 1) * 100,
+    upper_ci = (Q97.5 - 1) * 100,
+    
+    # Categorize direction
+    Direction = case_when(
+      pct_change > 0 ~ "Increase",
+      pct_change < 0 ~ "Decrease",
+      TRUE ~ "No Change"
+    ),
+    
+    # Format the CI string
+    `95% Credible Interval` = sprintf("[ %+.1f%% , %+.1f%% ]", lower_ci, upper_ci)
+  ) %>%
+  select(Predictor, Direction, `Estimated Change (%)` = pct_change, `95% Credible Interval`)
+
+# 4. Generate the gt table
+formatted_table_data %>%
+  gt() %>%
+  tab_header(
+    title = md("**Expected Change in Casual Ridership**"),
+    subtitle = "Relative to a baseline standard Monday"
+  ) %>%
+  fmt_number(
+    columns = `Estimated Change (%)`,
+    decimals = 1,
+    pattern = "{x}%"
+  ) %>%
+  cols_align(
+    align = "center",
+    columns = c(Direction, `Estimated Change (%)`, `95% Credible Interval`)
+  ) 
+  #%>%
+  #tab_source_note(
+   # source_note = "Note: Values extracted directly from Bayesian Negative Binomial posterior #distributions." )
+```
+
+
+
+```{r}
+# Calculate the probability of direction for your core variables
+prob_sat_positive <- sum(posterior_samples$b_dow_monSat > 0) / nrow(posterior_samples)
+prob_sun_positive <- sum(posterior_samples$b_dow_monSun > 0) / nrow(posterior_samples)
+prob_holiday_positive <- sum(posterior_samples$b_is_summer_holidayTRUE > 0) / nrow(posterior_samples)
+prob_rain_negative <- sum(posterior_samples$b_precip_hour_count < 0) / nrow(posterior_samples)
+
+# Print them out nicely
+cat(
+  "Probability Saturday is busier than Monday:     ", prob_sat_positive * 100, "%\n",
+  "Probability Sunday is busier than Monday:       ", prob_sun_positive * 100, "%\n",
+  "Probability Holidays are busier than Mondays:   ", prob_holiday_positive * 100, "%\n",
+  "Probability Rain decreases traffic:             ", prob_rain_negative * 100, "%\n"
+)
+```
+
+```{r}
+
+# Generate the effects object
+eff <- conditional_effects(fit_bayes_nb, "temp_max:is_leisure_day")
+
+# Extract the underlying dataframe
+plot_data <- as.data.frame(eff[[1]])
+
+# Let's find the values specifically at 30°C to label them
+labels_30deg <- plot_data %>%
+  # Find the row closest to 30 degrees for both groups
+  group_by(is_leisure_day) %>%
+  filter(abs(temp_max - 30) == min(abs(temp_max - 30)))
+
+ggplot(plot_data, aes(x = temp_max, y = estimate__, color = is_leisure_day)) +
+  # The Main Curves
+  geom_line(size = 1.2) +
+  # Adding the points and labels at 30°C
+  geom_point(data = labels_30deg, size = 4) +
+  geom_label(data = labels_30deg, 
+             aes(label = paste0(round(estimate__), " trips")),
+             nudge_y = 40,  # Move label up slightly
+             fontface = "bold",
+             show.legend = FALSE) +
+  # Aesthetics
+  scale_color_manual(values = c("Leisure" = "darkorange", "Workday" = "steelblue")) +
+  labs(title = "The 30°C Activation Gap",
+       subtitle = "Leisure days see a massive surge compared to workdays at peak heat",
+       x = "Maximum Temperature (°C)", 
+       y = "Expected Daily Trips",
+       color = "Day Type") +
+  beach_theme
+```
+
+
 
 
 
@@ -157,9 +502,6 @@ Temperature does not operate on a straight line. The model confirms a highly cre
 # User Type Segmentation
 
 ```{r}
-library(tidyr)
-library(dplyr)
-
 model_data_long <- model_data_2025 %>%
   pivot_longer(
     cols = c(trips_casual, trips_member), # Or whatever your column names are
@@ -170,7 +512,6 @@ model_data_long <- model_data_2025 %>%
                           levels = c("trips_casual", "trips_member")))#,
                           #labels = c("Casual", "Annual")))
 ```
-
 
 
 ```{r}

@@ -4,8 +4,8 @@ format: pdf
 editor: visual
 ---
 
-
 ## GAMM to Figure out Peak Season Times
+
 ```{r}
 model_data_2025 <- readRDS(here("07_ExplanatoryModelling", "model_data_2025.rds"))
 
@@ -37,8 +37,6 @@ model_data_2025 <- model_data_2025 %>%
   mutate(is_holiday = as.factor(is_holiday))
 ```
 
-
-
 ```{r}
 fit_gam <- gam(
   total_trips ~ s(temp_max) + 
@@ -58,9 +56,6 @@ summary(fit_gam)
 # 4. Check the ACF 
 acf(residuals(fit_gam, type = "pearson"), na.action = na.pass, main = "ACF: Dynamic GAM (Lagged Response)")
 ```
-
-
-
 
 ```{r}
 library(gratia)
@@ -93,14 +88,7 @@ g2 <- ggplot(sm_day, aes(x = day_of_year, y = .estimate)) +
 g2 # Display side-by-side
 ```
 
-
-
 ### Activation Dates
-
-
-
-
-
 
 ```{r}
 library(gratia)
@@ -121,7 +109,6 @@ p2 <- draw(d) +
 p1
 p2
 ```
-
 
 ```{r}
 library(gratia)
@@ -152,7 +139,6 @@ key_dates <- data.frame(
 print(key_dates)
 ```
 
-
 ```{r}
 # Function to get the typical temp range for a specific day
 get_temp_range <- function(target_day, data) {
@@ -171,8 +157,6 @@ key_dates$Typical_Temp_Max <- sapply(key_dates$Day_of_Year, get_temp_range, data
 
 print(key_dates[, c("Event", "Date", "Typical_Temp_Max")])
 ```
-
-
 
 ```{r}
 library(dplyr)
@@ -196,13 +180,7 @@ print(paste("The steepest decline occurs on Day:", round(steepest_day, 1)))
 print(paste("Calendar Date:", steepest_date))
 ```
 
-
-
-
-
-##
-
-
+## 
 
 ```{r}
 library(dplyr)
@@ -256,8 +234,6 @@ draw(d1_hires) +
        x = "Day of Year") +
   theme_minimal()
 ```
-
-
 
 ```{r}
 library(dplyr)
@@ -317,10 +293,6 @@ draw(d1_hires) +
   theme_minimal()
 ```
 
-
-
-
-
 ```{r}
 library(dplyr)
 
@@ -353,7 +325,6 @@ final_bia_report <- master_calendar %>%
 print(final_bia_report)
 ```
 
-
 ```{r}
 # 1. The Function (Updated to be explicit about the column)
 get_milestone_weather <- function(target_day, weather_data) {
@@ -385,8 +356,3 @@ print(final_bia_report)
 
 colnames(model_data_2025)
 ```
-
-
-
-
-

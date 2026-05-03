@@ -33,6 +33,7 @@ library(MASS)
 library(broom)
 library(kableExtra)
 library(arrow)
+select <- dplyr::select
 ```
 
 
@@ -106,10 +107,13 @@ Major Holidays of 2025
 ```{r}
 holidays_2025 <- as.Date(c(
   "2025-01-01", "2025-02-17", "2025-04-18", "2025-05-19", 
-  "2025-07-01", "2025-08-04", "2025-09-01", "2025-10-13",
+  "2025-07-01", "2025-07-24", "2025-07-25", "2025-07-26", "2025-08-04", "2025-09-01", "2025-10-13",
   "2025-12-25", "2025-12-26"
 ))
+
+summer_holidays_2025 <- as.Date(c("2025-05-19", "2025-07-01", "2025-08-04", "2025-09-01"))
 ```
+
 
 
 ## The Outcomes (Response Variables, Y)
@@ -160,23 +164,27 @@ model_data_2025 <- beaches_bike_daily %>%
   mutate(
     # Day of the week
     dow = wday(date, label = TRUE, abbr = TRUE),
-    
+    dow_mon = factor(dow, 
+                     levels = c("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"), 
+                     ordered = FALSE),
     is_holiday = date %in% holidays_2025,
+    is_summer_holiday = date %in% summer_holidays_2025,
     is_weekend = dow %in% c("Sat", "Sun"),
-    
+    is_leisure_day = as.factor(if_else(dow %in% c("Sat", "Sun") | is_summer_holiday == 1, 
+                             "Leisure", "Workday")),
     day_type = case_when(is_holiday ~ "Holiday",
                          is_weekend ~ "Weekend",
                          TRUE       ~ "Weekday"),
     day_type = factor(day_type, levels = c("Weekday", "Weekend", "Holiday")),
+    day_type_holiday_sum = case_when(is_summer_holiday ~ "Holiday",
+                         is_weekend ~ "Weekend",
+                         TRUE       ~ "Weekday"),
+    day_type_holiday_sum = factor(day_type_holiday_sum, levels = c("Weekday", "Weekend", "Holiday")),
     time_index = as.numeric(date - min(date)))
 
 saveRDS(model_data_2025, here("07_ExplanatoryModelling", "model_data_2025.rds"))
 ```
 
-
-```{r}
-print(skim(model_data_2025))
-```
 
 
 ---------------
@@ -543,29 +551,6 @@ ggplot(sim_data_temp, aes(x = daily_mean_temp, y = predicted_trips)) +
   theme_minimal(base_size = 14) +
   scale_x_continuous(breaks = seq(-10, 30, by = 5))
 ```
-
-
-
-
-### Bayesian Approach 
-
-
-```{r}
-#| eval: false
-## to try later
-library(brms)
-
-fit_bayes <- brm(
-  bf(total_trips ~ s(daily_mean_temp) + s(daylight_hours) + daily_total_precip + is_weekend,
-     autocor = ~ arma(time = time_index, p = 1, q = 0)), # This is your AR(1)
-  data = model_data_2025,
-  family = negbinomial(),
-  cores = 4, # Run chains in parallel
-  iter = 2000
-)
-```
-
-
 
 
 

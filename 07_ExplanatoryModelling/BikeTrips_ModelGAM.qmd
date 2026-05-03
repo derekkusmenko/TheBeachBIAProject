@@ -31,10 +31,9 @@ library(mgcv)
 # 1. Fit the strict parametric GLM (straight lines only, no time awareness)
 fit_glm_nb <- gam(
   total_trips ~ temp_max + 
-                usable_light_hours + 
                 is_precip + 
                 precip_hour_count + 
-                day_type,
+                day_type_holiday_sum,
   family = nb(), 
   data = model_data_2025
 )
@@ -162,23 +161,86 @@ acf(residuals(fit_gam_dynamic, type = "pearson"), na.action = na.pass, main = "A
 ```
 
 
-
-
-
+## Deciding on Rain predictor
 
 ```{r}
-library(gratia)
-plot(fit_gam_dynamic$gam, pages = 1, shade = TRUE, shade.col = "lightblue", all.terms = TRUE)
-# install.packages("gratia")
+# Fit Model A: Volume
+fit_mm <- gam(total_trips ~ dow_mon + is_summer_holiday + 
+              s(temp_max, by = is_leisure_day) + s(time_index) + 
+              total_precip_mm, 
+              data = model_data_2025, family = nb(link = "log"))
 
-# Automatically plots all smooths with partial residuals and confidence intervals
-draw(fit_gam_dynamic$gam, residuals = TRUE)
+# Fit Model B: Duration
+fit_hours <- gam(total_trips ~ dow_mon + is_summer_holiday + 
+                 s(temp_max, by = is_leisure_day) + s(time_index) + 
+                 precip_hour_count, 
+                 data = model_data_2025, family = nb(link = "log"))
+
+
+# Compare them!
+AIC(fit_mm, fit_hours)
 ```
 
 
 
 
 
+
+
+```{r}
+library(mgcv)
+
+# ==========================================
+# 1. FIT THE POISSON GAM
+# ==========================================
+fit_gam_poisson <- gam(
+  total_trips ~ 
+    dow_mon + 
+    is_summer_holiday + 
+    precip_hour_count +
+    s(temp_max, by = is_leisure_day) + 
+    s(time_index),
+    
+  data = model_data_2025,
+  family = poisson(link = "log"),
+  method = "REML"
+)
+
+# ==========================================
+# 2. FIT THE NEGATIVE BINOMIAL GAM
+# ==========================================
+fit_gam_nb <- gam(
+  total_trips ~ 
+    dow_mon + 
+    is_summer_holiday + 
+    precip_hour_count +
+    s(temp_max, by = is_leisure_day) + 
+    s(time_index),
+    
+  data = model_data_2025,
+  family = nb(link = "log"), # This is the only difference!
+  method = "REML"
+)
+
+# ==========================================
+# 3. THE OVERDISPERSION TEST
+# ==========================================
+# Calculate the sum of squared Pearson residuals from the Poisson model
+pearson_sq <- sum(residuals(fit_gam_poisson, type = "pearson")^2)
+
+# Divide by the residual degrees of freedom
+dispersion_ratio <- pearson_sq / fit_gam_poisson$df.residual
+
+cat("\n--- OVERDISPERSION TEST ---\n")
+cat("Dispersion Ratio:", round(dispersion_ratio, 3), "\n")
+cat("(Remember: > 1.5 means you have severe overdispersion and should switch)\n\n")
+
+# ==========================================
+# 4. THE AIC DUEL
+# ==========================================
+cat("--- AIC COMPARISON (Lower is Better) ---\n")
+AIC(fit_gam_poisson, fit_gam_nb)
+```
 
 
 

@@ -1,0 +1,1868 @@
+---
+title: "BikeShareTrips_Plot"
+format: pdf
+---
+
+
+```{r}
+library(skimr)
+library(ggplot2)
+library(tidyverse)
+```
+
+```{r}
+beaches_bike_data <- read_parquet(here("01-data/clean/beaches_bike_trips.parquet"))
+```
+
+
+```{r}
+library(dplyr)
+library(ggplot2)
+library(scales)
+library(lubridate)
+library(mgcv) # Required for the GAM engine
+
+# 1. Filter specifically for 2025 and aggregate
+daily_trends_2025 <- beaches_bike_data |>
+  filter(year(start_date) == 2025) |>
+  group_by(start_date) |>
+  summarise(daily_trips = n(), .groups = "drop")
+
+# 2. Define exact boundaries for the cyclic spline
+# This ensures the model knows where the cycle begins and ends
+year_knots <- list(x = as.numeric(as.Date(c("2025-01-01", "2025-12-31"))))
+
+# 3. Build the plot
+ggplot(daily_trends_2025, aes(x = start_date, y = daily_trips)) +
+  # Raw daily data in the background
+  geom_line(color = "#e2e8f0", alpha = 0.8, linewidth = 0.5) +
+  
+  # GAM trend line using a cyclic cubic spline
+  geom_smooth(
+    method = "gam", 
+    formula = y ~ s(x, bs = "cc", k = 12), # k=12 allows enough flexibility for monthly shifts
+    method.args = list(knots = year_knots),
+    color = "#2ECC71", 
+    linewidth = 1.2,
+    se = FALSE # Set to TRUE if you want the confidence ribbon
+  ) +
+  
+  # Formatting for a single year view
+  scale_x_date(date_breaks = "1 month", date_labels = "%b") +
+  scale_y_continuous(labels = comma_format(), expand = expansion(mult = c(0, 0.05))) +
+  
+  # Minimalist business theme
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(face = "bold", size = 18, color = "#1a202c", margin = margin(b = 8)),
+    plot.subtitle = element_text(size = 12, color = "#4a5568", margin = margin(b = 20)),
+    panel.grid.major.x = element_blank(), 
+    panel.grid.minor = element_blank(),
+    panel.grid.major.y = element_line(color = "#edf2f7", linewidth = 0.5),
+    axis.title.x = element_blank(),
+    axis.title.y = element_text(color = "#4a5568", face = "bold", margin = margin(r = 12)),
+    axis.text = element_text(color = "#2d3748")
+  ) +
+  labs(
+    title = "2025 Daily Bike Share Volume: The Beaches",
+    subtitle = "GAM seasonal trend (Cyclic Cubic Spline)",
+    y = "Total Trips"
+  )
+```
+
+
+```{r}
+library(dplyr)
+library(ggplot2)
+library(scales)
+library(lubridate)
+library(mgcv)
+library(ggrepel) # Required for clean label placement
+
+# 1. Identify the Top 3 Days
+top_days <- daily_trends_2025 |>
+  slice_max(order_by = daily_trips, n = 3)
+
+# 2. Build the plot (using your exact GAM setup)
+year_knots <- list(x = as.numeric(as.Date(c("2025-01-01", "2025-12-31"))))
+
+ggplot(daily_trends_2025, aes(x = start_date, y = daily_trips)) +
+  geom_line(color = "#e2e8f0", alpha = 0.8, linewidth = 0.5) +
+  geom_smooth(
+    method = "gam", formula = y ~ s(x, bs = "cc", k = 12),
+    method.args = list(knots = year_knots),
+    color = "#2ECC71", linewidth = 1.2, se = FALSE
+  ) +
+  # NEW: Add points and repelled labels for the top 3 days
+  geom_point(data = top_days, color = "#2c3e50", size = 2.5) +
+  geom_label_repel(
+    data = top_days, 
+    aes(label = paste(format(start_date, "%b %d"), "\n", comma(daily_trips), "trips")),
+    nudge_y = 300, # Push labels up
+    color = "#2c3e50",
+    fontface = "bold",
+    segment.color = "#a0aec0",
+    fill = alpha("white", 0.8)
+  ) +
+  scale_x_date(date_breaks = "1 month", date_labels = "%b") +
+  scale_y_continuous(labels = comma_format(), expand = expansion(mult = c(0, 0.15))) +
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(face = "bold", size = 18, color = "#1a202c", margin = margin(b = 8)),
+    panel.grid.major.x = element_blank(), 
+    panel.grid.minor = element_blank(),
+    axis.title.x = element_blank()
+  ) +
+  labs(title = "2025 Peak Days: Bike Share Volume", y = "Total Trips")
+```
+
+```{r}
+library(dplyr)
+library(ggplot2)
+library(lubridate)
+library(scales)
+
+# 1. Prepare the data with proper calendar layout calculations
+cal_data <- beaches_bike_data |>
+  filter(year(start_date) == 2025) |>
+  group_by(start_date) |>
+  summarise(daily_trips = n(), .groups = "drop") |>
+  mutate(
+    # Day of the week (Sun-Sat)
+    weekday = wday(start_date, label = TRUE, abbr = TRUE, week_start = 7), 
+    
+    # Month label
+    month = month(start_date, label = TRUE, abbr = TRUE),
+    
+    # Calculate exactly which week of the month a day falls into (for the y-axis grid)
+    first_day_of_month = floor_date(start_date, "month"),
+    first_wday = wday(first_day_of_month, week_start = 7),
+    week_of_month = ceiling((day(start_date) + first_wday - 1) / 7)
+  )
+
+# 2. Build the Calendar Heatmap
+ggplot(cal_data, aes(x = weekday, y = -week_of_month, fill = daily_trips)) +
+  # Draw the calendar tiles
+  geom_tile(color = "white", linewidth = 0.8) +
+  
+  # Group into a 3-column month grid
+  facet_wrap(~ month, ncol = 3, scales = "free_y") +
+  
+  # Custom color gradient matching the BIA presentation (light gray to BIA green)
+  scale_fill_gradient(
+    low = "#f1f5f9", 
+    high = "#2ECC71", 
+    name = "Daily Trips ", 
+    labels = comma
+  ) +
+  
+  # Clean, minimalist theme
+  theme_minimal(base_size = 12) +
+  theme(
+    plot.title = element_text(face = "bold", size = 18, color = "#1a202c", margin = margin(b = 8)),
+    plot.subtitle = element_text(size = 12, color = "#4a5568", margin = margin(b = 20)),
+    axis.title = element_blank(),
+    axis.text.y = element_blank(),     # Hide the numeric week numbers
+    axis.text.x = element_text(size = 8, color = "#718096"),
+    axis.ticks = element_blank(),
+    panel.grid = element_blank(),      # Remove background grid lines
+    strip.text = element_text(face = "bold", size = 14, color = "#2d3748", margin = margin(b = 8, t = 10)),
+    legend.position = "bottom",
+    legend.key.width = unit(2.5, "cm"),
+    legend.title = element_text(vjust = 0.8)
+  ) +
+  labs(
+    title = "2025 Traffic Intensity by Day",
+    subtitle = "Darker green indicates higher bike share volume"
+  )
+```
+
+
+```{r}
+library(dplyr)
+library(ggplot2)
+library(scales)
+library(lubridate)
+library(mgcv)
+
+# 1. Define the seasonal boundary dates for the shaded background
+season_zones <- data.frame(
+  xmin = as.Date(c("2025-01-01", "2025-05-01", "2025-07-01", "2025-09-01", "2025-11-01")),
+  xmax = as.Date(c("2025-04-30", "2025-06-30", "2025-08-31", "2025-10-31", "2025-12-31")),
+  season = factor(c("Off-Peak", "Shoulder", "Peak", "Shoulder", "Off-Peak"), 
+                  levels = c("Off-Peak", "Shoulder", "Peak"))
+)
+
+# 2. Re-calculate daily trends for 2025
+daily_trends_2025 <- beaches_bike_data |>
+  filter(year(start_date) == 2025) |>
+  group_by(start_date) |>
+  summarise(daily_trips = n(), .groups = "drop")
+
+year_knots <- list(x = as.numeric(as.Date(c("2025-01-01", "2025-12-31"))))
+
+# 3. Build the plot with background shading
+ggplot() +
+  # Add shaded regions first so they sit in the background
+  geom_rect(
+    data = season_zones, 
+    aes(xmin = xmin, xmax = xmax, ymin = -Inf, ymax = Inf, fill = season), 
+    alpha = 0.15
+  ) +
+  # Custom colors for the seasons
+  scale_fill_manual(values = c("Off-Peak" = "lightblue", "Shoulder" = "#f6e05e", "Peak" = "#fc8181")) +
+  
+  # Overlay the raw data and GAM trendline
+  geom_line(data = daily_trends_2025, aes(x = start_date, y = daily_trips), color = "#cbd5e0", alpha = 0.8) +
+  geom_smooth(
+    data = daily_trends_2025, aes(x = start_date, y = daily_trips),
+    method = "gam", formula = y ~ s(x, bs = "cc", k = 12),
+    method.args = list(knots = year_knots),
+    color = "#2c3e50", linewidth = 1.2, se = FALSE
+  ) +
+  
+  scale_x_date(date_breaks = "1 month", date_labels = "%b", expand = c(0,0)) +
+  scale_y_continuous(labels = comma_format(), expand = expansion(mult = c(0, 0.05))) +
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(face = "bold", size = 18, color = "#1a202c", margin = margin(b = 8)),
+    legend.position = "top",
+    legend.title = element_blank(),
+    panel.grid.major.x = element_blank(), 
+    panel.grid.minor = element_blank(),
+    axis.title.x = element_blank()
+  ) +
+  labs(title = "2025 Seasonal Transitions: Bike Share Volume", y = "Total Trips")
+```
+
+
+
+```{r}
+library(dplyr)
+library(ggplot2)
+library(scales)
+library(lubridate)
+library(mgcv)
+library(Ckmeans.1d.dp) # Highly recommended for optimal 1D clustering
+
+# 1. Fit the GAM to extract the smooth seasonal signal
+year_knots <- list(x = as.numeric(as.Date(c("2025-01-01", "2025-12-31"))))
+gam_model <- gam(
+  daily_trips ~ s(as.numeric(start_date), bs = "cc", k = 12), 
+  data = daily_trends_2025, 
+  knots = year_knots
+)
+
+# Append the smoothed predictions back to the dataframe
+daily_trends_2025$smoothed_trend <- predict(gam_model, daily_trends_2025)
+
+# 2. Apply 1D K-Means Clustering to the smoothed trend
+# We force it to find 3 distinct volume states
+clusters <- Ckmeans.1d.dp(daily_trends_2025$smoothed_trend, k = 3)
+
+# Add the cluster assignments to our data
+daily_trends_2025$cluster_id <- clusters$cluster
+
+# Since Ckmeans orders clusters by magnitude (1=Lowest, 3=Highest)
+daily_trends_2025 <- daily_trends_2025 |>
+  mutate(
+    season = case_when(
+      cluster_id == 1 ~ "Off-Peak",
+      cluster_id == 2 ~ "Shoulder",
+      cluster_id == 3 ~ "Peak"
+    ),
+    season = factor(season, levels = c("Off-Peak", "Shoulder", "Peak"))
+  )
+
+# 3. Extract the exact start and end dates mathematically derived by the clusters
+season_boundaries <- daily_trends_2025 |>
+  group_by(season, year_half = month(start_date) > 6) |> # Split by first/second half of year for continuous blocks
+  summarise(
+    start = min(start_date),
+    end = max(start_date),
+    .groups = "drop"
+  ) |>
+  select(-year_half) |>
+  arrange(start)
+
+print("Mathematically Derived Seasonal Boundaries:")
+print(season_boundaries)
+
+# 4. Build the plot based on the derived boundaries
+ggplot() +
+  # Use the derived boundaries for the background shading
+  geom_rect(
+    data = season_boundaries, 
+    aes(xmin = start, xmax = end, ymin = -Inf, ymax = Inf, fill = season), 
+    alpha = 0.15
+  ) +
+  scale_fill_manual(values = c("Off-Peak" = "#e2e8f0", "Shoulder" = "#f6e05e", "Peak" = "#fc8181")) +
+  
+  # Add the raw daily data points faintly
+  geom_point(data = daily_trends_2025, aes(x = start_date, y = daily_trips), color = "#a0aec0", alpha = 0.4, size = 1) +
+  
+  # Overlay the segmented GAM trendline 
+  # Grouping by 'season' ensures the line color changes exactly at the cluster boundary
+  geom_line(
+    data = daily_trends_2025, 
+    aes(x = start_date, y = smoothed_trend, color = season, group = 1), 
+    linewidth = 1.5
+  ) +
+  scale_color_manual(values = c("Off-Peak" = "#718096", "Shoulder" = "#d69e2e", "Peak" = "#e53e3e")) +
+  
+  scale_x_date(date_breaks = "1 month", date_labels = "%b", expand = c(0,0)) +
+  scale_y_continuous(labels = comma_format(), expand = expansion(mult = c(0, 0.05))) +
+  
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(face = "bold", size = 18, color = "#1a202c", margin = margin(b = 8)),
+    plot.subtitle = element_text(size = 12, color = "#4a5568", margin = margin(b = 20)),
+    legend.position = "top",
+    legend.title = element_blank(),
+    panel.grid.major.x = element_blank(), 
+    panel.grid.minor = element_blank(),
+    axis.title.x = element_blank()
+  ) +
+  labs(
+    title = "Data-Driven Seasonal Transitions",
+    subtitle = "Seasons defined using 1D K-Means clustering on the Cyclic GAM trendline",
+    y = "Total Trips"
+  )
+```
+
+
+```{r}
+library(dplyr)
+library(ggplot2)
+library(scales)
+library(lubridate)
+library(mgcv)
+library(Ckmeans.1d.dp)
+
+# 1. Fit the GAM (Same as before)
+year_knots <- list(x = as.numeric(as.Date(c("2025-01-01", "2025-12-31"))))
+gam_model <- gam(
+  daily_trips ~ s(as.numeric(start_date), bs = "cc", k = 12), 
+  data = daily_trends_2025, 
+  knots = year_knots
+)
+daily_trends_2025$smoothed_trend <- predict(gam_model, daily_trends_2025)
+
+# 2. Apply 1D K-Means Clustering with k=4
+clusters <- Ckmeans.1d.dp(daily_trends_2025$smoothed_trend, k = 4)
+
+# 3. Map to 4 distinct seasonal phases
+daily_trends_2025 <- daily_trends_2025 |>
+  mutate(
+    cluster_id = clusters$cluster,
+    season = case_when(
+      cluster_id == 1 ~ "Deep Off-Peak",
+      cluster_id == 2 ~ "Activation / Wind-down",
+      cluster_id == 3 ~ "Shoulder",
+      cluster_id == 4 ~ "Peak"
+    ),
+    season = factor(season, levels = c("Deep Off-Peak", "Activation / Wind-down", "Shoulder", "Peak"))
+  )
+
+# 4. Extract Boundaries
+season_boundaries <- daily_trends_2025 |>
+  group_by(season, year_half = month(start_date) > 6) |> 
+  summarise(
+    start = min(start_date),
+    end = max(start_date),
+    .groups = "drop"
+  ) |>
+  select(-year_half) |>
+  arrange(start)
+
+# 5. Build the 4-Phase Plot
+ggplot() +
+  geom_rect(
+    data = season_boundaries, 
+    aes(xmin = start, xmax = end, ymin = -Inf, ymax = Inf, fill = season), 
+    alpha = 0.15
+  ) +
+  # Added a lighter blue/grey for the deep off-peak, and a soft green for the activation phase
+  scale_fill_manual(values = c("Deep Off-Peak" = "#e2e8f0", "Activation / Wind-down" = "#c6f6d5", "Shoulder" = "#f6e05e", "Peak" = "#fc8181")) +
+  
+  geom_point(data = daily_trends_2025, aes(x = start_date, y = daily_trips), color = "#a0aec0", alpha = 0.4, size = 1) +
+  
+  geom_line(
+    data = daily_trends_2025, 
+    aes(x = start_date, y = smoothed_trend, color = season, group = 1), 
+    linewidth = 1.5
+  ) +
+  scale_color_manual(values = c("Deep Off-Peak" = "#718096", "Activation / Wind-down" = "#48bb78", "Shoulder" = "#d69e2e", "Peak" = "#e53e3e")) +
+  
+  scale_x_date(date_breaks = "1 month", date_labels = "%b", expand = c(0,0)) +
+  scale_y_continuous(labels = comma_format(), expand = expansion(mult = c(0, 0.05))) +
+  
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(face = "bold", size = 18, color = "#1a202c", margin = margin(b = 8)),
+    plot.subtitle = element_text(size = 12, color = "#4a5568", margin = margin(b = 20)),
+    legend.position = "top",
+    legend.title = element_blank(),
+    panel.grid.major.x = element_blank(), 
+    panel.grid.minor = element_blank(),
+    axis.title.x = element_blank()
+  ) +
+  labs(
+    title = "Data-Driven Seasonal Transitions (4-Phase Model)",
+    subtitle = "Highlighting the 'Activation' phase leading into the Shoulder season",
+    y = "Total Trips"
+  )
+```
+
+```{r}
+# --- OUTPUT THE LOWEST DAYS/TROUGHS ---
+
+# 1. Absolute lowest single day of raw trips
+lowest_raw_day <- daily_trends_2025 |> 
+  slice_min(daily_trips, n = 1) |>
+  select(Date = start_date, Trips = daily_trips, Phase = season)
+
+# 2. Lowest point of the overall mathematical trend
+lowest_trend_day <- daily_trends_2025 |> 
+  slice_min(smoothed_trend, n = 1) |>
+  mutate(Trend_Value = round(smoothed_trend, 0)) |>
+  select(Date = start_date, Trend_Value, Phase = season)
+
+print("--- ABSOLUTE LOWEST SINGLE DAY ---")
+print(lowest_raw_day)
+
+print("--- LOWEST POINT OF THE SEASONAL TREND ---")
+print(lowest_trend_day)
+```
+
+
+
+
+```{r}
+# If you don't have these installed, run: install.packages(c("showtext", "sysfonts"))
+library(dplyr)
+library(ggplot2)
+library(scales)
+library(lubridate)
+library(showtext)
+
+# --- 1. SET UP AGENCY-GRADE TYPOGRAPHY ---
+# This pulls the 'Montserrat' font (a classic, clean UI font) directly from Google Fonts
+font_add_google("Montserrat", "montserrat")
+showtext_auto() # Enables the custom font rendering
+
+# --- 2. DEFINE THE BEACH BIA PALETTE ---
+# Base colors for the background shading (alpha will be applied in the plot)
+bia_phases <- c(
+  "Deep Off-Peak" = "#CCD3EB",          # Lavender
+  "Activation / Wind-down" = "#AED7EB", # Blue
+  "Shoulder" = "#F5CF9A",               # Peach
+  "Peak" = "#DF674C"                    # Poppy
+)
+
+# Darker, saturated versions of the brand colors for the trendline 
+# (Ensures the line pops against the shaded backgrounds)
+bia_lines <- c(
+  "Deep Off-Peak" = "#7A8CBE", 
+  "Activation / Wind-down" = "#5C9AB8", 
+  "Shoulder" = "#C79A5E", 
+  "Peak" = "#B33E23"
+)
+
+# --- 3. BUILD THE PLOT ---
+plot <- ggplot() +
+  # The Background Phases
+  geom_rect(
+    data = season_boundaries, 
+    aes(xmin = start, xmax = end, ymin = -Inf, ymax = Inf, fill = season), 
+    alpha = 0.35 # Soft wash of the brand colors
+  ) +
+  
+  # Raw data points using the BIA 'Taupe'
+  geom_point(
+    data = daily_trends_2025, 
+    aes(x = start_date, y = daily_trips), 
+    color = "#B28B78", # Taupe
+    alpha = 0.45, 
+    size = 1.2
+  ) +
+  
+  # The Smoothed GAM Trendline
+  geom_line(
+    data = daily_trends_2025, 
+    aes(x = start_date, y = smoothed_trend, color = season, group = 1), 
+    linewidth = 1.8 # Slightly thicker for impact
+  ) +
+  
+  # Map the custom colors
+  scale_fill_manual(
+    values = bia_phases,
+    name = "Traffic Phase",
+    guide = guide_legend(override.aes = list(alpha = 0.8, color = "#2D3748", linewidth = 0.2))
+  ) +
+  scale_color_manual(values = bia_lines, guide = "none") +
+  
+  # Axis Formatting
+  scale_x_date(date_breaks = "1 month", date_labels = "%b", expand = c(0,0)) +
+  scale_y_continuous(labels = comma_format(), expand = expansion(mult = c(0, 0.08))) +
+  
+  # --- 4. PROFESSIONAL THEMING ---
+  theme_minimal(base_size = 14, base_family = "montserrat") +
+  theme(
+    plot.background = element_rect(fill = "#FFFFFF", color = NA),
+    panel.background = element_rect(fill = "#FFFFFF", color = NA),
+    
+    # Typography hierarchy
+    plot.title = element_text(face = "bold", size = 22, color = "#1a202c", margin = margin(b = 8)),
+    plot.subtitle = element_text(size = 13, color = "#4a5568", margin = margin(b = 25)),
+    
+    # Legend styling
+    legend.position = "top",
+    legend.justification = "left",
+    legend.title = element_text(face = "bold", color = "#1a202c", margin = margin(r = 15)),
+    legend.text = element_text(color = "#4a5568", size = 11),
+    legend.background = element_blank(),
+    legend.key.size = unit(1.2, "cm"),
+    
+    # Grid and axis styling
+    panel.grid.major.x = element_blank(), 
+    panel.grid.minor = element_blank(),
+    panel.grid.major.y = element_line(color = "#EDF2F7", linewidth = 0.6, linetype = "dashed"),
+    
+    axis.title.x = element_blank(),
+    axis.title.y = element_text(face = "bold", color = "#4a5568", margin = margin(r = 15)),
+    axis.text = element_text(color = "#718096", size = 11),
+    
+    # Add a subtle margin to the whole plot so it breathes
+    plot.margin = margin(t = 20, r = 20, b = 20, l = 20)
+  ) +
+  labs(
+    title = "2025 Seasonal Traffic Patterns",
+    subtitle = "Mathematically derived growth phases based on Bike Share volume and variance",
+    y = "Total Daily Trips"
+  )
+plot
+```
+
+
+```{r}
+library(dplyr)
+library(ggplot2)
+library(scales)
+library(lubridate)
+library(showtext)
+
+# --- 1. SET UP AGENCY-GRADE TYPOGRAPHY ---
+font_add_google("Montserrat", "montserrat")
+showtext_auto() 
+
+# --- 2. DEFINE THE BEACH BIA PALETTE ---
+bia_phases <- c(
+  "Deep Off-Peak" = "#CCD3EB",          
+  "Activation / Wind-down" = "#AED7EB", 
+  "Shoulder" = "#F5CF9A",               
+  "Peak" = "#DF674C"                    
+)
+
+bia_lines <- c(
+  "Deep Off-Peak" = "#7A8CBE", 
+  "Activation / Wind-down" = "#5C9AB8", 
+  "Shoulder" = "#C79A5E", 
+  "Peak" = "#B33E23"
+)
+
+# --- 3. BUILD THE PLOT ---
+ggplot() +
+  geom_rect(
+    data = season_boundaries, 
+    aes(xmin = start, xmax = end, ymin = -Inf, ymax = Inf, fill = season), 
+    alpha = 0.35 
+  ) +
+  geom_point(
+    data = daily_trends_2025, 
+    aes(x = start_date, y = daily_trips), 
+    color = "#B28B78", 
+    alpha = 0.45, 
+    size = 1.2
+  ) +
+  geom_line(
+    data = daily_trends_2025, 
+    aes(x = start_date, y = smoothed_trend, color = season, group = 1), 
+    linewidth = 1.8 
+  ) +
+  
+  scale_fill_manual(
+    values = bia_phases,
+    name = "Traffic Phase:", # Added colon for better flow at the bottom
+    guide = guide_legend(override.aes = list(alpha = 0.8, color = "#2D3748", linewidth = 0.2))
+  ) +
+  scale_color_manual(values = bia_lines, guide = "none") +
+  
+  scale_x_date(date_breaks = "1 month", date_labels = "%b", expand = c(0,0)) +
+  scale_y_continuous(labels = comma_format(), expand = expansion(mult = c(0, 0.08))) +
+  
+  # --- 4. PROFESSIONAL THEMING ---
+  theme_minimal(base_size = 14, base_family = "montserrat") +
+  theme(
+    plot.background = element_rect(fill = "#FFFFFF", color = NA),
+    panel.background = element_rect(fill = "#FFFFFF", color = NA),
+    
+    plot.title = element_text(face = "bold", size = 22, color = "#1a202c", margin = margin(b = 8)),
+    plot.subtitle = element_text(size = 13, color = "#4a5568", margin = margin(b = 20)),
+    
+    # --- LEGEND UPDATES ---
+    legend.position = "bottom",
+    legend.justification = "center",
+    legend.title = element_text(face = "bold", color = "#1a202c", margin = margin(r = 8)), 
+    legend.text = element_text(color = "#4a5568", size = 11),
+    legend.background = element_blank(),
+    legend.key.width = unit(0.8, "cm"),   # Shrinks the color block width
+    legend.key.height = unit(0.4, "cm"),  # Shrinks the color block height
+    legend.spacing.x = unit(0.3, "cm"),   # Pulls the text and next block closer together
+    legend.margin = margin(t = 15),       # Adds padding above the legend
+    
+    panel.grid.major.x = element_blank(), 
+    panel.grid.minor = element_blank(),
+    panel.grid.major.y = element_line(color = "#EDF2F7", linewidth = 0.6, linetype = "dashed"),
+    
+    axis.title.x = element_blank(),
+    axis.title.y = element_text(face = "bold", color = "#4a5568", margin = margin(r = 15)),
+    axis.text = element_text(color = "#718096", size = 11),
+    
+    plot.margin = margin(t = 20, r = 20, b = 20, l = 20)
+  ) +
+  labs(
+    title = "2025 Seasonal Traffic Patterns",
+    subtitle = "Mathematically derived growth phases based on Bike Share volume and variance",
+    y = "Total Daily Trips"
+  )
+```
+
+
+
+
+
+## 1-D Clustering for Seasonal Date Analysis
+
+```{r}
+# Load required libraries
+library(dplyr)
+library(ggplot2)
+library(scales)
+library(lubridate)
+library(showtext)
+library(mgcv)          # For GAM smoothing
+library(Ckmeans.1d.dp) # For optimal 1D clustering
+
+# ======================================================================
+# PART 1: MATHEMATICAL CLUSTERING & BOUNDARY CALCULATION
+# ======================================================================
+
+# 1. Fit the GAM to extract the smooth seasonal signal
+# This removes daily variance to find the underlying seasonal curve
+year_knots <- list(x = as.numeric(as.Date(c("2025-01-01", "2025-12-31"))))
+gam_model <- gam(
+  daily_trips ~ s(as.numeric(start_date), bs = "cc", k = 12), 
+  data = daily_trends_2025, 
+  knots = year_knots
+)
+
+# Append the smoothed predictions back to the dataframe
+daily_trends_2025$smoothed_trend <- predict(gam_model, daily_trends_2025)
+
+# 2. Apply 1D K-Means Clustering to the smoothed trend
+# We force it to find 3 distinct volume states based on the curve's height
+clusters <- Ckmeans.1d.dp(daily_trends_2025$smoothed_trend, k = 3)
+
+# Add the cluster assignments to our data and map to season names
+# Ckmeans orders clusters by magnitude (1=Lowest, 3=Highest)
+daily_trends_2025 <- daily_trends_2025 |>
+  mutate(
+    cluster_id = clusters$cluster,
+    season = case_when(
+      cluster_id == 1 ~ "Off-Peak",
+      cluster_id == 2 ~ "Shoulder",
+      cluster_id == 3 ~ "Peak"
+    ),
+    season = factor(season, levels = c("Off-Peak", "Shoulder", "Peak"))
+  )
+
+# 3. Extract boundaries and eliminate visual gaps
+season_boundaries_3 <- daily_trends_2025 |>
+  arrange(start_date) |>
+  mutate(
+    # Detect when the season changes to create unique continuous blocks
+    new_block = season != lag(season, default = first(season)),
+    block_id = cumsum(new_block)
+  ) |>
+  group_by(season, block_id) |>
+  summarise(
+    start = min(start_date),
+    end = max(start_date),
+    .groups = "drop"
+  ) |>
+  mutate(
+    # Shift boundaries by 0.5 days (12 hours) to eliminate white gaps between seasons
+    # ggplot treats numeric dates as days since the epoch
+    xmin = as.numeric(start) - 0.5,
+    xmax = as.numeric(end) + 0.5
+  )
+
+# ======================================================================
+# PART 2: PLOTTING & AESTHETICS
+# ======================================================================
+
+# 4. Set up Agency-Grade Typography and Palettes
+font_add_google("Montserrat", "montserrat")
+showtext_auto() 
+
+# Note: Renamed "Deep Off-Peak" to "Off-Peak" to match the 3-cluster output above
+bia_phases <- c(
+  "Off-Peak" = "#CCD3EB",          
+  "Shoulder" = "#F5CF9A",               
+  "Peak" = "#DF674C"                    
+)
+
+bia_lines <- c(
+  "Off-Peak" = "#7A8CBE", 
+  "Shoulder" = "#C79A5E", 
+  "Peak" = "#B33E23"
+)
+
+# 5. Build the Plot
+plot_3phase <- ggplot() +
+  # Background Season Blocks (using the gap-free xmin/xmax boundaries)
+  geom_rect(
+    data = season_boundaries_3, 
+    aes(xmin = xmin, xmax = xmax, ymin = -Inf, ymax = Inf, fill = season), 
+    alpha = 0.35 
+  ) +
+  # Raw Daily Data Points
+  geom_point(
+    data = daily_trends_2025, 
+    aes(x = start_date, y = daily_trips), 
+    color = "#B28B78", 
+    alpha = 0.45, 
+    size = 1.2
+  ) +
+  # Smoothed Trend Line (colored by season)
+  geom_line(
+    data = daily_trends_2025, 
+    aes(x = start_date, y = smoothed_trend, color = season, group = 1), 
+    linewidth = 1.8 
+  ) +
+  
+  # Scales and Guides
+  scale_fill_manual(
+    values = bia_phases,
+    name = "Traffic Phase:", 
+    guide = guide_legend(override.aes = list(alpha = 0.8, color = "#2D3748", linewidth = 0.2))
+  ) +
+  scale_color_manual(values = bia_lines, guide = "none") +
+  scale_x_date(date_breaks = "1 month", date_labels = "%b", expand = c(0,0)) +
+  scale_y_continuous(labels = comma_format(), expand = expansion(mult = c(0, 0.08))) +
+  
+  # Professional Theming
+  theme_minimal(base_size = 14, base_family = "montserrat") +
+  theme(
+    plot.background = element_rect(fill = "#FFFFFF", color = NA),
+    panel.background = element_rect(fill = "#FFFFFF", color = NA),
+    
+    plot.title = element_text(face = "bold", size = 22, color = "#1a202c", margin = margin(b = 8)),
+    plot.subtitle = element_text(size = 13, color = "#4a5568", margin = margin(b = 20)),
+    
+    # Legend Styling
+    legend.position = "bottom",
+    legend.justification = "center",
+    legend.title = element_text(face = "bold", color = "#1a202c", margin = margin(r = 8)), 
+    legend.text = element_text(color = "#4a5568", size = 11),
+    legend.background = element_blank(),
+    legend.key.width = unit(0.8, "cm"),   
+    legend.key.height = unit(0.4, "cm"),  
+    legend.spacing.x = unit(0.3, "cm"),   
+    legend.margin = margin(t = 15),       
+    
+    # Grid and Axis Formatting
+    panel.grid.major.x = element_blank(), 
+    panel.grid.minor = element_blank(),
+    panel.grid.major.y = element_line(color = "#EDF2F7", linewidth = 0.6, linetype = "dashed"),
+    
+    axis.title.x = element_blank(),
+    axis.title.y = element_text(face = "bold", color = "#4a5568", margin = margin(r = 15)),
+    axis.text = element_text(color = "#718096", size = 11),
+    
+    plot.margin = margin(t = 20, r = 20, b = 20, l = 20)
+  ) +
+  labs(
+    title = "2025 Seasonal Traffic Patterns - 3 Phases",
+    subtitle = "Mathematically derived growth phases based on Bike Share volume and variance",
+    y = "Total Daily Trips"
+  )
+
+suppressWarnings(print(plot_3phase))
+
+season_boundaries |> arrange(season_boundaries$start)
+```
+
+
+
+
+```{r}
+# Load required libraries
+library(dplyr)
+library(ggplot2)
+library(scales)
+library(lubridate)
+library(showtext)
+library(mgcv)          
+library(Ckmeans.1d.dp) 
+
+# ======================================================================
+# PART 1: MATHEMATICAL CLUSTERING & BOUNDARY CALCULATION
+# ======================================================================
+
+# 1. Fit the GAM to extract the smooth seasonal signal
+year_knots <- list(x = as.numeric(as.Date(c("2025-01-01", "2025-12-31"))))
+gam_model <- gam(
+  daily_trips ~ s(as.numeric(start_date), bs = "cc", k = 12), 
+  data = daily_trends_2025, 
+  knots = year_knots
+)
+
+# Append the smoothed predictions back to the dataframe
+daily_trends_2025$smoothed_trend <- predict(gam_model, daily_trends_2025)
+
+# 2. Apply 1D K-Means Clustering to the smoothed trend (Now k = 4)
+clusters <- Ckmeans.1d.dp(daily_trends_2025$smoothed_trend, k = 4)
+
+# Add the cluster assignments to our data and map to the 4 seasons
+daily_trends_2025 <- daily_trends_2025 |>
+  mutate(
+    cluster_id = clusters$cluster,
+    season = case_when(
+      cluster_id == 1 ~ "Deep Off-Peak",
+      cluster_id == 2 ~ "Activation / Wind-down",
+      cluster_id == 3 ~ "Shoulder",
+      cluster_id == 4 ~ "Peak"
+    ),
+    season = factor(season, levels = c("Deep Off-Peak", "Activation / Wind-down", "Shoulder", "Peak"))
+  )
+
+# 3. Extract boundaries and eliminate visual gaps
+season_boundaries_4 <- daily_trends_2025 |>
+  arrange(start_date) |>
+  mutate(
+    # Detect when the season changes to create unique continuous blocks
+    new_block = season != lag(season, default = first(season)),
+    block_id = cumsum(new_block)
+  ) |>
+  group_by(season, block_id) |>
+  summarise(
+    start = min(start_date),
+    end = max(start_date),
+    .groups = "drop"
+  ) |>
+  mutate(
+    # The 0.5 shift causes a harmless ggplot warning but perfectly closes white gaps
+    xmin = as.numeric(start) - 0.5,
+    xmax = as.numeric(end) + 0.5
+  )
+
+# ======================================================================
+# PART 2: PLOTTING & AESTHETICS
+# ======================================================================
+
+# 4. Set up Typography and 4-Phase Palettes
+font_add_google("Montserrat", "montserrat")
+showtext_auto() 
+
+bia_phases <- c(
+  "Deep Off-Peak" = "#CCD3EB",          
+  "Activation / Wind-down" = "#AED7EB", 
+  "Shoulder" = "#F5CF9A",               
+  "Peak" = "#DF674C"                    
+)
+
+bia_lines <- c(
+  "Deep Off-Peak" = "#7A8CBE", 
+  "Activation / Wind-down" = "#5C9AB8",
+  "Shoulder" = "#C79A5E", 
+  "Peak" = "#B33E23"
+)
+
+# 5. Build the Plot (Wrapped in suppressWarnings to hide the numeric scale alert)
+p <- ggplot() +
+  # Background Season Blocks 
+  geom_rect(
+    data = season_boundaries_4, 
+    aes(xmin = xmin, xmax = xmax, ymin = -Inf, ymax = Inf, fill = season), 
+    alpha = 0.35 
+  ) +
+  # Raw Daily Data Points
+  geom_point(
+    data = daily_trends_2025, 
+    aes(x = start_date, y = daily_trips), 
+    color = "#B28B78", 
+    alpha = 0.45, 
+    size = 1.2
+  ) +
+  # Smoothed Trend Line
+  geom_line(
+    data = daily_trends_2025, 
+    aes(x = start_date, y = smoothed_trend, color = season, group = 1), 
+    linewidth = 1.8 
+  ) +
+  
+  # Scales and Guides
+  scale_fill_manual(
+    values = bia_phases,
+    name = "Traffic Phase:", 
+    guide = guide_legend(override.aes = list(alpha = 0.8, color = "#2D3748", linewidth = 0.2))
+  ) +
+  scale_color_manual(values = bia_lines, guide = "none") +
+  scale_x_date(date_breaks = "1 month", date_labels = "%b", expand = c(0,0)) +
+  scale_y_continuous(labels = comma_format(), expand = expansion(mult = c(0, 0.08))) +
+  
+  # Professional Theming
+  theme_minimal(base_size = 14, base_family = "montserrat") +
+  theme(
+    plot.background = element_rect(fill = "#FFFFFF", color = NA),
+    panel.background = element_rect(fill = "#FFFFFF", color = NA),
+    
+    plot.title = element_text(face = "bold", size = 22, color = "#1a202c", margin = margin(b = 8)),
+    plot.subtitle = element_text(size = 13, color = "#4a5568", margin = margin(b = 20)),
+    
+    # Legend Styling
+    legend.position = "bottom",
+    legend.justification = "center",
+    legend.title = element_text(face = "bold", color = "#1a202c", margin = margin(r = 8)), 
+    legend.text = element_text(color = "#4a5568", size = 11),
+    legend.background = element_blank(),
+    legend.key.width = unit(0.8, "cm"),   
+    legend.key.height = unit(0.4, "cm"),  
+    legend.spacing.x = unit(0.3, "cm"),   
+    legend.margin = margin(t = 15),       
+    
+    # Grid and Axis Formatting
+    panel.grid.major.x = element_blank(), 
+    panel.grid.minor = element_blank(),
+    panel.grid.major.y = element_line(color = "#EDF2F7", linewidth = 0.6, linetype = "dashed"),
+    
+    axis.title.x = element_blank(),
+    axis.title.y = element_text(face = "bold", color = "#4a5568", margin = margin(r = 15)),
+    axis.text = element_text(color = "#718096", size = 11),
+    
+    plot.margin = margin(t = 20, r = 20, b = 20, l = 20)
+  ) +
+  labs(
+    title = "2025 Seasonal Traffic Patterns - 4 Phases",
+    subtitle = "Mathematically derived growth phases based on Bike Share volume and variance",
+    y = "Total Daily Trips"
+  )
+
+# Print the plot cleanly
+suppressWarnings(print(p))
+season_boundaries |> arrange(start)
+```
+
+
+
+
+
+
+
+
+
+
+```{r}
+library(dplyr)
+library(lubridate)
+
+# 1. Annual Minimum (Trough)
+annual_min <- daily_trends_2025 |> 
+  slice_min(smoothed_trend, n = 1) |> 
+  mutate(milestone = "Annual Minimum")
+
+# 2. Peak Summer Volume
+annual_max <- daily_trends_2025 |> 
+  slice_max(smoothed_trend, n = 1) |> 
+  mutate(milestone = "Peak Summer Volume")
+
+# 3. Peak Spring Growth (Start of the Spring 'Shoulder' phase)
+spring_growth <- daily_trends_2025 |> 
+  filter(season == "Shoulder", month(start_date) < 7) |> 
+  slice_min(start_date, n = 1) |> 
+  mutate(milestone = "Peak Spring Growth")
+
+# 4. Autumn Deceleration (Start of the Fall 'Wind-down' phase)
+autumn_decel <- daily_trends_2025 |> 
+  filter(season == "Activation / Wind-down", month(start_date) > 7) |> 
+  slice_min(start_date, n = 1) |> 
+  mutate(milestone = "Autumn Deceleration")
+
+# Combine them into a clean table for your slides
+milestone_dates <- bind_rows(annual_min, spring_growth, annual_max, autumn_decel) |>
+  select(
+    Milestone = milestone,
+    Date = start_date,
+    Predicted_Trips = smoothed_trend
+  ) |>
+  mutate(
+    Month = toupper(format(Date, "%b")),
+    Day = format(Date, "%d")
+  )
+
+print(milestone_dates)
+```
+
+```{r}
+library(skimr)
+toronto_weather <- read_parquet(here("01-data/clean/toronto_weather_daily.parquet"))
+print(skim(toronto_weather))
+```
+
+```{r}
+library(dplyr)
+library(lubridate)
+library(Ckmeans.1d.dp)
+
+# ======================================================================
+# PART 1: PRINT THE EXACT DATES (3-SEASON AND 4-SEASON)
+# ======================================================================
+
+# --- 3-Season Model ---
+clusters_3 <- Ckmeans.1d.dp(daily_trends_2025$smoothed_trend, k = 3)
+
+daily_trends_2025 <- daily_trends_2025 |>
+  mutate(
+    season_3 = case_when(
+      clusters_3$cluster == 1 ~ "Off-Peak",
+      clusters_3$cluster == 2 ~ "Shoulder",
+      clusters_3$cluster == 3 ~ "Peak"
+    ),
+    season_3 = factor(season_3, levels = c("Off-Peak", "Shoulder", "Peak"))
+  )
+
+boundaries_3 <- daily_trends_2025 |>
+  mutate(new_block = season_3 != lag(season_3, default = first(season_3)),
+         block_id = cumsum(new_block)) |>
+  group_by(season_3, block_id) |>
+  summarise(start = min(start_date), end = max(start_date), .groups = "drop") |>
+  select(Phase = season_3, Start = start, End = end)
+
+cat("\n--- 3-SEASON BOUNDARIES ---\n")
+print(boundaries_3)
+
+
+# --- 4-Season Model ---
+clusters_4 <- Ckmeans.1d.dp(daily_trends_2025$smoothed_trend, k = 4)
+
+daily_trends_2025 <- daily_trends_2025 |>
+  mutate(
+    season_4 = case_when(
+      clusters_4$cluster == 1 ~ "Deep Off-Peak",
+      clusters_4$cluster == 2 ~ "Activation / Wind-down",
+      clusters_4$cluster == 3 ~ "Shoulder",
+      clusters_4$cluster == 4 ~ "Peak"
+    ),
+    season_4 = factor(season_4, levels = c("Deep Off-Peak", "Activation / Wind-down", "Shoulder", "Peak"))
+  )
+
+boundaries_4 <- daily_trends_2025 |>
+  mutate(new_block = season_4 != lag(season_4, default = first(season_4)),
+         block_id = cumsum(new_block)) |>
+  group_by(season_4, block_id) |>
+  summarise(start = min(start_date), end = max(start_date), .groups = "drop") |>
+  select(Phase = season_4, Start = start, End = end)
+
+cat("\n--- 4-SEASON BOUNDARIES ---\n")
+print(boundaries_4)
+
+
+# ======================================================================
+# PART 2: TEMPERATURE CORRELATION USING YOUR LOCAL DATASET
+# ======================================================================
+
+# Ensure the date column in your dataset is formatted as a Date object to allow the join
+toronto_weather <- toronto_weather |>
+  mutate(date = as.Date(date))
+
+# Join your local weather data with the 4-season daily trends
+temp_analysis <- daily_trends_2025 |>
+  left_join(toronto_weather, by = c("start_date" = "date")) |>
+  group_by(season_4) |>
+  summarise(
+    Avg_Daily_High = round(mean(temp_max, na.rm = TRUE), 1),
+    Avg_Daily_Low = round(mean(temp_min, na.rm = TRUE), 1),
+    Avg_Mean_Temp = round(mean(temp_mean, na.rm = TRUE), 1),
+    Min_High_Recorded = round(min(temp_max, na.rm = TRUE), 1),
+    .groups = "drop"
+  )
+
+cat("\n--- TEMPERATURE PROFILES BY 4-SEASON PHASE (°C) ---\n")
+print(temp_analysis)
+```
+
+
+
+
+```{r}
+library(ggplot2)
+library(dplyr)
+
+# ======================================================================
+# APPENDIX PLOTS: 4-PHASE MODEL
+# ======================================================================
+
+# --- 1. The "Step" Graph (Time Series colored by Cluster) ---
+# This shows exactly where the boundaries trigger during the year
+p_step_4 <- ggplot(daily_trends_2025, aes(x = start_date, y = smoothed_trend)) +
+  # Draw the segmented line colored by season
+  geom_line(aes(color = season_4, group = 1), linewidth = 2) +
+  scale_color_manual(
+    values = c("Deep Off-Peak" = "#7A8CBE", 
+               "Activation / Wind-down" = "#5C9AB8",
+               "Shoulder" = "#C79A5E", 
+               "Peak" = "#B33E23"),
+    name = "Assigned Phase:"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    legend.position = "bottom",
+    panel.grid.minor = element_blank()
+  ) +
+  labs(
+    title = "1-D Cluster Mapping over Time (4-Phase)",
+    subtitle = "Color segments show exact algorithmic boundary breaks",
+    x = "Date",
+    y = "Smoothed Daily Volume"
+  )
+
+print(p_step_4)
+
+
+# --- 2. The Histogram with Centroids ---
+# Extract the exact cluster centers (centroids) from the Ckmeans model
+centers_4 <- data.frame(
+  season = levels(daily_trends_2025$season_4),
+  center = clusters_4$centers
+)
+
+p_hist_4 <- ggplot(daily_trends_2025, aes(x = smoothed_trend, fill = season_4)) +
+  geom_histogram(bins = 40, color = "white", alpha = 0.85) +
+  # Add dashed vertical lines for the algorithm's centroids
+  geom_vline(
+    data = centers_4, 
+    aes(xintercept = center), 
+    color = "#1a202c", 
+    linetype = "dashed", 
+    linewidth = 0.8
+  ) +
+  scale_fill_manual(
+    values = c("Deep Off-Peak" = "#CCD3EB", 
+               "Activation / Wind-down" = "#AED7EB",
+               "Shoulder" = "#F5CF9A", 
+               "Peak" = "#DF674C"),
+    name = "Assigned Phase:"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    legend.position = "bottom",
+    panel.grid.minor = element_blank()
+  ) +
+  labs(
+    title = "Volume Distribution & Cluster Centroids (4-Phase)",
+    subtitle = "Dashed lines represent the mathematical center of each season",
+    x = "Smoothed Daily Volume",
+    y = "Number of Days"
+  )
+
+print(p_hist_4)
+```
+
+
+
+```{r}
+# --- 2. The Histogram with Centroids (3-Phase) ---
+# Extract the exact cluster centers (centroids) from the Ckmeans model
+centers_3 <- data.frame(
+  season = levels(daily_trends_2025$season_3),
+  center = clusters_3$centers
+)
+
+p_hist_3 <- ggplot(daily_trends_2025, aes(x = smoothed_trend, fill = season_3)) +
+  geom_histogram(bins = 40, color = "white", alpha = 0.85) +
+  # Add dashed vertical lines for the algorithm's centroids
+  geom_vline(
+    data = centers_3, 
+    aes(xintercept = center), 
+    color = "#1a202c", 
+    linetype = "dashed", 
+    linewidth = 0.8
+  ) +
+  scale_fill_manual(
+    values = c("Off-Peak" = "#CCD3EB", 
+               "Shoulder" = "#F5CF9A", 
+               "Peak" = "#DF674C"),
+    name = "Assigned Phase:"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    legend.position = "bottom",
+    panel.grid.minor = element_blank()
+  ) +
+  labs(
+    title = "Volume Distribution & Cluster Centroids (3-Phase)",
+    subtitle = "Dashed lines represent the mathematical center of each season",
+    x = "Smoothed Daily Volume",
+    y = "Number of Days"
+  )
+
+print(p_hist_3)
+```
+
+
+
+
+```{r}
+library(dplyr)
+library(lubridate)
+
+# Ensure your dates are in the Date format to match
+toronto_weather <- toronto_weather |> mutate(date = as.Date(date))
+
+# Calculate the 7-day weather window around each milestone
+milestone_weather <- milestone_dates |>
+  rowwise() |>
+  mutate(
+    window_start = Date - days(3),
+    window_end = Date + days(3)
+  ) |>
+  ungroup() |>
+  # Join every combination, then filter to just the 7-day windows
+  cross_join(toronto_weather) |>
+  filter(date >= window_start & date <= window_end) |>
+  group_by(Milestone, Date, Month, Day) |>
+  summarise(
+    # The big number on the card: average of the mean temperatures that week
+    avg_temp = round(mean(temp_mean, na.rm = TRUE), 1),
+    # The range on the card: the lowest low and highest high of that week
+    range_low = round(min(temp_min, na.rm = TRUE), 1),
+    range_high = round(max(temp_max, na.rm = TRUE), 1),
+    .groups = "drop"
+  ) |>
+  # Format exactly as it appears in your presentation
+  mutate(
+    Formatted_Main = paste0(avg_temp, "°C"),
+    Formatted_Range = paste0("Range: ", range_low, "°C to ", range_high, "°C")
+  ) |>
+  arrange(Date)
+
+# Print the final copy-pasteable data for your UI cards
+print(milestone_weather |> select(Milestone, Month, Day, Formatted_Main, Formatted_Range))
+```
+
+
+
+
+
+```{r}
+library(dplyr)
+library(ggplot2)
+library(scales)
+
+# 1. Calculate the exact mathematical cut points between clusters
+# The cut happens exactly halfway between the max of one group and the min of the next
+thresholds <- daily_trends_2025 |>
+  group_by(season) |>
+  summarise(
+    min_val = min(smoothed_trend),
+    max_val = max(smoothed_trend),
+    .groups = "drop"
+  ) |>
+  arrange(min_val) |>
+  mutate(cut_point = (max_val + lead(min_val)) / 2) |>
+  filter(!is.na(cut_point))
+
+# 2. Build the Clustering Visualization
+ggplot(daily_trends_2025, aes(x = smoothed_trend, fill = season)) +
+  # Histogram shows the concentration of days at specific trip volumes
+  geom_histogram(binwidth = 15, color = "white", linewidth = 0.5, alpha = 0.85) +
+  
+  # Add dashed vertical lines for the exact K-Means thresholds
+  geom_vline(
+    xintercept = thresholds$cut_point, 
+    color = "#2D3748", 
+    linetype = "dashed", 
+    linewidth = 0.8
+  ) +
+  
+  # Beach BIA Palette
+  scale_fill_manual(
+    values = c(
+      "Deep Off-Peak" = "#CCD3EB", 
+      "Activation / Wind-down" = "#AED7EB", 
+      "Shoulder" = "#F5CF9A", 
+      "Peak" = "#DF674C"
+    ),
+    name = "Assigned Phase:"
+  ) +
+  
+  scale_x_continuous(labels = comma_format()) +
+  
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(face = "bold", size = 18, color = "#1a202c", margin = margin(b = 8)),
+    plot.subtitle = element_text(size = 12, color = "#4a5568", margin = margin(b = 20)),
+    legend.position = "top",
+    panel.grid.minor = element_blank(),
+    panel.grid.major.y = element_line(color = "#EDF2F7", linetype = "dashed"),
+    axis.title.x = element_text(face = "bold", color = "#4a5568", margin = margin(t = 10)),
+    axis.title.y = element_text(face = "bold", color = "#4a5568", margin = margin(r = 10))
+  ) +
+  labs(
+    title = "1D K-Means Clustering Results",
+    subtitle = "Dashed lines represent the mathematical boundaries separating each seasonal phase",
+    x = "Predicted Daily Trips (Smoothed GAM Trend)",
+    y = "Frequency (Number of Days in 2025)"
+  )
+```
+
+
+
+```{r}
+library(dplyr)
+library(ggplot2)
+
+# Assuming you have daily_trends_2025 with the 'smoothed_trend' from the GAM
+derivatives_data <- daily_trends_2025 |>
+  arrange(start_date) |>
+  mutate(
+    # 1st Derivative: Velocity (Change in trips per day)
+    velocity = smoothed_trend - lag(smoothed_trend, default = first(smoothed_trend)),
+    
+    # 2nd Derivative: Acceleration (Change in velocity per day)
+    acceleration = velocity - lag(velocity, default = first(velocity))
+  )
+
+# Find the critical days mathematically:
+calc_milestones <- data.frame(
+  Milestone = c(
+    "Fastest Spring Growth (Max Velocity)", 
+    "Absolute Summer Peak (Velocity = 0)", 
+    "Fastest Autumn Decline (Min Velocity)"
+  ),
+  Date = c(
+    derivatives_data$start_date[which.max(derivatives_data$velocity)],
+    derivatives_data$start_date[which.max(derivatives_data$smoothed_trend)], # Where velocity crosses 0
+    derivatives_data$start_date[which.min(derivatives_data$velocity)]
+  )
+)
+
+print("--- CALCULUS-DERIVED MILESTONES ---")
+print(calc_milestones)
+```
+
+
+```{r}
+library(dplyr)
+library(ggplot2)
+library(scales)
+
+# 1. Calculate 1st (Velocity) and 2nd (Acceleration) Derivatives
+deriv_data <- daily_trends_2025 |>
+  arrange(start_date) |>
+  mutate(
+    # Velocity: Change in trips from yesterday
+    velocity = c(NA, diff(smoothed_trend)),
+    # Acceleration: Change in velocity from yesterday
+    acceleration = c(NA, NA, diff(diff(smoothed_trend)))
+  )
+
+# 2. Extract the exact Milestone Dates
+# Extract the exact Milestone Dates with chronological safeguards
+calc_milestones <- data.frame(
+  Milestone = c(
+    "1. Winter Trough (Lowest Volume)",
+    "2. Spring Activation (Start of Spring)", 
+    "3. Fastest Spring Growth (Max Velocity)", 
+    "4. Absolute Summer Peak (Velocity = 0)",
+    "5. Autumn Deceleration (Start of Fall)"
+  ),
+  Date = c(
+    deriv_data$start_date[which.min(deriv_data$smoothed_trend)],
+    
+    # Restrict Spring Activation to before July
+    deriv_data |> filter(month(start_date) < 7) |> slice_max(acceleration, n = 1) |> pull(start_date),
+    
+    deriv_data$start_date[which.max(deriv_data$velocity)],
+    deriv_data$start_date[which.max(deriv_data$smoothed_trend)],
+    
+    # Restrict Autumn Deceleration to after July
+    deriv_data |> filter(month(start_date) > 7) |> slice_min(acceleration, n = 1) |> pull(start_date)
+  )
+)
+
+print("--- CORRECTED CALCULUS MILESTONES ---")
+print(calc_milestones)
+
+# 3. Join milestones back to data for plotting
+milestone_points <- deriv_data |>
+  filter(start_date %in% calc_milestones$Date) |>
+  left_join(calc_milestones, by = c("start_date" = "Date"))
+
+# 4. Visualize the Calculus Milestones
+ggplot(deriv_data, aes(x = start_date, y = smoothed_trend)) +
+  geom_line(color = "#4a5568", linewidth = 1.2, alpha = 0.5) +
+  
+  # Highlight the specific milestone days
+  geom_point(data = milestone_points, aes(color = Milestone), size = 4) +
+  
+  # Use ggrepel or standard text to label them
+  geom_text(
+    data = milestone_points, 
+    aes(label = paste(format(start_date, "%b %d"), "\n", gsub("[0-9]\\. ", "", Milestone)), color = Milestone), 
+    vjust = -0.8, fontface = "bold", size = 3.5
+  ) +
+  
+  scale_color_manual(
+    values = c("#718096", "#AED7EB", "#F5CF9A", "#DF674C", "#B28B78"),
+    guide = "none"
+  ) +
+  scale_x_date(date_breaks = "1 month", date_labels = "%b", expand = expansion(mult = c(0.05, 0.05))) +
+  theme_minimal(base_size = 14) +
+  theme(plot.title = element_text(face = "bold")) +
+  labs(title = "The Anatomy of 2025 Traffic", subtitle = "Milestones defined by 1st (Velocity) and 2nd (Acceleration) Derivatives", y = "Smoothed Daily Trips", x = "")
+```
+
+
+
+
+
+```{r}
+install.packages("depmixS4")
+library(depmixS4)
+
+# Define a 4-state HMM (for your 4 seasons)
+# We model daily_trips using a Gaussian (normal) distribution
+set.seed(42) # For reproducibility
+hmm_spec <- depmix(daily_trips ~ 1, data = daily_trends_2025, nstates = 4, family = gaussian())
+
+# Fit the model (this uses the Expectation-Maximization algorithm)
+hmm_fit <- fit(hmm_spec, verbose = FALSE)
+
+# Extract the most likely state (season) for each day (Viterbi path)
+hmm_states <- posterior(hmm_fit)
+
+daily_trends_2025 <- daily_trends_2025 |>
+  mutate(hmm_season = hmm_states$state)
+
+# See how the HMM grouped your year
+table(month(daily_trends_2025$start_date), daily_trends_2025$hmm_season)
+```
+
+
+
+
+
+
+```{r}
+library(depmixS4)
+library(dplyr)
+
+# 1. Fit the HMM on the SMOOTHED trend, not the raw trips
+set.seed(42) 
+# CHANGED: 'smoothed_trend ~ 1' instead of 'daily_trips ~ 1'
+hmm_spec <- depmix(smoothed_trend ~ 1, data = daily_trends_2025, nstates = 4, family = gaussian())
+hmm_fit <- fit(hmm_spec, verbose = FALSE)
+
+# 2. Extract states
+hmm_states <- posterior(hmm_fit)
+daily_trends_2025$hmm_season <- hmm_states$state
+
+# 3. Safely map to BIA Labels (Same as your working code)
+hmm_mapping <- daily_trends_2025 |>
+  group_by(hmm_season) |>
+  summarise(mean_vol = mean(daily_trips, na.rm = TRUE), .groups = "drop") |>
+  arrange(mean_vol)
+
+bia_labels <- c("Deep Off-Peak", "Activation / Wind-down", "Shoulder", "Peak")
+hmm_mapping$bia_phase <- bia_labels[1:nrow(hmm_mapping)]
+
+daily_trends_2025 <- daily_trends_2025 |>
+  dplyr::select(-any_of(c("bia_phase", "mean_vol"))) |> 
+  left_join(hmm_mapping |> dplyr::select(hmm_season, bia_phase), by = "hmm_season") |>
+  mutate(bia_phase = factor(bia_phase, levels = bia_labels))
+
+# 4. Extract the clean transitions
+hmm_transitions <- daily_trends_2025 |>
+  arrange(start_date) |>
+  mutate(previous_phase = lag(bia_phase)) |>
+  filter(bia_phase != previous_phase & !is.na(previous_phase)) |>
+  dplyr::select(Date = start_date, From = previous_phase, To = bia_phase)
+
+print("--- NOISE-CANCELED HMM TRANSITION DATES ---")
+print(hmm_transitions)
+
+
+# --- 3. EXTRACT BOUNDARIES FOR PLOTTING ---
+runs <- rle(as.character(daily_trends_2025$bia_phase))
+hmm_boundaries <- data.frame(
+  season = factor(runs$values, levels = c("Deep Off-Peak", "Activation / Wind-down", "Shoulder", "Peak")),
+  start = daily_trends_2025$start_date[c(1, cumsum(runs$lengths)[-length(runs$lengths)] + 1)],
+  end = daily_trends_2025$start_date[cumsum(runs$lengths)] + days(1)
+)
+
+# --- 4. PLOT THE HMM RESULTS ---
+# Using the exact same agency-style BIA formatting from earlier
+bia_phases <- c("Deep Off-Peak" = "#CCD3EB", "Activation / Wind-down" = "#AED7EB", "Shoulder" = "#F5CF9A", "Peak" = "#DF674C")
+
+ggplot() +
+  geom_rect(
+    data = hmm_boundaries, 
+    aes(xmin = start, xmax = end, ymin = -Inf, ymax = Inf, fill = season), 
+    alpha = 0.4
+  ) +
+  geom_point(data = daily_trends_2025, aes(x = start_date, y = daily_trips), color = "#B28B78", alpha = 0.5, size = 1.2) +
+  geom_line(data = daily_trends_2025, aes(x = start_date, y = smoothed_trend), color = "#2D3748", linewidth = 1.2) +
+  
+  scale_fill_manual(values = bia_phases, name = "HMM Probabilistic State:") +
+  scale_x_date(date_breaks = "1 month", date_labels = "%b", expand = c(0,0)) +
+  scale_y_continuous(labels = comma_format(), expand = expansion(mult = c(0, 0.08))) +
+  
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.background = element_rect(fill = "#FFFFFF", color = NA),
+    panel.background = element_rect(fill = "#FFFFFF", color = NA),
+    plot.title = element_text(face = "bold", size = 20, color = "#1a202c", margin = margin(b = 8)),
+    legend.position = "bottom",
+    panel.grid.major.x = element_blank(),
+    panel.grid.minor = element_blank()
+  ) +
+  labs(
+    title = "Probabilistic Seasonal Mapping (HMM)",
+    subtitle = "Seasons defined by transition probabilities and daily volume",
+    y = "Total Daily Trips", x = ""
+  )
+```
+
+
+
+```{r}
+library(dplyr)
+library(ggplot2)
+library(mgcv)
+library(scales)
+library(showtext)
+
+# --- 1. SET UP TYPOGRAPHY ---
+font_add_google("Montserrat", "montserrat")
+showtext_auto()
+
+# --- 2. FIT THE TEMPERATURE MODEL ---
+# Fit a GAM to predict trips based purely on the mean daily temperature
+temp_gam <- gam(daily_trips ~ s(temp_mean, bs = "cs"), data = weather_bike)
+
+# Create a highly granular sequence of temperatures to find the exact inflection point
+temp_grid <- data.frame(temp_mean = seq(
+  min(weather_bike$temp_mean, na.rm = TRUE), 
+  max(weather_bike$temp_mean, na.rm = TRUE), 
+  length.out = 1000
+))
+
+# Predict volume across the temperature spectrum
+temp_grid$predicted_trips <- predict(temp_gam, newdata = temp_grid)
+
+# --- 3. CALCULATE THE DERIVATIVE ---
+temp_grid <- temp_grid |>
+  mutate(
+    # Velocity: How many extra trips does 1 additional degree of warmth bring?
+    trip_velocity = predicted_trips - lag(predicted_trips, default = first(predicted_trips))
+  )
+
+# Extract the critical temperatures
+activation_temp <- temp_grid$temp_mean[which.max(temp_grid$trip_velocity)]
+saturation_temp <- temp_grid$temp_mean[which.max(temp_grid$predicted_trips)]
+
+print(paste("Activation Temperature (Fastest Growth):", round(activation_temp, 1), "°C"))
+print(paste("Saturation Temperature (Volume Flattens/Drops):", round(saturation_temp, 1), "°C"))
+
+# --- 4. BUILD THE PLOT ---
+ggplot(weather_bike, aes(x = temp_mean, y = daily_trips)) +
+  # Raw data points (Taupe)
+  geom_point(color = "#B28B78", alpha = 0.35, size = 1.5) +
+  
+  # The smoothed temperature trendline
+  geom_line(data = temp_grid, aes(x = temp_mean, y = predicted_trips), color = "#1a202c", linewidth = 1.5) +
+  
+  # --- ADD THE CRITICAL THRESHOLD LINES ---
+  # Activation Trigger (Blue)
+  geom_vline(xintercept = activation_temp, color = "#AED7EB", linetype = "dashed", linewidth = 1.2) +
+  annotate(
+    "text", x = activation_temp - 0.5, y = max(weather_bike$daily_trips, na.rm = TRUE) * 0.9, 
+    label = paste0("Activation Trigger\n", round(activation_temp, 1), "°C"), 
+    color = "#5C9AB8", fontface = "bold", hjust = 1, family = "montserrat"
+  ) +
+  
+  # Saturation Trigger (Poppy)
+  geom_vline(xintercept = saturation_temp, color = "#DF674C", linetype = "dashed", linewidth = 1.2) +
+  annotate(
+    "text", x = saturation_temp + 0.5, y = max(weather_bike$daily_trips, na.rm = TRUE) * 0.9, 
+    label = paste0("Heat Saturation\n", round(saturation_temp, 1), "°C"), 
+    color = "#B33E23", fontface = "bold", hjust = 0, family = "montserrat"
+  ) +
+  
+  scale_y_continuous(labels = comma_format(), expand = expansion(mult = c(0, 0.08))) +
+  scale_x_continuous(breaks = seq(-15, 30, by = 5), labels = function(x) paste0(x, "°C")) +
+  
+  theme_minimal(base_size = 14, base_family = "montserrat") +
+  theme(
+    plot.background = element_rect(fill = "#FFFFFF", color = NA),
+    panel.background = element_rect(fill = "#FFFFFF", color = NA),
+    plot.title = element_text(face = "bold", size = 22, color = "#1a202c", margin = margin(b = 8)),
+    plot.subtitle = element_text(size = 13, color = "#4a5568", margin = margin(b = 20)),
+    panel.grid.major.x = element_blank(), 
+    panel.grid.minor = element_blank(),
+    panel.grid.major.y = element_line(color = "#EDF2F7", linewidth = 0.6, linetype = "dashed"),
+    axis.title.x = element_text(face = "bold", color = "#4a5568", margin = margin(t = 15)),
+    axis.title.y = element_text(face = "bold", color = "#4a5568", margin = margin(r = 15)),
+    axis.text = element_text(color = "#718096", size = 11)
+  ) +
+  labs(
+    title = "The Weather Activation Threshold",
+    subtitle = "Identifying the exact temperature where business activity experiences maximum acceleration",
+    x = "Mean Daily Temperature",
+    y = "Total Daily Trips"
+  )
+```
+
+
+
+```{r}
+library(dplyr)
+library(ggplot2)
+library(scales)
+library(mgcv)
+library(Ckmeans.1d.dp)
+library(showtext)
+
+# --- 1. THE GAM (The MVP) ---
+# Fit the model to find the pure relationship between Temp and Trips
+temp_gam <- gam(daily_trips ~ s(temp_mean, bs = "cs"), data = weather_bike)
+
+# Generate a smooth line of temperatures from coldest to hottest
+temp_grid <- data.frame(temp_mean = seq(
+  min(weather_bike$temp_mean, na.rm = TRUE), 
+  max(weather_bike$temp_mean, na.rm = TRUE), 
+  length.out = 1000
+))
+temp_grid$predicted_trips <- predict(temp_gam, newdata = temp_grid)
+
+# --- 2. 1D K-MEANS CLUSTERING ---
+# Ask the algorithm to find 3 distinct volume states along the temperature curve
+set.seed(42)
+temp_clusters <- Ckmeans.1d.dp(temp_grid$predicted_trips, k = 3)
+
+# Map the clusters to our behavioral zones
+temp_grid <- temp_grid |>
+  mutate(
+    cluster_id = temp_clusters$cluster,
+    behavior_zone = case_when(
+      cluster_id == 1 ~ "Dormant Zone",
+      cluster_id == 2 ~ "Activation Zone",
+      cluster_id == 3 ~ "Peak Saturation"
+    ),
+    behavior_zone = factor(behavior_zone, levels = c("Dormant Zone", "Activation Zone", "Peak Saturation"))
+  )
+
+# --- 3. EXTRACT THE EXACT TEMPERATURE THRESHOLDS ---
+temp_boundaries <- temp_grid |>
+  group_by(behavior_zone) |>
+  summarise(
+    start_temp = min(temp_mean),
+    end_temp = max(temp_mean),
+    .groups = "drop"
+  )
+
+print("--- K-MEANS BEHAVIORAL TEMPERATURE ZONES ---")
+print(temp_boundaries |> mutate(across(where(is.numeric), ~round(., 1))))
+
+# --- 4. BUILD THE PRESENTATION PLOT ---
+ggplot() +
+  # Draw the background zones using the Beach BIA Palette
+  geom_rect(
+    data = temp_boundaries, 
+    aes(xmin = start_temp, xmax = end_temp, ymin = -Inf, ymax = Inf, fill = behavior_zone), 
+    alpha = 0.35
+  ) +
+  scale_fill_manual(
+    values = c("Dormant Zone" = "#CCD3EB", "Activation Zone" = "#F5CF9A", "Peak Saturation" = "#DF674C"),
+    name = "Behavioral Zone:"
+  ) +
+  
+  # Add the raw daily data points
+  geom_point(data = weather_bike, aes(x = temp_mean, y = daily_trips), color = "#B28B78", alpha = 0.35, size = 1.5) +
+  
+  # Overlay the smoothed GAM trend
+  geom_line(data = temp_grid, aes(x = temp_mean, y = predicted_trips), color = "#1a202c", linewidth = 1.8) +
+  
+  scale_y_continuous(labels = comma_format(), expand = expansion(mult = c(0, 0.08))) +
+  scale_x_continuous(breaks = seq(-15, 30, by = 5), labels = function(x) paste0(x, "°C"), expand = c(0,0)) +
+  
+  theme_minimal(base_size = 14, base_family = "montserrat") +
+  theme(
+    plot.background = element_rect(fill = "#FFFFFF", color = NA),
+    panel.background = element_rect(fill = "#FFFFFF", color = NA),
+    plot.title = element_text(face = "bold", size = 22, color = "#1a202c", margin = margin(b = 8)),
+    plot.subtitle = element_text(size = 13, color = "#4a5568", margin = margin(b = 20)),
+    legend.position = "bottom",
+    legend.justification = "center",
+    legend.title = element_text(face = "bold", color = "#1a202c", margin = margin(r = 8)),
+    panel.grid.major.x = element_blank(), 
+    panel.grid.minor = element_blank(),
+    panel.grid.major.y = element_line(color = "#EDF2F7", linewidth = 0.6, linetype = "dashed"),
+    axis.title.x = element_text(face = "bold", color = "#4a5568", margin = margin(t = 15)),
+    axis.title.y = element_text(face = "bold", color = "#4a5568", margin = margin(r = 15)),
+    axis.text = element_text(color = "#718096", size = 11)
+  ) +
+  labs(
+    title = "Temperature Zones by K-Means Clustering",
+    subtitle = "Mathematically defining the temperature thresholds that trigger distinct business activity levels",
+    x = "Mean Daily Temperature",
+    y = "Total Daily Trips"
+  )
+```
+
+
+
+```{r}
+library(dplyr)
+library(ggplot2)
+library(scales)
+library(lubridate)
+library(mgcv)
+library(Ckmeans.1d.dp)
+
+# 1 & 2. Fit GAM and Cluster (Assuming you already ran these from the previous step)
+year_knots <- list(x = as.numeric(as.Date(c("2025-01-01", "2025-12-31"))))
+gam_model <- gam(daily_trips ~ s(as.numeric(start_date), bs = "cc", k = 12), data = daily_trends_2025, knots = year_knots)
+daily_trends_2025$smoothed_trend <- predict(gam_model, daily_trends_2025)
+clusters <- Ckmeans.1d.dp(daily_trends_2025$smoothed_trend, k = 4)
+
+daily_trends_2025 <- daily_trends_2025 |>
+  mutate(
+    cluster_id = clusters$cluster,
+    season = case_when(
+      cluster_id == 1 ~ "Deep Off-Peak",
+      cluster_id == 2 ~ "Activation / Wind-down",
+      cluster_id == 3 ~ "Shoulder",
+      cluster_id == 4 ~ "Peak"
+    ),
+    season = factor(season, levels = c("Deep Off-Peak", "Activation / Wind-down", "Shoulder", "Peak"))
+  )
+
+# 3. Extract Boundaries using Run Length Encoding (Fixes the white gap)
+runs <- rle(as.character(daily_trends_2025$season))
+
+season_boundaries <- data.frame(
+  season = factor(runs$values, levels = c("Deep Off-Peak", "Activation / Wind-down", "Shoulder", "Peak")),
+  start = daily_trends_2025$start_date[c(1, cumsum(runs$lengths)[-length(runs$lengths)] + 1)],
+  end = daily_trends_2025$start_date[cumsum(runs$lengths)]
+) |>
+  # Add 1 day to the end date so the rectangles seamlessly touch in ggplot
+  mutate(end = end + days(1))
+
+# --- OUTPUT EXACT DATES FOR YOUR SLIDE DECK ---
+slide_dates <- season_boundaries |>
+  mutate(
+    Start_Date = format(start, "%b %d, %Y"),
+    End_Date = format(end - days(1), "%b %d, %Y") # Subtract the visual 1 day back for the real date
+  ) |>
+  select(Phase = season, Start_Date, End_Date)
+
+print("--- COPY THESE DATES FOR YOUR PRESENTATION ---")
+print(slide_dates)
+
+
+# 4. Build the Updated Plot
+ggplot() +
+  geom_rect(
+    data = season_boundaries, 
+    aes(xmin = start, xmax = end, ymin = -Inf, ymax = Inf, fill = season), 
+    alpha = 0.15
+  ) +
+  scale_fill_manual(
+    values = c("Deep Off-Peak" = "#e2e8f0", "Activation / Wind-down" = "#c6f6d5", "Shoulder" = "#f6e05e", "Peak" = "#fc8181"),
+    name = "Traffic Phase" # Updates the legend title
+  ) +
+  
+  geom_point(data = daily_trends_2025, aes(x = start_date, y = daily_trips), color = "#a0aec0", alpha = 0.4, size = 1) +
+  geom_line(
+    data = daily_trends_2025, 
+    aes(x = start_date, y = smoothed_trend, color = season, group = 1), 
+    linewidth = 1.5
+  ) +
+  scale_color_manual(
+    values = c("Deep Off-Peak" = "#718096", "Activation / Wind-down" = "#48bb78", "Shoulder" = "#d69e2e", "Peak" = "#e53e3e"),
+    guide = "none" # Hide the line color from the legend to keep it clean
+  ) +
+  
+  scale_x_date(date_breaks = "1 month", date_labels = "%b", expand = c(0,0)) +
+  scale_y_continuous(labels = comma_format(), expand = expansion(mult = c(0, 0.05))) +
+  
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(face = "bold", size = 18, color = "#1a202c", margin = margin(b = 8)),
+    plot.subtitle = element_text(size = 12, color = "#4a5568", margin = margin(b = 20)),
+    legend.position = "top",
+    legend.title = element_text(face = "bold", margin = margin(r = 10)),
+    panel.grid.major.x = element_blank(), 
+    panel.grid.minor = element_blank(),
+    axis.title.x = element_blank()
+  ) +
+  labs(
+    title = "Data-Driven Seasonal Transitions in 2025 for The Beach BIA",
+    subtitle = "Seasonal Phases based on volume and variance",
+    y = "Total Trips"
+  )
+```
+
+
+```{r}
+library(ggridges)
+library(gganimate) # For the GIF output
+library(transformr)
+
+# 1. Filter for 2025 and ensure 'hour' is numeric and 'month' is an ordered factor
+hourly_data_2025 <- beaches_bike_data |>
+  filter(year(start_date) == 2025)
+
+# 2. Build the animated plot
+animated_ridge <- ggplot(hourly_data_2025, aes(x = hour, y = as.factor(1), fill = stat(x))) +
+  geom_density_ridges_gradient(scale = 3, rel_min_height = 0.01) +
+  scale_fill_viridis_c(option = "viridis", direction = 1) +
+  scale_x_continuous(breaks = seq(0, 23, by = 4), labels = paste0(seq(0, 23, by = 4), ":00")) +
+  theme_ridges() +
+  theme(
+    legend.position = "none",
+    axis.title.y = element_blank(),
+    axis.text.y = element_blank(),
+    axis.ticks.y = element_blank()
+  ) +
+  labs(
+    title = 'Hourly Trip Distribution: {closest_state}',
+    subtitle = "Highlighting the 2:00 PM - 6:00 PM peak arrival window",
+    x = "Hour of Day"
+  ) +
+  # NEW: gganimate transition
+  transition_states(month, transition_length = 2, state_length = 1) +
+  enter_fade() + 
+  exit_shrink()
+
+# 3. Render and save the GIF
+animate(animated_ridge, nframes = 100, fps = 10, width = 800, height = 500, renderer = gifski_renderer("hourly_shift_2025.gif"))
+```
+
+
+
+
